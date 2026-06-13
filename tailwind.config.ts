@@ -42,23 +42,6 @@ const config: Config = {
           tertiaryFill: '#7676801E',
           quaternaryFill: '#74748014',
 
-          'dark-label': '#FFFFFF',
-          'dark-secondaryLabel': '#EBEBF599',
-          'dark-tertiaryLabel': '#EBEBF54D',
-          'dark-quaternaryLabel': '#EBEBF52E',
-          'dark-separator': '#38383A',
-          'dark-opaqueSeparator': '#38383A',
-          'dark-systemBackground': '#1C1C1E',
-          'dark-secondarySystemBackground': '#2C2C2E',
-          'dark-tertiarySystemBackground': '#3A3A3C',
-          'dark-systemGroupedBackground': '#1C1C1E',
-          'dark-secondarySystemGroupedBackground': '#2C2C2E',
-          'dark-tertiarySystemGroupedBackground': '#3A3A3C',
-          'dark-fill': '#7878805C',
-          'dark-secondaryFill': '#78788047',
-          'dark-tertiaryFill': '#7676803D',
-          'dark-quaternaryFill': '#76768030',
-
           health: {
             excellent: '#34C759',
             good: '#7DCF5C',

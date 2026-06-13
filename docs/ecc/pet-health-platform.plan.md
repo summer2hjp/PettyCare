@@ -24,6 +24,9 @@
 
 ## 总体架构决策
 
+> **目标平台：PC Web（桌面浏览器）**
+> 设计语言融入 Apple 美学，布局与交互适配桌面端。
+
 | 决策 | 选项 | 选择理由 |
 |------|------|----------|
 | 框架 | **React + TypeScript** | 通用性强、生态成熟 |
@@ -31,9 +34,10 @@
 | 状态管理 | React Context + useReducer | 避免过度工程化 |
 | 样式方案 | Tailwind CSS + 自定义设计令牌 | 原子化样式与 Apple 设计令牌结合 |
 | 图表 | Recharts / 自绘 SVG | 轻量、可定制外观 |
-| 动画 | Framer Motion | 弹簧动画、手势、布局动效 |
+| 动画 | Framer Motion | 弹簧动画、布局动效 |
 | 构建 | Vite | 极速 HMR、Tree-shaking |
-| 图标 | Lucide + SF Symbols 风格自定义 SVG | Apple SF Symbol 风格匹配 |
+| 图标 | Lucide + Apple-style 自定义 SVG | 清晰、语义化图标 |
+| 导航 | **macOS 风格侧边栏** | 桌面应用标配，替代移动端 TabBar |
 
 ## 模式参考
 
@@ -44,9 +48,9 @@
 | 色彩体系 | Apple HIG - Color | 系统红/橙/黄/绿/蓝/紫语义色，低饱和度背景 |
 | 字体层级 | Apple HIG - Typography | largeTitle(34) → title1(28) → title2(22) → title3(20) → headline(17) → body(17) → callout(16) → subhead(15) → footnote(13) → caption1(12) → caption2(11) |
 | 毛玻璃 | SF Symbols / Vibrancy | 多层半透明叠加，背景模糊 30-60px |
-| 导航 | iOS Tab Bar + Navigation Bar | 底部 Tab 主导航 + 上层 NavigationView 式堆栈 |
-| 列表 | UITableView / UICollectionView | 圆角分组列表 (Inset Grouped)、滑动操作 |
-| 卡片 | UIView 层叠 | 圆角 (16px)、阴影 (y=2, blur=12)、白底 |
+| 导航 | macOS Sidebar + Toolbar | 左侧固定侧边栏 + 顶部工具栏 |
+| 列表 | NSTableView / NSCollectionView | 桌面风格列表、行悬停高亮 |
+| 卡片 | NSVisualEffectView | 圆角 (12px)、毛玻璃背景、hover 抬起阴影 |
 
 ## 文件结构
 
@@ -59,8 +63,8 @@ src/
 │   │   ├── AppleButton.tsx              # 系统风格按钮 (3 种样式)
 │   │   ├── AppleCard.tsx                # 圆角卡片
 │   │   ├── AppleSegmentedControl.tsx    # 分段控件
-│   │   ├── AppleTabBar.tsx              # 底部 Tab Bar
-│   │   ├── AppleNavigationBar.tsx       # 导航栏
+│   │   ├── AppleSidebar.tsx            # macOS 风格左侧导航栏
+│   │   ├── AppleToolbar.tsx            # 顶部工具栏
 │   │   ├── AppleList.tsx                # Inset Grouped 列表
 │   │   ├── AppleSwitch.tsx              # 开关控件
 │   │   ├── AppleAvatar.tsx              # 圆形头像
@@ -83,7 +87,8 @@ src/
 │       ├── EmptyState.tsx
 │       ├── LoadingState.tsx
 │       ├── ErrorState.tsx
-│       └── PullToRefresh.tsx
+│       ├── ContextMenu.tsx
+│       └── Toast.tsx
 ├── features/                            # 功能模块 (页面)
 │   ├── home/HomePage.tsx
 │   ├── pets/PetListPage.tsx
@@ -95,8 +100,8 @@ src/
 │   ├── appointments/AppointmentsPage.tsx
 │   └── settings/SettingsPage.tsx
 ├── layouts/
-│   ├── RootLayout.tsx                   # 根布局 (TabBar + 状态栏)
-│   └── StackLayout.tsx                  # 堆栈导航布局
+│   ├── RootLayout.tsx                   # 根布局 (侧边栏 + 工具栏 + 主内容区)
+│   └── ContentLayout.tsx                # 内容区布局 (列表/详情分栏)
 ├── hooks/
 │   ├── useTheme.ts
 │   ├── useDynamicType.ts
@@ -159,11 +164,11 @@ npm run dev  # 开发服务器正常启动
 | `GlassPanel` | backdrop-blur + 半透明叠加 | 默认 |
 | `AppleButton` | filled / tinted / plain | 默认 / 禁用 / 加载 |
 | `AppleCard` | 圆角 16px, 阴影 y=2 blur=12 | 默认 / 按下 / 禁用 |
+| `AppleSidebar` | macOS 风格侧边栏，毛玻璃背景 | 选中 / 未选中 / 悬停高亮 |
+| `AppleToolbar` | 顶部工具栏，搜索+操作按钮 | 常规 / 滚动折叠 |
 | `AppleSegmentedControl` | 圆角胶囊形分段 | 选中 / 未选中 |
-| `AppleList` | Inset Grouped 分组列表 | 有数据 / 空 |
+| `AppleTable` | 桌面表格列表，行悬停高亮 | 有数据 / 空 / 加载 |
 | `AppleSwitch` | 绿色/灰色 弹簧动画 | 开 / 关 / 禁用 |
-| `AppleTabBar` | 半透明毛玻璃背景 | 选中 / 未选中 / 角标 |
-| `AppleNavigationBar` | 大标题 + 标准标题双模式 | 常规 / 滚动折叠 |
 | `DynamicType` | 系统字体缩放的 Text | 各级字号 |
 | `AppleAvatar` | 圆形裁切 + 浅阴影 | 有图 / 无图(首字母) |
 | `AppleBadge` | 红色角标 | 数字 / 圆点 / 无 |
@@ -221,13 +226,15 @@ npm run dev  # 开发服务器正常启动
 
 ### 阶段 11：动效与微交互
 
-| 动效 | 技术实现 |
-|------|---------|
-| 页面转场 | Framer Motion `AnimatePresence` slide + fade |
-| 列表项出现 | 交错弹簧动画 staggerChildren: 0.05 |
-| 按钮点击 | 弹性缩放 scale: 0.97 → 1.0 |
-| 卡片悬停 | y: -2, 阴影加深 |
-| 数字动画 | 计数器滚动效果 |
+| 动效 | 技术实现 | 触发场景 |
+|------|---------|----------|
+| 页面转场 | Framer Motion `AnimatePresence` fade + slide | 路由切换 |
+| 列表项出现 | 交错弹簧动画 staggerChildren: 0.05 | 列表加载 |
+| 侧边栏高亮 | 平滑背景色过渡 200ms | 导航项 hover/选中 |
+| 按钮点击 | 弹性缩放 scale: 0.97 → 1.0 | 点击操作 |
+| 卡片悬停 | y: -2, 阴影加深 | 鼠标 hover |
+| Tooltip 浮现 | fade + slide-up 150ms | 图标/按钮 hover |
+| 数字动画 | 计数器滚动效果 | 健康评分变化 |
 
 ## 依赖关系
 

@@ -47,12 +47,12 @@ export const appleDarkColors = {
   quaternaryLabel: '#EBEBF52E',
   separator: '#38383A',
   opaqueSeparator: '#38383A',
-  systemBackground: '#1C1C1E',
-  secondarySystemBackground: '#2C2C2E',
-  tertiarySystemBackground: '#3A3A3C',
-  systemGroupedBackground: '#1C1C1E',
-  secondarySystemGroupedBackground: '#2C2C2E',
-  tertiarySystemGroupedBackground: '#3A3A3C',
+  systemBackground: '#000000',
+  secondarySystemBackground: '#1C1C1E',
+  tertiarySystemBackground: '#2C2C2E',
+  systemGroupedBackground: '#000000',
+  secondarySystemGroupedBackground: '#1C1C1E',
+  tertiarySystemGroupedBackground: '#2C2C2E',
 } as const
 
 export const healthColors = {
