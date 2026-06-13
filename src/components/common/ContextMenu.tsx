@@ -32,7 +32,7 @@ export function ContextMenu({ items, children, className }: ContextMenuProps) {
           {items.map(item => (
             <button key={item.id} disabled={item.disabled}
               onClick={() => { item.onClick(); setOpen(false) }}
-              className={cn('w-full flex items-center gap-3 px-4 py-2 text-apple-subhead text-apple-label hover:bg-[var(--apple-fill)] transition-colors duration-100', item.danger && 'text-apple-red', item.disabled && 'opacity-40 cursor-not-allowed')}>
+              className={cn('w-full flex items-center gap-3 px-4 py-2 text-apple-subhead text-apple-label hover:bg-[var(--apple-fill)] dark:hover:bg-transparent transition-colors duration-100', item.danger && 'text-apple-red', item.disabled && 'opacity-40 cursor-not-allowed')}>
               {item.icon && <span className="w-4 h-4 flex items-center">{item.icon}</span>}
               {item.label}
             </button>

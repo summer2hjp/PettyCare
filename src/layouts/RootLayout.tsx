@@ -9,6 +9,7 @@ interface RootLayoutProps {
   navItems?: NavItem[]
   activeItem?: string
   pageTitle?: string
+  onNavigate?: (id: string) => void
   className?: string
 }
 
@@ -17,18 +18,18 @@ export function RootLayout({
   navItems,
   activeItem = 'home',
   pageTitle = 'Dashboard',
+  onNavigate,
   className,
 }: RootLayoutProps) {
   const { theme, toggleTheme } = useTheme()
-  const [currentNav, setCurrentNav] = useState(activeItem)
   const [searchValue, setSearchValue] = useState('')
 
   return (
     <div className="h-dvh flex overflow-hidden bg-[var(--apple-secondarySystemBackground)]">
       <AppleSidebar
-        activeItem={currentNav}
+        activeItem={activeItem}
         navItems={navItems}
-        onNavigate={setCurrentNav}
+        onNavigate={onNavigate}
       />
 
       <div className="flex-1 flex flex-col min-w-0">
@@ -40,7 +41,7 @@ export function RootLayout({
           onThemeToggle={toggleTheme}
         />
 
-        <main className={cn('flex-1 overflow-y-auto p-6 bg-[var(--apple-secondarySystemBackground)]', className)}>
+        <main className={cn('flex-1 overflow-y-auto p-5 bg-[var(--apple-secondarySystemBackground)]', className)}>
           {children}
         </main>
       </div>

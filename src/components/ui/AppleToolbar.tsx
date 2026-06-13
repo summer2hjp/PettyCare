@@ -96,22 +96,24 @@ export function AppleToolbar({
     <>
       <header
         className={cn(
-          'h-14 flex items-center justify-between px-6 relative z-30',
+          'h-14 flex items-center px-6 relative z-30',
           'bg-[var(--apple-secondarySystemBackground)]',
           className,
         )}
       >
-        <div className="flex items-center gap-2 min-w-0">
-          <h1 className="text-apple-title-3 text-apple-label truncate">{title}</h1>
-        </div>
+        {title && (
+          <div className="flex items-center gap-2 min-w-0">
+            <h1 className="text-apple-title-3 text-apple-label truncate">{title}</h1>
+          </div>
+        )}
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 ml-auto">
           {/* Search trigger */}
           <button
             onClick={() => setSearchOpen(true)}
             className={cn(
               'w-9 h-9 flex items-center justify-center',
-              'rounded-full hover:bg-[var(--apple-fill)]',
+              'rounded-full hover:bg-[var(--apple-fill)] dark:hover:bg-transparent',
               'transition-colors duration-200',
             )}
           >
@@ -121,7 +123,7 @@ export function AppleToolbar({
           <button
             className={cn(
               'relative w-9 h-9 flex items-center justify-center',
-              'rounded-full hover:bg-[var(--apple-fill)]',
+              'rounded-full hover:bg-[var(--apple-fill)] dark:hover:bg-transparent',
               'transition-colors duration-200',
             )}
           >
@@ -144,7 +146,7 @@ export function AppleToolbar({
             onClick={onThemeToggle}
             className={cn(
               'w-9 h-9 flex items-center justify-center',
-              'rounded-full hover:bg-[var(--apple-fill)]',
+              'rounded-full hover:bg-[var(--apple-fill)] dark:hover:bg-transparent',
               'transition-colors duration-200',
             )}
           >
@@ -184,7 +186,7 @@ export function AppleToolbar({
                   onChange={e => onSearch?.(e.target.value)}
                   onKeyDown={e => e.key === 'Escape' && setSearchOpen(false)}
                   className={cn(
-                    'flex-1 h-10 text-apple-title-3 text-apple-label',
+                    'flex-1 h-10 text-apple-title-3 text-apple-label text-left',
                     'bg-transparent',
                     'placeholder:text-apple-placeholderText',
                     'border-none outline-none',
@@ -194,7 +196,7 @@ export function AppleToolbar({
                   onClick={() => setSearchOpen(false)}
                   className={cn(
                     'w-8 h-8 flex items-center justify-center',
-                    'rounded-full hover:bg-[var(--apple-fill)]',
+                    'rounded-full hover:bg-[var(--apple-fill)] dark:hover:bg-transparent',
                     'transition-colors duration-200',
                   )}
                 >

@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
+import { PetProvider } from '@/store/pet-context'
 import App from './App'
 import './index.css'
 
@@ -10,7 +11,9 @@ if (!rootElement) throw new Error('Root element not found')
 createRoot(rootElement).render(
   <StrictMode>
     <BrowserRouter>
-      <App />
+      <PetProvider>
+        <App />
+      </PetProvider>
     </BrowserRouter>
   </StrictMode>,
 )

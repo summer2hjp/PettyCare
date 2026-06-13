@@ -31,12 +31,12 @@ export function AppleTable<T>({
             <div
               key={key}
               onClick={() => onRowClick?.(item)}
-              className={cn('flex items-center gap-4 px-5 py-3.5 transition-colors duration-150 hover:bg-[var(--apple-fill)]', onRowClick && 'cursor-pointer')}
+              className={cn('group flex items-center gap-3 px-4 py-2 transition-colors duration-150', onRowClick && 'cursor-pointer')}
             >
               {columns.map(col => (
                 <div
                   key={col.key}
-                  className={cn('text-apple-subhead text-apple-label truncate', col.align === 'center' && 'text-center', col.align === 'right' && 'text-right')}
+                  className={cn('text-apple-subhead text-apple-label group-hover:text-apple-blue truncate', col.align === 'center' && 'text-center', col.align === 'right' && 'text-right')}
                   style={col.width ? { flex: `0 0 ${col.width}` } : { flex: 1 }}
                 >
                   {col.render ? col.render(item, index) : (item as any)[col.key] ?? '-'}

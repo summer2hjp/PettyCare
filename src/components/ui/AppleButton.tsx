@@ -16,7 +16,7 @@ interface AppleButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 const variantStyles: Record<ButtonVariant, string> = {
   primary: 'bg-apple-blue text-white hover:brightness-110 active:brightness-90 shadow-apple-sm hover:shadow-apple-md disabled:opacity-40 disabled:shadow-none',
   secondary: 'bg-[var(--apple-fill)] text-apple-label hover:bg-[var(--apple-secondaryFill)] active:brightness-95 disabled:opacity-40',
-  plain: 'bg-transparent text-apple-blue hover:bg-[var(--apple-fill)] disabled:opacity-40',
+  plain: 'bg-transparent text-apple-blue hover:bg-[var(--apple-fill)] dark:hover:bg-transparent disabled:opacity-40',
 }
 
 const sizeStyles: Record<ButtonSize, string> = {

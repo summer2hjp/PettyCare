@@ -5,17 +5,20 @@ interface AppleSwitchProps extends Omit<InputHTMLAttributes<HTMLInputElement>, '
   size?: 'sm' | 'md'
 }
 
-export function AppleSwitch({ size = 'md', className, checked, onChange, disabled, ...props }: AppleSwitchProps) {
+export function AppleSwitch({ size = 'sm', className, checked, onChange, disabled, ...props }: AppleSwitchProps) {
   return (
-    <label className={cn('relative inline-flex items-center cursor-pointer', disabled && 'opacity-40 cursor-not-allowed', className)}>
-      <input type="checkbox" checked={checked} onChange={onChange} disabled={disabled} className="sr-only peer" {...props} />
+    <label className={cn('relative inline-flex items-center cursor-pointer -mt-[1px]', disabled && 'opacity-40 cursor-not-allowed', className)}>
+      <input type="checkbox" checked={checked} onChange={onChange} disabled={disabled} className="sr-only" {...props} />
       <div className={cn(
-        size === 'sm' ? 'w-9 h-5' : 'w-12 h-7',
-        'rounded-full p-0.5 bg-[var(--apple-fill)] peer-checked:bg-apple-green transition-colors duration-300',
+        size === 'sm' ? 'w-[36px] h-[20px]' : 'w-[44px] h-[24px]',
+        'rounded-full p-[2px] transition-all duration-[250ms] ease-apple-smooth',
+        checked ? 'bg-apple-green' : 'bg-[var(--apple-separator)]',
       )}>
         <div className={cn(
-          size === 'sm' ? 'w-3.5 h-3.5' : 'w-5 h-5',
-          'rounded-full bg-white shadow-apple-sm peer-checked:translate-x-full transition-transform duration-300',
+          size === 'sm' ? 'w-[16px] h-[16px]' : 'w-[20px] h-[20px]',
+          'rounded-full bg-white transition-all duration-[250ms] ease-apple-spring',
+          'shadow-[0_1px_3px_rgba(0,0,0,0.2),0_1px_1px_rgba(0,0,0,0.1)]',
+          checked && (size === 'sm' ? 'translate-x-[16px]' : 'translate-x-[20px]'),
         )} />
       </div>
     </label>
