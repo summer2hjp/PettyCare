@@ -1,2 +1,2 @@
 # PettyCare
-Care of your Pets everywhere，everywhen，everytime
+take care of  your Pets everywhere，everywhen，everytime
