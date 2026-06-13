@@ -1,12 +1,10 @@
-import { useState, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { usePets } from '@/store/pet-context'
 import { AppleButton } from '@/components/ui/AppleButton'
 import { AppleCard } from '@/components/ui/AppleCard'
-import { AppleAvatar } from '@/components/ui/AppleAvatar'
-import { AppleSegmentedControl } from '@/components/ui/AppleSegmentedControl'
 import { DynamicType } from '@/components/ui/DynamicType'
 import { cn } from '@/utils/cn'
-import { ArrowLeft, Camera } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import type { Pet, PetFormData, PetSpecies, PetGender } from '@/types/pet'
 
 interface PetFormPageProps { pet?: Pet; onBack?: () => void; onSaved?: () => void }
@@ -25,15 +23,12 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
     weightUnit: pet?.weightUnit ?? 'kg', color: pet?.color ?? '', microchipId: pet?.microchipId ?? '', notes: pet?.notes ?? '',
   })
   const [errors, setErrors] = useState<Partial<Record<keyof PetFormData, string>>>({})
-  const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => set('avatarUrl', reader.result as string)
-    reader.readAsDataURL(file)
-  }
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') onBack?.() }
+    document.addEventListener('keydown', handleEsc)
+    return () => document.removeEventListener('keydown', handleEsc)
+  }, [onBack])
 
   const set = <K extends keyof PetFormData>(key: K, value: PetFormData[K]) => {
     setForm(prev => ({ ...prev, [key]: value }))
@@ -58,30 +53,16 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <div className="flex items-center gap-3 mb-4">
-        <button onClick={onBack} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--apple-fill)] dark:hover:bg-transparent transition-colors">
-          <ArrowLeft size={18} className="text-apple-label" />
-        </button>
-        <DynamicType styleLevel="title1" weight={700}>{isEdit ? 'Edit Pet' : 'New Pet'}</DynamicType>
-      </div>
-
-      <div className="flex justify-center mb-4">
-        <div className="relative cursor-pointer group" onClick={() => fileInputRef.current?.click()}>
-          <AppleAvatar
-            name={form.name || 'Pet'}
-            src={form.avatarUrl}
-            size="lg"
-            className="ring-2 ring-apple-blue ring-offset-2 ring-offset-[var(--apple-secondarySystemBackground)]"
-          />
-          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-apple-blue rounded-full flex items-center justify-center shadow-apple-sm group-hover:scale-110 transition-transform duration-200">
-            <Camera size={10} className="text-white" />
-          </div>
-          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
-        </div>
-      </div>
-
+    <div className="max-w-2xl mx-auto flex items-center min-h-[calc(100vh-120px)]">
+      <div className="w-full">
       <AppleCard padding="md" className="space-y-3">
+        {/* Header actions */}
+        <div className="grid grid-cols-2 gap-3 mb-2">
+          <AppleButton variant="secondary" size="sm" onClick={onBack} className="justify-self-start">Cancel</AppleButton>
+          <div className="flex justify-end">
+            <AppleButton variant="secondary" size="sm" onClick={handleSubmit}>Save</AppleButton>
+          </div>
+        </div>
         <div className="grid grid-cols-2 gap-3">
           <Field label="Name" error={errors.name}>
             <input type="text" value={form.name} onChange={e => set('name', e.target.value)} placeholder="Pet's name" className={fieldInput(errors.name)} />
@@ -91,48 +72,30 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
           </Field>
         </div>
 
-        <div>
-          <DynamicType styleLevel="caption1" weight={600} className="mb-1.5">Species</DynamicType>
-          <AppleSegmentedControl segments={speciesOptions} value={form.species} onChange={v => set('species', v as PetSpecies)} className="flex-nowrap overflow-x-auto scrollbar-none" />
-        </div>
-
-        <div className="flex gap-3 items-end">
-          <div className="flex-1">
-            <DynamicType styleLevel="caption1" weight={600} className="mb-1.5">Gender</DynamicType>
-            <div className="flex gap-2">
-              {(['male', 'female'] as PetGender[]).map(g => (
-                <button key={g} onClick={() => set('gender', g)}
-                  className={cn('flex-1 py-1.5 rounded-apple-lg text-apple-caption-1 font-medium transition-all duration-200', form.gender === g ? 'bg-apple-blue text-white' : 'bg-[var(--apple-fill)] text-apple-label')}>
-                  {g === 'male' ? '♂' : '♀'} {g === 'male' ? 'Male' : 'Female'}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="w-28">
-            <Field label="Weight" error={errors.weight}>
-              <input type="number" step="0.1" min="0" value={form.weight || ''} onChange={e => set('weight', parseFloat(e.target.value) || 0)} placeholder="0.0" className={fieldInput(errors.weight)} />
-            </Field>
-          </div>
-          <div className="w-20">
-            <DynamicType styleLevel="caption1" weight={600} className="mb-1.5">Unit</DynamicType>
-            <div className="flex gap-1 p-0.5 bg-[var(--apple-fill)] rounded-apple-lg">
-              {(['kg', 'lb'] as const).map(u => (
-                <button key={u} onClick={() => set('weightUnit', u)}
-                  className={cn('flex-1 py-1 rounded-apple-lg text-apple-caption-2 font-medium transition-all duration-200', form.weightUnit === u ? 'bg-[var(--apple-secondarySystemBackground)] text-apple-label shadow-apple-sm' : 'text-apple-label')}>{u}</button>
-              ))}
-            </div>
-          </div>
-        </div>
-
         <div className="grid grid-cols-2 gap-3">
+          <Field label="Species">
+            <FormSelect value={form.species} onChange={v => set('species', v as PetSpecies)} options={speciesOptions} />
+          </Field>
+          <Field label="Gender">
+            <FormSelect value={form.gender} onChange={v => set('gender', v as PetGender)} options={[{ value: 'male', label: '♂ Male' }, { value: 'female', label: '♀ Female' }]} />
+          </Field>
+        </div>
+
+        <div className="grid grid-cols-3 gap-3">
           <Field label="Date of Birth" error={errors.birthDate}>
             <input type="date" value={form.birthDate} onChange={e => set('birthDate', e.target.value)} className={fieldInput(errors.birthDate)} />
           </Field>
-          <Field label="Color">
-            <input type="text" value={form.color ?? ''} onChange={e => set('color', e.target.value)} placeholder="e.g. Golden" className={fieldInput()} />
+          <Field label="Weight" error={errors.weight}>
+            <input type="number" step="0.1" min="0" value={form.weight || ''} onChange={e => set('weight', parseFloat(e.target.value) || 0)} placeholder="0.0" className={fieldInput(errors.weight)} />
+          </Field>
+          <Field label="Unit">
+            <FormSelect value={form.weightUnit} onChange={v => set('weightUnit', v as 'kg' | 'lb')} options={[{ value: 'kg', label: 'kg' }, { value: 'lb', label: 'lb' }]} />
           </Field>
         </div>
 
+        <Field label="Color">
+          <input type="text" value={form.color ?? ''} onChange={e => set('color', e.target.value)} placeholder="e.g. Golden, White, Black" className={fieldInput()} />
+        </Field>
         <Field label="Microchip ID">
           <input type="text" value={form.microchipId ?? ''} onChange={e => set('microchipId', e.target.value)} placeholder="e.g. 985112001234567" className={fieldInput()} />
         </Field>
@@ -140,10 +103,6 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
           <textarea value={form.notes ?? ''} onChange={e => set('notes', e.target.value)} placeholder="Any additional info..." rows={1} className={cn(fieldInput(), 'resize-none', 'leading-[34px]')} />
         </Field>
       </AppleCard>
-
-      <div className="flex justify-end gap-3 mt-4">
-        <AppleButton variant="secondary" onClick={onBack}>Cancel</AppleButton>
-        <AppleButton onClick={handleSubmit}>{isEdit ? 'Save Changes' : 'Add Pet'}</AppleButton>
       </div>
     </div>
   )
@@ -156,6 +115,40 @@ function Field({ label, error, children }: { label: string; error?: string; chil
         {label} {error && <span className="text-apple-red ml-1">{error}</span>}
       </DynamicType>
       {children}
+    </div>
+  )
+}
+
+function FormSelect({ value, onChange, options, placeholder }: { value: string; onChange: (v: string) => void; options: { value: string; label: string }[]; placeholder?: string }) {
+  const [open, setOpen] = useState(false)
+  const ref = useRef<HTMLDivElement>(null)
+  const current = options.find(o => o.value === value)
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => { if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false) }
+    const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
+    if (open) { document.addEventListener('mousedown', handleClick); document.addEventListener('keydown', handleEsc) }
+    return () => { document.removeEventListener('mousedown', handleClick); document.removeEventListener('keydown', handleEsc) }
+  }, [open])
+
+  return (
+    <div ref={ref} className="relative">
+      <button type="button" onClick={() => setOpen(!open)}
+        className={cn('w-full h-[36px] px-[10px] rounded-apple-lg text-apple-footnote text-left bg-[var(--apple-fill)] border-0 flex items-center justify-between gap-1 cursor-pointer')}>
+        <span className={cn(current ? 'text-apple-label' : 'text-apple-placeholderText')}>{current?.label ?? placeholder}</span>
+        <ChevronDown size={14} className={cn('text-apple-secondaryLabel shrink-0 transition-transform duration-200', open && 'rotate-180')} />
+      </button>
+      {open && (
+        <div className={cn('absolute left-0 top-full mt-1 w-full py-1 z-50 rounded-apple-xl shadow-apple-lg border border-[var(--apple-separator)] bg-[var(--apple-secondarySystemGroupedBackground)] animate-scale-in')}>
+          {options.map(o => (
+            <button key={o.value} type="button" onClick={() => { onChange(o.value); setOpen(false) }}
+              className={cn('w-full flex items-center px-3 py-2 text-apple-footnote text-left transition-colors duration-100', o.value === value ? 'text-apple-label font-semibold' : 'text-apple-label hover:text-apple-blue')}>
+              {o.label}
+              {o.value === value && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-apple-blue" />}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }

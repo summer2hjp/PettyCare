@@ -20,7 +20,7 @@ const variantStyles: Record<ButtonVariant, string> = {
 }
 
 const sizeStyles: Record<ButtonSize, string> = {
-  sm: 'h-[28px] px-3 text-apple-caption-1 gap-1',
+  sm: 'h-[28px] px-[10px] text-apple-caption-1 gap-1',
   md: 'h-[34px] px-4 text-apple-footnote gap-1.5',
   lg: 'h-[40px] px-5 text-apple-subhead gap-2',
 }
