@@ -1,0 +1,30 @@
+# Dependencies — 145+ packages, must not be committed
+node_modules/
+
+# Build output
+dist/
+build/
+
+# Environment files — contain secrets
+.env
+.env.local
+.env.production.local
+.env.development.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Misc
+.cache/

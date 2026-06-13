@@ -1,0 +1,216 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* =========================================
+   Apple Design Tokens — CSS Custom Properties
+   ========================================= */
+
+:root {
+  --apple-red: #FF3B30;
+  --apple-orange: #FF9500;
+  --apple-yellow: #FFCC00;
+  --apple-green: #34C759;
+  --apple-mint: #00C7BE;
+  --apple-teal: #30B0C7;
+  --apple-cyan: #32ADE6;
+  --apple-blue: #007AFF;
+  --apple-indigo: #5856D6;
+  --apple-purple: #AF52DE;
+  --apple-pink: #FF2D55;
+  --apple-brown: #A2845E;
+  --apple-label: #000000;
+  --apple-secondaryLabel: #3C3C4399;
+  --apple-tertiaryLabel: #3C3C434C;
+  --apple-quaternaryLabel: #3C3C432E;
+  --apple-placeholderText: #3C3C434C;
+  --apple-separator: #3C3C4349;
+  --apple-opaqueSeparator: #C6C6C8;
+  --apple-link: #007AFF;
+  --apple-systemBackground: #FFFFFF;
+  --apple-secondarySystemBackground: #F2F2F7;
+  --apple-tertiarySystemBackground: #FFFFFF;
+  --apple-systemGroupedBackground: #F2F2F7;
+  --apple-secondarySystemGroupedBackground: #FFFFFF;
+  --apple-tertiarySystemGroupedBackground: #F2F2F7;
+  --apple-shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.04);
+  --apple-shadow-md: 0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --apple-shadow-lg: 0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+  --apple-shadow-xl: 0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.04);
+  --apple-health-excellent: #34C759;
+  --apple-health-good: #7DCF5C;
+  --apple-health-fair: #FFCC00;
+  --apple-health-poor: #FF9500;
+  --apple-health-critical: #FF3B30;
+}
+
+/* =========================================
+   Dark Mode Overrides
+   ========================================= */
+
+.dark {
+  --apple-label: #FFFFFF;
+  --apple-secondaryLabel: #EBEBF599;
+  --apple-tertiaryLabel: #EBEBF54D;
+  --apple-quaternaryLabel: #EBEBF52E;
+  --apple-separator: #38383A;
+  --apple-opaqueSeparator: #38383A;
+  --apple-systemBackground: #1C1C1E;
+  --apple-secondarySystemBackground: #2C2C2E;
+  --apple-tertiarySystemBackground: #3A3A3C;
+  --apple-systemGroupedBackground: #1C1C1E;
+  --apple-secondarySystemGroupedBackground: #2C2C2E;
+  --apple-tertiarySystemGroupedBackground: #3A3A3C;
+  --apple-shadow-sm: 0 1px 2px rgba(0,0,0,0.24), 0 1px 4px rgba(0,0,0,0.16);
+  --apple-shadow-md: 0 2px 8px rgba(0,0,0,0.32), 0 1px 2px rgba(0,0,0,0.24);
+  --apple-shadow-lg: 0 4px 16px rgba(0,0,0,0.40), 0 2px 4px rgba(0,0,0,0.24);
+  --apple-shadow-xl: 0 8px 32px rgba(0,0,0,0.48), 0 2px 8px rgba(0,0,0,0.24);
+}
+
+/* =========================================
+   Base Layer
+   ========================================= */
+
+@layer base {
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    font-family: -apple-system, 'SF Pro Text', 'SF Pro Display',
+      'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+  }
+
+  body {
+    @apply bg-apple-systemBackground text-apple-body text-apple-label
+           min-h-screen min-h-dvh overflow-x-hidden;
+  }
+
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  ::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--apple-separator);
+    border-radius: 2px;
+  }
+}
+
+/* =========================================
+   Component Layer
+   ========================================= */
+
+@layer components {
+  .glass {
+    background-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(40px) saturate(1.2);
+    -webkit-backdrop-filter: blur(40px) saturate(1.2);
+  }
+  .dark .glass {
+    background-color: rgba(28, 28, 30, 0.72);
+  }
+
+  .glass-light {
+    background-color: rgba(255, 255, 255, 0.48);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
+  .dark .glass-light {
+    background-color: rgba(28, 28, 30, 0.48);
+  }
+
+  .glass-heavy {
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(60px) saturate(1.4);
+    -webkit-backdrop-filter: blur(60px) saturate(1.4);
+  }
+  .dark .glass-heavy {
+    background-color: rgba(28, 28, 30, 0.85);
+  }
+
+  .apple-card {
+    @apply bg-[var(--apple-secondarySystemGroupedBackground)]
+           rounded-apple-xl shadow-apple-md
+           transition-shadow duration-300;
+  }
+  .dark .apple-card {
+    @apply shadow-dark-apple-md;
+  }
+
+  .apple-inset-group {
+    @apply bg-[var(--apple-secondarySystemGroupedBackground)]
+           rounded-apple-xl overflow-hidden
+           divide-y divide-[var(--apple-separator)];
+  }
+
+  .skeleton {
+    @apply bg-[var(--apple-separator)] rounded-apple animate-skeleton;
+    background-image: linear-gradient(
+      90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%
+    );
+    background-size: 200% 100%;
+  }
+  .dark .skeleton {
+    background-image: linear-gradient(
+      90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%
+    );
+  }
+}
+
+/* =========================================
+   Reduced Motion
+   ========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* =========================================
+   High Contrast
+   ========================================= */
+
+@media (prefers-contrast: more) {
+  :root {
+    --apple-label: #000000;
+    --apple-secondaryLabel: #3C3C43CC;
+    --apple-separator: #3C3C43CC;
+  }
+  .dark {
+    --apple-label: #FFFFFF;
+    --apple-secondaryLabel: #EBEBF5CC;
+    --apple-separator: #545458;
+  }
+}
+
+/* =========================================
+   Utilities
+   ========================================= */
+
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+@layer utilities {
+  .transition-apple {
+    transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
+    transition-duration: 350ms;
+  }
+  .transition-spring {
+    transition-timing-function: cubic-bezier(0.32, 0.94, 0.60, 1);
+    transition-duration: 350ms;
+  }
+}
