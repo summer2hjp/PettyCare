@@ -32,8 +32,5 @@ npm-debug.log*
 .cache/
 tmp/
 
-# Claude Code — session data, worktrees, memory
-.claude/
-
 # CodeGraph — static analysis artifacts
 .codegraph/
