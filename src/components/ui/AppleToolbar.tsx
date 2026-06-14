@@ -113,8 +113,8 @@ export function AppleToolbar({
             onClick={() => setSearchOpen(true)}
             className={cn(
               'w-9 h-9 flex items-center justify-center',
-              'rounded-full hover:bg-[var(--apple-fill)] dark:hover:bg-transparent',
-              'transition-colors duration-200',
+              'rounded-full transition-colors duration-200',
+              'hover:[&>svg]:stroke-[2.5]',
             )}
           >
             <Search size={20} className="text-apple-label" />
@@ -123,8 +123,8 @@ export function AppleToolbar({
           <button
             className={cn(
               'relative w-9 h-9 flex items-center justify-center',
-              'rounded-full hover:bg-[var(--apple-fill)] dark:hover:bg-transparent',
-              'transition-colors duration-200',
+              'rounded-full transition-colors duration-200',
+              'hover:[&>svg]:stroke-[2.5]',
             )}
           >
             <Bell size={20} className="text-apple-label" />
@@ -146,8 +146,8 @@ export function AppleToolbar({
             onClick={onThemeToggle}
             className={cn(
               'w-9 h-9 flex items-center justify-center',
-              'rounded-full hover:bg-[var(--apple-fill)] dark:hover:bg-transparent',
-              'transition-colors duration-200',
+              'rounded-full transition-colors duration-200',
+              'hover:[&>svg]:stroke-[2.5]',
             )}
           >
             {isDark ? <Sun size={18} className="text-apple-label" /> : <Moon size={18} className="text-apple-label" />}
@@ -196,8 +196,8 @@ export function AppleToolbar({
                   onClick={() => setSearchOpen(false)}
                   className={cn(
                     'w-8 h-8 flex items-center justify-center',
-                    'rounded-full hover:bg-[var(--apple-fill)] dark:hover:bg-transparent',
-                    'transition-colors duration-200',
+                    'rounded-full transition-colors duration-200',
+                    'hover:[&>svg]:stroke-[2.5]',
                   )}
                 >
                   <X size={20} className="text-apple-secondaryLabel" />

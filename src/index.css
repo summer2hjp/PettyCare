@@ -7,6 +7,8 @@
    ========================================= */
 
 :root {
+  color-scheme: light;
+
   --apple-red: #FF3B30;
   --apple-orange: #FF9500;
   --apple-yellow: #FFCC00;
@@ -19,6 +21,8 @@
   --apple-purple: #AF52DE;
   --apple-pink: #FF2D55;
   --apple-brown: #A2845E;
+
+  /* ── Semantic tokens (Tailwind classes resolve to these via var()) ── */
   --apple-label: #000000;
   --apple-secondaryLabel: #3C3C4399;
   --apple-tertiaryLabel: #3C3C434C;
@@ -33,10 +37,18 @@
   --apple-systemGroupedBackground: #F2F2F7;
   --apple-secondarySystemGroupedBackground: #FFFFFF;
   --apple-tertiarySystemGroupedBackground: #F2F2F7;
+  --apple-fill: #78788033;
+  --apple-secondaryFill: #78788028;
+  --apple-tertiaryFill: #7676801E;
+  --apple-quaternaryFill: #74748014;
+
+  /* ── Shadow tokens ── */
   --apple-shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.04);
   --apple-shadow-md: 0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
   --apple-shadow-lg: 0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
   --apple-shadow-xl: 0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.04);
+
+  /* ── Health status colors (fixed, no theme change) ── */
   --apple-health-excellent: #34C759;
   --apple-health-good: #7DCF5C;
   --apple-health-fair: #FFCC00;
@@ -73,33 +85,19 @@
 }
 
 /* =========================================
-   Dark Mode — Utility Overrides
-   Tailwind JIT 生成静态色值，通过 CSS 层叠覆盖
+   Theme Transition
+   Smoothly interpolate theme changes
    ========================================= */
 
-.dark .text-apple-label { color: #FFFFFF; }
-.dark .text-apple-secondaryLabel { color: #EBEBF599; }
-.dark .text-apple-tertiaryLabel { color: #EBEBF54D; }
-.dark .text-apple-quaternaryLabel { color: #EBEBF52E; }
-.dark .text-apple-placeholderText { color: #3C3C434C; }
-.dark .text-apple-link { color: #007AFF; }
-
-.dark .bg-apple-systemBackground { background-color: #000000; }
-.dark .bg-apple-secondarySystemBackground { background-color: #1C1C1E; }
-.dark .bg-apple-tertiarySystemBackground { background-color: #2C2C2E; }
-.dark .bg-apple-systemGroupedBackground { background-color: #000000; }
-.dark .bg-apple-secondarySystemGroupedBackground { background-color: #2C2C2E; }
-.dark .bg-apple-tertiarySystemGroupedBackground { background-color: #3A3A3C; }
-.dark .bg-apple-fill { background-color: #78788059; }
-.dark .bg-apple-secondaryFill { background-color: #78788045; }
-
-.dark .border-apple-separator { border-color: #38383A; }
-.dark .placeholder\:text-apple-placeholderText::placeholder { color: #EBEBF560; }
-
-.dark .apple-card { background-color: #2C2C2E; }
-.dark .apple-inset-group { background-color: #2C2C2E; }
-.dark .apple-inset-group > :not([hidden]) ~ :not([hidden]) { border-color: #38383A; }
-
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *::before,
+html.theme-transitioning *::after {
+  transition: background-color 0.35s ease,
+              color 0.35s ease,
+              border-color 0.35s ease,
+              box-shadow 0.35s ease !important;
+}
 
 /* =========================================
    Base Layer
