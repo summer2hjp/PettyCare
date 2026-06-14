@@ -73,9 +73,9 @@ const perPetMedications: Record<string, Medication[]> = {
   '5': [],
 }
 
-function mockVaccinations(petId: string): Vaccination[] { return perPetVaccinations[petId] ?? [] }
-function mockVisits(petId: string): VetVisit[] { return perPetVisits[petId] ?? [] }
-function mockMedications(petId: string): Medication[] { return perPetMedications[petId] ?? [] }
+export function mockVaccinations(petId: string): Vaccination[] { return perPetVaccinations[petId] ?? [] }
+export function mockVisits(petId: string): VetVisit[] { return perPetVisits[petId] ?? [] }
+export function mockMedications(petId: string): Medication[] { return perPetMedications[petId] ?? [] }
 
 function VaccinationRow({ v }: { v: Vaccination }) {
   const statusColor = v.status === 'completed' ? 'bg-apple-green' : v.status === 'overdue' ? 'bg-apple-red' : 'bg-apple-orange'

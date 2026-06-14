@@ -9,7 +9,7 @@ import { formatDate, isToday } from '@/utils/date'
 import { cn } from '@/utils/cn'
 import { Plus, ChevronLeft, ChevronRight, Calendar as CalendarIcon, Stethoscope, Syringe, Scissors } from 'lucide-react'
 
-interface Appointment { id: string; petId: string; date: string; time: string; type: string; vet: string; notes?: string }
+export interface Appointment { id: string; petId: string; date: string; time: string; type: string; vet: string; notes?: string }
 
 const typeIcons: Record<string, React.ReactNode> = {
   'Annual Checkup': <Stethoscope size={16} className="text-apple-blue" />,
@@ -21,7 +21,7 @@ const typeIcons: Record<string, React.ReactNode> = {
 
 const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-function mockAppointments(petId: string): Appointment[] {
+export function mockAppointments(petId: string): Appointment[] {
   const now = new Date()
   const today = now.toISOString().slice(0, 10)
   const tom = new Date(now); tom.setDate(tom.getDate() + 1)

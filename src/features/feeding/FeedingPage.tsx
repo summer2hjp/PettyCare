@@ -9,10 +9,10 @@ import { formatDate } from '@/utils/date'
 import { cn } from '@/utils/cn'
 import { Plus, Utensils, Clock, RotateCcw } from 'lucide-react'
 
-interface FeedingRecord { id: string; petId: string; time: string; food: string; portion: string; notes?: string }
-interface FeedingSchedule { time: string; label: string }
+export interface FeedingRecord { id: string; petId: string; time: string; food: string; portion: string; notes?: string }
+export interface FeedingSchedule { time: string; label: string }
 
-const schedules: Record<string, FeedingSchedule[]> = {
+export const schedules: Record<string, FeedingSchedule[]> = {
   '1': [{ time: '08:00', label: 'Breakfast' }, { time: '12:00', label: 'Lunch' }, { time: '18:00', label: 'Dinner' }],
   '2': [{ time: '07:30', label: 'Breakfast' }, { time: '17:30', label: 'Dinner' }],
   '3': [{ time: '08:00', label: 'Breakfast' }, { time: '12:00', label: 'Lunch' }, { time: '18:00', label: 'Dinner' }],
@@ -20,7 +20,7 @@ const schedules: Record<string, FeedingSchedule[]> = {
   '5': [{ time: '09:00', label: 'Morning' }, { time: '21:00', label: 'Evening' }],
 }
 
-function mockFeedingRecords(petId: string): FeedingRecord[] {
+export function mockFeedingRecords(petId: string): FeedingRecord[] {
   const today = new Date().toISOString().slice(0, 10)
   const sched = schedules[petId] ?? schedules['1']
   return sched.map((s, i) => ({

@@ -11,9 +11,9 @@ import { cn } from '@/utils/cn'
 import { Footprints, Timer, Flame, TrendingUp, Dog } from 'lucide-react'
 
 type ViewMode = 'day' | 'week' | 'month'
-interface ActivityRecord { date: string; steps: number; distance: number; duration: number; calories: number }
+export interface ActivityRecord { date: string; steps: number; distance: number; duration: number; calories: number }
 
-function mockActivity(_petId: string): ActivityRecord[] {
+export function mockActivity(_petId: string): ActivityRecord[] {
   const records: ActivityRecord[] = []
   for (let i = 14; i >= 0; i--) {
     const d = new Date(); d.setDate(d.getDate() - i)
