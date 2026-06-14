@@ -1,6 +1,6 @@
 # PettyCare Dashboard 测试规范
 
-> ⚠️ 此文件已合并到项目级测试规范 [pettycare-test-spec.md](./pettycare-test-spec.md)。
+> ⚠️ 此文件已合并到项目级测试规范 [pettycare-frontend-test-spec.md](./pettycare-frontend-test-spec.md)。
 > 本文件保留为 Dashboard 模块的详细测试用例参考。
 
 基于 Test Level 分级标准，覆盖 Dashboard 标签页及其关联功能
