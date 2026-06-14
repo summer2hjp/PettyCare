@@ -1,0 +1,732 @@
+/**
+ * Health Module Visual & Functional Tests
+ *
+ * Verifies the Health page renders correctly with:
+ * - PetSelector dropdown
+ * - Tab switching (Vaccinations / Vet Visits / Medications)
+ * - Data changes per pet selection
+ * - Add record buttons
+ */
+import puppeteer from 'puppeteer'
+
+const BASE_URL = 'http://localhost:5173'
+
+async function sleep(ms: number) { return new Promise(r => setTimeout(r, ms)) }
+
+async function run() {
+  const browser = await puppeteer.launch({
+    executablePath: '/usr/bin/google-chrome',
+    headless: true,
+    args: ['--no-sandbox', '--disable-setuid-sandbox'],
+  })
+
+  const page = await browser.newPage()
+  page.setDefaultTimeout(30000)
+  await page.setViewport({ width: 1440, height: 900 })
+
+  let passed = 0
+  let failed = 0
+  const testResults: { level: string; name: string; passed: boolean }[] = []
+
+  function assert(condition: boolean, name: string, level = 'TL1') {
+    testResults.push({ level, name, passed: condition })
+    if (condition) {
+      console.log(`  ✅ [${level}] ${name}`)
+      passed++
+    } else {
+      console.log(`  ❌ [${level}] ${name}`)
+      failed++
+    }
+  }
+
+  // Helper: navigate to Health page via sidebar
+  async function navigateToHealth() {
+    await page.evaluate(() => {
+      const sidebar = document.querySelector('nav')
+      if (!sidebar) return
+      const buttons = Array.from(sidebar.querySelectorAll('button'))
+      const healthBtn = buttons.find(b =>
+        b.textContent?.trim() === 'Health'
+      )
+      if (healthBtn) healthBtn.click()
+    })
+    await sleep(800)
+  }
+
+  // ════════════════════════════════════════════════
+  // TL1: UI RENDERING & PAGE STRUCTURE
+  // ════════════════════════════════════════════════
+
+  // ─── Test 1: Page loads ───
+  console.log('\n📋 [TL1] Page Load')
+  await page.goto(BASE_URL, { waitUntil: 'networkidle0' })
+  await sleep(1000)
+  const title = await page.title()
+  assert(title.includes('PettyCare'), `Page title is "${title}"`, 'TL1')
+
+  // ─── Test 2: Navigate to Health page ───
+  console.log('\n📋 [TL1] Navigate to Health Page')
+  await navigateToHealth()
+  const healthBodyText = await page.evaluate(() => document.body.innerText)
+  assert(healthBodyText.includes('Vaccinations') || healthBodyText.includes('Vet Visits') || healthBodyText.includes('Medications'),
+    'Health page content is displayed', 'TL1')
+
+  // ─── Test 3: Sidebar "Health" nav item exists ───
+  console.log('\n📋 [TL1] Sidebar Navigation')
+  const sidebarHasHealth = await page.evaluate(() => {
+    const sidebar = document.querySelector('nav')
+    if (!sidebar) return false
+    const buttons = Array.from(sidebar.querySelectorAll('button'))
+    return buttons.some(b => b.textContent?.trim() === 'Health')
+  })
+  assert(sidebarHasHealth, 'Sidebar contains "Health" nav item', 'TL1')
+
+  // ─── Test 4: PetSelector dropdown is visible ───
+  console.log('\n📋 [TL1] PetSelector')
+  const petSelectorVisible = await page.evaluate(() => {
+    const petNames = ['Luna', 'Max', 'Coco', 'Bella', 'Charlie']
+    const body = document.body.innerText
+    return body.includes('🐾') || body.includes('🐕') || body.includes('🐈') || body.includes('🐹')
+  })
+  assert(petSelectorVisible, 'PetSelector shows emoji indicator', 'TL1')
+
+  const petNameVisible = await page.evaluate(() => {
+    const body = document.body.innerText
+    const petNames = ['Luna', 'Max', 'Coco', 'Bella', 'Charlie']
+    return petNames.some(n => body.includes(n))
+  })
+  assert(petNameVisible, 'PetSelector shows a pet name', 'TL1')
+
+  // Default pet should be the first pet (Luna, id:1)
+  const defaultPetName = await page.evaluate(() => {
+    const body = document.body.innerText
+    // The currently selected pet name appears near the top of the page
+    const petNames = ['Luna', 'Max', 'Coco', 'Bella', 'Charlie']
+    // Look for pet name in the first 300 chars (near the PetSelector)
+    const topArea = body.substring(0, 300)
+    for (const name of petNames) {
+      if (topArea.includes(name)) return name
+    }
+    return ''
+  })
+  assert(defaultPetName === 'Luna', `Default selected pet is "${defaultPetName}" (expected Luna)`, 'TL1')
+
+  // ─── Test 5: Tab selector visible with 3 tabs ───
+  console.log('\n📋 [TL1] Tab Selector')
+
+  // First open the tab dropdown to see all options
+  const tabSelectorResult = await page.evaluate(() => {
+    const body = document.body.innerText
+    const buttons = Array.from(document.querySelectorAll('button'))
+    // Find the tab dropdown trigger by looking for ChevronDown icon or text containing emoji + tab name
+    const tabBtn = buttons.find(b => b.innerHTML.includes('ChevronDown') && (b.textContent?.includes('Vaccinations') || b.textContent?.includes('Visits') || b.textContent?.includes('Medications')))
+    if (tabBtn) tabBtn.click()
+    return {
+      hasVaccLabel: body.includes('Vaccinations'),
+      hasVisitsLabel: body.includes('Visits') || body.includes('Vet'),
+      hasMedsLabel: body.includes('Medications'),
+    }
+  })
+  await sleep(400)
+
+  // Now check dropdown shows all 3 options
+  const allTabsVisible = await page.evaluate(() => {
+    const body = document.body.innerText
+    return body.includes('Vaccinations') && body.includes('Visits') && body.includes('Medications')
+  })
+  assert(allTabsVisible, 'All 3 tabs (Vaccinations, Vet Visits, Medications) visible in dropdown', 'TL1')
+
+  // Close the dropdown by clicking Vaccinations again
+  await page.evaluate(() => {
+    const buttons = Array.from(document.querySelectorAll('button'))
+    const currentTabBtn = buttons.find(b => b.textContent?.includes('Vaccinations') && b.innerHTML.includes('ChevronDown'))
+    if (currentTabBtn) currentTabBtn.click()
+  })
+  await sleep(300)
+
+  // Hard reload to clear any stuck dropdown state
+  await page.goto(BASE_URL, { waitUntil: 'networkidle0' })
+  await sleep(1500)
+  // Navigate to Health page
+  await page.evaluate(() => {
+    const sidebar = document.querySelector('nav')
+    if (!sidebar) return
+    const buttons = Array.from(sidebar.querySelectorAll('button'))
+    const healthBtn = buttons.find(b => b.textContent?.trim() === 'Health')
+    if (healthBtn) healthBtn.click()
+  })
+  await sleep(1000)
+
+  // ─── Test 6: Default tab = Vaccinations shows vaccine items ───
+  console.log('\n📋 [TL1] Vaccinations Tab (Default)')
+  await sleep(500)
+  const vaccinationContent = await page.evaluate(() => {
+    const body = document.body.innerText
+    const vaccines = ['FVRCP', 'Rabies', 'Feline Leukemia']
+    const foundVaccines = vaccines.filter(v => body.includes(v))
+    return {
+      hasVaccinationTitle: body.includes('Vaccinations'),
+      foundVaccines,
+      hasStatusBadge: body.includes('Completed') || body.includes('Upcoming') || body.includes('Overdue'),
+      hasDueDate: body.includes('Due:') || body.includes('scheduled'),
+    }
+  })
+  assert(vaccinationContent.hasVaccinationTitle, 'Vaccinations section title is visible', 'TL1')
+  assert(vaccinationContent.foundVaccines.length > 0,
+    `Vaccine names visible: ${vaccinationContent.foundVaccines.join(', ')}`, 'TL1')
+  assert(vaccinationContent.hasStatusBadge, 'Status badges (Completed/Upcoming/Overdue) are visible', 'TL1')
+  assert(vaccinationContent.hasDueDate, 'Due date labels are visible', 'TL1')
+
+  // Check that specific vaccine names for Luna (pet id:1) are displayed
+  const lunaVaccines = ['FVRCP', 'Rabies', 'Feline Leukemia']
+  const lunaVaccineCheck = await page.evaluate(() => {
+    const body = document.body.innerText
+    return {
+      hasFVRCP: body.includes('FVRCP'),
+      hasRabies: body.includes('Rabies'),
+      hasFelineLeukemia: body.includes('Feline Leukemia'),
+    }
+  })
+  assert(lunaVaccineCheck.hasFVRCP, 'Vaccination "FVRCP" is visible for Luna', 'TL1')
+  assert(lunaVaccineCheck.hasRabies, 'Vaccination "Rabies" is visible for Luna', 'TL1')
+  assert(lunaVaccineCheck.hasFelineLeukemia, 'Vaccination "Feline Leukemia" is visible for Luna', 'TL1')
+
+  // ─── Test 7: Switch to Vet Visits tab ───
+  console.log('\n📋 [TL1] Vet Visits Tab')
+  await page.evaluate(() => {
+    // Find the tab dropdown button and click it to open the menu
+    const tabButtons = Array.from(document.querySelectorAll('button'))
+    const tabDropdownBtn = tabButtons.find(b =>
+      (b.textContent?.includes('Vaccinations') || b.textContent?.includes('Visits') || b.textContent?.includes('Medications')) &&
+      b.querySelector('svg')
+    )
+    if (tabDropdownBtn) tabDropdownBtn.click()
+  })
+  await sleep(500)
+
+  // Click "Vet Visits" option in dropdown
+  await page.evaluate(() => {
+    const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+    const visitsItem = dropdownItems.find(b => b.textContent?.includes('Vet Visits'))
+    if (visitsItem) visitsItem.click()
+  })
+  await sleep(600)
+
+  const visitsContent = await page.evaluate(() => {
+    const body = document.body.innerText
+    return {
+      hasVisitTitle: body.includes('Vet Visits') || body.includes('Visits'),
+      hasVisitDate: body.includes('Dec') || body.includes('2024') || body.includes('Aug'),
+      hasVetName: body.includes('Dr. Smith') || body.includes('Dr. Lee'),
+      hasCost: body.includes('$'),
+      hasReason: body.includes('Annual checkup') || body.includes('Hairball'),
+      hasDiagnosis: body.includes('Healthy') || body.includes('digestive'),
+    }
+  })
+  assert(visitsContent.hasVisitTitle, 'Vet Visits tab shows section title', 'TL1')
+  assert(visitsContent.hasVisitDate, 'Visit date is visible', 'TL1')
+  assert(visitsContent.hasVetName, 'Vet name is visible', 'TL1')
+  assert(visitsContent.hasCost, 'Visit cost ($) is visible', 'TL1')
+  assert(visitsContent.hasReason, 'Visit reason is visible', 'TL1')
+  assert(visitsContent.hasDiagnosis, 'Visit diagnosis is visible', 'TL1')
+
+  // ─── Test 8: Switch to Medications tab ───
+  console.log('\n📋 [TL1] Medications Tab')
+  await page.evaluate(() => {
+    const tabButtons = Array.from(document.querySelectorAll('button'))
+    const tabDropdownBtn = tabButtons.find(b =>
+      (b.textContent?.includes('Vaccinations') || b.textContent?.includes('Visits') || b.textContent?.includes('Medications')) &&
+      b.querySelector('svg')
+    )
+    if (tabDropdownBtn) tabDropdownBtn.click()
+  })
+  await sleep(500)
+
+  await page.evaluate(() => {
+    const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+    const medsItem = dropdownItems.find(b => b.textContent?.includes('Medications'))
+    if (medsItem) medsItem.click()
+  })
+  await sleep(600)
+
+  const medicationsContent = await page.evaluate(() => {
+    const body = document.body.innerText
+    return {
+      hasMedicationsTitle: body.includes('Medications'),
+      hasMedicationName: body.includes('Hairball Relief'),
+      hasDosage: body.includes('1 tube') || body.includes('dosage'),
+      hasFrequency: body.includes('Weekly') || body.includes('frequency'),
+      hasActiveStatus: body.includes('Active') || body.includes('Inactive'),
+    }
+  })
+  assert(medicationsContent.hasMedicationsTitle, 'Medications tab shows section title', 'TL1')
+  assert(medicationsContent.hasMedicationName, 'Medication name is visible', 'TL1')
+  assert(medicationsContent.hasDosage, 'Dosage information is visible', 'TL1')
+  assert(medicationsContent.hasFrequency, 'Frequency information is visible', 'TL1')
+  assert(medicationsContent.hasActiveStatus, 'Active/Inactive status indicator is visible', 'TL1')
+
+  // ─── Test 9: Add (+) button exists per tab ───
+  console.log('\n📋 [TL1] Add Record Buttons')
+  const addButtonsExist = await page.evaluate(() => {
+    const buttons = Array.from(document.querySelectorAll('button'))
+    const addRecordBtns = buttons.filter(b =>
+      b.textContent?.includes('Add Record') ||
+      b.textContent?.includes('Add Visit') ||
+      b.textContent?.includes('Add Medication')
+    )
+    return {
+      count: addRecordBtns.length,
+      texts: addRecordBtns.map(b => b.textContent?.trim()),
+    }
+  })
+  assert(addButtonsExist.count >= 1,
+    `Add button(s) present on Medications tab: ${addButtonsExist.count} found (${addButtonsExist.texts.join(', ')})`, 'TL1')
+  console.log(`  ℹ️  Add buttons on current tab: ${addButtonsExist.count}`)
+
+  // Check Vaccinations tab for Add Record button
+  await page.evaluate(() => {
+    const tabButtons = Array.from(document.querySelectorAll('button'))
+    const tabDropdownBtn = tabButtons.find(b =>
+      (b.textContent?.includes('Vaccinations') || b.textContent?.includes('Visits') || b.textContent?.includes('Medications')) &&
+      b.querySelector('svg')
+    )
+    if (tabDropdownBtn) tabDropdownBtn.click()
+  })
+  await sleep(400)
+  await page.evaluate(() => {
+    const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+    const vacItem = dropdownItems.find(b => b.textContent?.includes('Vaccinations'))
+    if (vacItem) vacItem.click()
+  })
+  await sleep(600)
+
+  const vaxAddButton = await page.evaluate(() => {
+    const buttons = Array.from(document.querySelectorAll('button'))
+    return buttons.some(b => b.textContent?.includes('Add Record'))
+  })
+  assert(vaxAddButton, 'Vaccinations tab has "Add Record" button', 'TL1')
+
+  // Check Vet Visits tab for Add Visit button
+  await page.evaluate(() => {
+    const tabButtons = Array.from(document.querySelectorAll('button'))
+    const tabDropdownBtn = tabButtons.find(b =>
+      (b.textContent?.includes('Vaccinations') || b.textContent?.includes('Visits') || b.textContent?.includes('Medications')) &&
+      b.querySelector('svg')
+    )
+    if (tabDropdownBtn) tabDropdownBtn.click()
+  })
+  await sleep(400)
+  await page.evaluate(() => {
+    const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+    const visitsItem = dropdownItems.find(b => b.textContent?.includes('Vet Visits'))
+    if (visitsItem) visitsItem.click()
+  })
+  await sleep(600)
+
+  const visitAddButton = await page.evaluate(() => {
+    const buttons = Array.from(document.querySelectorAll('button'))
+    return buttons.some(b => b.textContent?.includes('Add Visit'))
+  })
+  assert(visitAddButton, 'Vet Visits tab has "Add Visit" button', 'TL1')
+
+  // ════════════════════════════════════════════════
+  // TL2: TAB SWITCHING & PET SWITCHING
+  // ════════════════════════════════════════════════
+
+  // ─── Test 10: Tab switching — all 3 tabs show correct content ───
+  console.log('\n📋 [TL2] Tab Switching — All 3 Tabs')
+
+  // Already on Vet Visits tab from previous test
+  const visitBodyText = await page.evaluate(() => document.body.innerText)
+  assert(visitBodyText.includes('Annual checkup') || visitBodyText.includes('Ear infection') || visitBodyText.includes('Vaccination booster'),
+    'Vet Visits tab shows visit entries', 'TL2')
+
+  // Switch to Medications tab
+  await page.evaluate(() => {
+    const tabButtons = Array.from(document.querySelectorAll('button'))
+    const tabDropdownBtn = tabButtons.find(b =>
+      (b.textContent?.includes('Vaccinations') || b.textContent?.includes('Visits') || b.textContent?.includes('Medications')) &&
+      b.querySelector('svg')
+    )
+    if (tabDropdownBtn) tabDropdownBtn.click()
+  })
+  await sleep(400)
+  await page.evaluate(() => {
+    const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+    const medsItem = dropdownItems.find(b => b.textContent?.includes('Medications'))
+    if (medsItem) medsItem.click()
+  })
+  await sleep(600)
+
+  const medBodyText = await page.evaluate(() => document.body.innerText)
+  assert(medBodyText.includes('Hairball Relief'), 'Medications tab shows medication entries', 'TL2')
+
+  // ─── Test 11: Pet switching — change to Max (id:2) ───
+  console.log('\n📋 [TL2] Pet Switching — Switch to Max (id:2)')
+  // First switch to Vaccinations tab so we see clear data change
+  await page.evaluate(() => {
+    const tabButtons = Array.from(document.querySelectorAll('button'))
+    const tabDropdownBtn = tabButtons.find(b =>
+      (b.textContent?.includes('Vaccinations') || b.textContent?.includes('Visits') || b.textContent?.includes('Medications')) &&
+      b.querySelector('svg')
+    )
+    if (tabDropdownBtn) tabDropdownBtn.click()
+  })
+  await sleep(400)
+  await page.evaluate(() => {
+    const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+    const vacItem = dropdownItems.find(b => b.textContent?.includes('Vaccinations'))
+    if (vacItem) vacItem.click()
+  })
+  await sleep(600)
+
+  // Open PetSelector and switch to Max (id:2)
+  await page.evaluate(() => {
+    // Find the PetSelector button (it shows pet emoji + name)
+    const buttons = Array.from(document.querySelectorAll('button'))
+    const petSelectorBtn = buttons.find(b =>
+      b.textContent?.includes('Luna') && (b.textContent?.includes('🐈') || b.textContent?.includes('🐾'))
+    )
+    if (petSelectorBtn) petSelectorBtn.click()
+  })
+  await sleep(500)
+
+  await page.evaluate(() => {
+    const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+    const maxItem = dropdownItems.find(b => b.textContent?.includes('Max'))
+    if (maxItem) maxItem.click()
+  })
+  await sleep(800)
+
+  // After switching to Max, vaccinations should show Max's data (Rabies, DHPP, Bordetella, Leptospirosis)
+  const maxVaccines = await page.evaluate(() => {
+    const body = document.body.innerText
+    return {
+      hasRabies: body.includes('Rabies'),
+      hasDHPP: body.includes('DHPP'),
+      hasBordetella: body.includes('Bordetella'),
+      hasLeptospirosis: body.includes('Leptospirosis'),
+      hasOverdue: body.includes('Overdue'),
+      // Luna-specific vaccines should NOT be visible
+      hasFelineLeukemia: body.includes('Feline Leukemia'),
+      hasFVRCP: body.includes('FVRCP'),
+    }
+  })
+  assert(maxVaccines.hasRabies, 'Max\'s vaccination "Rabies" is visible', 'TL2')
+  assert(maxVaccines.hasDHPP, 'Max\'s vaccination "DHPP" is visible', 'TL2')
+  assert(maxVaccines.hasBordetella, 'Max\'s vaccination "Bordetella" is visible', 'TL2')
+  assert(maxVaccines.hasLeptospirosis, 'Max\'s vaccination "Leptospirosis" is visible', 'TL2')
+  assert(maxVaccines.hasOverdue, 'Max has "Overdue" status badge visible', 'TL2')
+  assert(!maxVaccines.hasFelineLeukemia, 'Luna-specific vaccine "Feline Leukemia" not shown for Max', 'TL2')
+  assert(!maxVaccines.hasFVRCP, 'Luna-specific vaccine "FVRCP" not shown for Max', 'TL2')
+
+  // ─── Test 12: Pet switching — switch to Coco (id:3) and check medications ───
+  console.log('\n📋 [TL2] Pet Switching — Switch to Coco (id:3) and check medications tab')
+
+  // Open PetSelector and switch to Coco (id:3)
+  await page.evaluate(() => {
+    const buttons = Array.from(document.querySelectorAll('button'))
+    const petSelectorBtn = buttons.find(b =>
+      b.textContent?.includes('Max') && (b.textContent?.includes('🐕') || b.textContent?.includes('🐾'))
+    )
+    if (petSelectorBtn) petSelectorBtn.click()
+  })
+  await sleep(500)
+
+  await page.evaluate(() => {
+    const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+    const cocoItem = dropdownItems.find(b => b.textContent?.includes('Coco'))
+    if (cocoItem) cocoItem.click()
+  })
+  await sleep(800)
+
+  // Switch to Medications tab for Coco
+  await page.evaluate(() => {
+    const tabButtons = Array.from(document.querySelectorAll('button'))
+    const tabDropdownBtn = tabButtons.find(b =>
+      (b.textContent?.includes('Vaccinations') || b.textContent?.includes('Visits') || b.textContent?.includes('Medications')) &&
+      b.querySelector('svg')
+    )
+    if (tabDropdownBtn) tabDropdownBtn.click()
+  })
+  await sleep(400)
+  await page.evaluate(() => {
+    const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+    const medsItem = dropdownItems.find(b => b.textContent?.includes('Medications'))
+    if (medsItem) medsItem.click()
+  })
+  await sleep(600)
+
+  const cocoMedications = await page.evaluate(() => {
+    const body = document.body.innerText
+    return {
+      hasApoquel: body.includes('Apoquel'),
+      hasHeartgard: body.includes('Heartgard'),
+      hasTwiceDaily: body.includes('Twice daily') || body.includes('twice'),
+      hasMonthly: body.includes('Monthly'),
+    }
+  })
+  assert(cocoMedications.hasApoquel, 'Coco\'s medication "Apoquel" is visible', 'TL2')
+  assert(cocoMedications.hasHeartgard, 'Coco\'s medication "Heartgard Plus" is visible', 'TL2')
+  assert(cocoMedications.hasTwiceDaily, 'Coco\'s medication frequency "Twice daily" is visible', 'TL2')
+  assert(cocoMedications.hasMonthly, 'Coco\'s medication frequency "Monthly" is visible', 'TL2')
+
+  // ─── Test 13: Pet switching — switch to Bella (id:4) with empty medications ───
+  console.log('\n📋 [TL2] Pet Switching — Switch to Bella (id:4, empty medications)')
+
+  await page.evaluate(() => {
+    const buttons = Array.from(document.querySelectorAll('button'))
+    const petSelectorBtn = buttons.find(b =>
+      b.textContent?.includes('Coco') && (b.textContent?.includes('🐕') || b.textContent?.includes('🐾'))
+    )
+    if (petSelectorBtn) petSelectorBtn.click()
+  })
+  await sleep(500)
+
+  await page.evaluate(() => {
+    const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+    const bellaItem = dropdownItems.find(b => b.textContent?.includes('Bella'))
+    if (bellaItem) bellaItem.click()
+  })
+  await sleep(800)
+
+  const bellaEmpty = await page.evaluate(() => {
+    const body = document.body.innerText
+    return {
+      showsNoMedications: body.includes('No medications'),
+      showsAddFirst: body.includes('first medication'),
+    }
+  })
+  assert(bellaEmpty.showsNoMedications, 'Bella shows "No medications" empty state', 'TL2')
+  assert(bellaEmpty.showsAddFirst, 'Empty state shows add-first description', 'TL2')
+
+  // ─── Test 14: Pet switching — switch to Charlie (id:5, hamster, only 1 vaccination) ───
+  console.log('\n📋 [TL2] Pet Switching — Switch to Charlie (id:5, hamster)')
+
+  // Switch to Vaccinations tab
+  await page.evaluate(() => {
+    const tabButtons = Array.from(document.querySelectorAll('button'))
+    const tabDropdownBtn = tabButtons.find(b =>
+      (b.textContent?.includes('Vaccinations') || b.textContent?.includes('Visits') || b.textContent?.includes('Medications')) &&
+      b.querySelector('svg')
+    )
+    if (tabDropdownBtn) tabDropdownBtn.click()
+  })
+  await sleep(400)
+  await page.evaluate(() => {
+    const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+    const vacItem = dropdownItems.find(b => b.textContent?.includes('Vaccinations'))
+    if (vacItem) vacItem.click()
+  })
+  await sleep(600)
+
+  // Open PetSelector and switch to Charlie
+  await page.evaluate(() => {
+    const buttons = Array.from(document.querySelectorAll('button'))
+    const petSelectorBtn = buttons.find(b =>
+      b.textContent?.includes('Bella') && (b.textContent?.includes('🐈') || b.textContent?.includes('🐾'))
+    )
+    if (petSelectorBtn) petSelectorBtn.click()
+  })
+  await sleep(500)
+
+  await page.evaluate(() => {
+    const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+    const charlieItem = dropdownItems.find(b => b.textContent?.includes('Charlie'))
+    if (charlieItem) charlieItem.click()
+  })
+  await sleep(800)
+
+  const charlieVaccines = await page.evaluate(() => {
+    const body = document.body.innerText
+    return {
+      hasNoneVaccine: body.includes('None'),
+      showsCompleted: body.includes('Completed'),
+      // Not from other pets
+      hasFVRCP: body.includes('FVRCP'),
+      hasRabies: body.includes('Rabies'),
+    }
+  })
+  assert(charlieVaccines.hasNoneVaccine, 'Charlie shows "None" vaccination (hamster N/A)', 'TL2')
+  assert(charlieVaccines.showsCompleted, 'Charlie vaccination shows "Completed" status', 'TL2')
+  assert(!charlieVaccines.hasFVRCP, 'Other pet vaccine "FVRCP" not shown for Charlie', 'TL2')
+
+  // ─── Test 15: Click "+" (Add Record / Add Visit / Add Medication) ───
+  console.log('\n📋 [TL2] Add Record Button Interaction')
+
+  // Switch to Max to see all 4 vaccinations
+  try {
+    await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll('button'))
+      const petSelectorBtn = buttons.find(b =>
+        b.textContent?.includes('Charlie') && (b.textContent?.includes('🐹') || b.textContent?.includes('🐾'))
+      )
+      if (petSelectorBtn) petSelectorBtn.click()
+    })
+    await sleep(500)
+    await page.evaluate(() => {
+      const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+      const maxItem = dropdownItems.find(b => b.textContent?.includes('Max'))
+      if (maxItem) maxItem.click()
+    })
+    await sleep(800)
+  } catch (_) { /* pet switch may fail if already on correct pet */ }
+
+  // Find and verify "Add Record" button exists
+  try {
+    const addRecordClicked = await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll('button'))
+      const addRecordBtn = buttons.find(b => b.textContent?.includes('Add Record'))
+      if (addRecordBtn) {
+        addRecordBtn.click()
+        return true
+      }
+      return false
+    })
+    assert(addRecordClicked, '"Add Record" button exists and was clicked', 'TL2')
+  } catch (e) {
+    assert(false, '"Add Record" button interaction (timeout protection)', 'TL2')
+  }
+
+  // Verify page is still responsive
+  try {
+    const pageStillResponsive = await page.evaluate(() => {
+      const body = document.body.innerText
+      return body.length > 0
+    })
+    assert(pageStillResponsive, 'Page remains responsive after clicking Add Record', 'TL2')
+  } catch (_) {
+    console.log('  ℹ️  Page responsiveness check skipped (after timeout)')
+  }
+
+  // ─── Test 16: Add Visit button exists and is clickable ───
+  console.log('\n📋 [TL2] Add Visit Button Interaction')
+
+  // Switch to Vet Visits tab
+  await page.evaluate(() => {
+    const tabButtons = Array.from(document.querySelectorAll('button'))
+    const tabDropdownBtn = tabButtons.find(b =>
+      (b.textContent?.includes('Vaccinations') || b.textContent?.includes('Visits') || b.textContent?.includes('Medications')) &&
+      b.querySelector('svg')
+    )
+    if (tabDropdownBtn) tabDropdownBtn.click()
+  })
+  await sleep(400)
+  await page.evaluate(() => {
+    const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+    const visitsItem = dropdownItems.find(b => b.textContent?.includes('Vet Visits'))
+    if (visitsItem) visitsItem.click()
+  })
+  await sleep(600)
+
+  const addVisitClicked = await page.evaluate(() => {
+    const buttons = Array.from(document.querySelectorAll('button'))
+    const addVisitBtn = buttons.find(b => b.textContent?.includes('Add Visit'))
+    if (addVisitBtn) {
+      addVisitBtn.click()
+      return true
+    }
+    return false
+  })
+  assert(addVisitClicked, '"Add Visit" button was clicked on Vet Visits tab', 'TL2')
+
+  await sleep(300)
+
+  // ─── Test 17: Add Medication button exists and is clickable ───
+  console.log('\n📋 [TL2] Add Medication Button Interaction')
+
+  await page.evaluate(() => {
+    const tabButtons = Array.from(document.querySelectorAll('button'))
+    const tabDropdownBtn = tabButtons.find(b =>
+      (b.textContent?.includes('Vaccinations') || b.textContent?.includes('Visits') || b.textContent?.includes('Medications')) &&
+      b.querySelector('svg')
+    )
+    if (tabDropdownBtn) tabDropdownBtn.click()
+  })
+  await sleep(400)
+  await page.evaluate(() => {
+    const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+    const medsItem = dropdownItems.find(b => b.textContent?.includes('Medications'))
+    if (medsItem) medsItem.click()
+  })
+  await sleep(600)
+
+  const addMedicationClicked = await page.evaluate(() => {
+    const buttons = Array.from(document.querySelectorAll('button'))
+    const addMedBtn = buttons.find(b => b.textContent?.includes('Add Medication'))
+    if (addMedBtn) {
+      addMedBtn.click()
+      return true
+    }
+    return false
+  })
+  assert(addMedicationClicked, '"Add Medication" button was clicked on Medications tab', 'TL2')
+
+  await sleep(300)
+
+  // ─── Test 18: Verify visit card details for Max ───
+  console.log('\n📋 [TL2] Visit Card Details for Max')
+  // Switch to Max's Vet Visits tab
+  await page.evaluate(() => {
+    const tabButtons = Array.from(document.querySelectorAll('button'))
+    const tabDropdownBtn = tabButtons.find(b =>
+      (b.textContent?.includes('Vaccinations') || b.textContent?.includes('Visits') || b.textContent?.includes('Medications')) &&
+      b.querySelector('svg')
+    )
+    if (tabDropdownBtn) tabDropdownBtn.click()
+  })
+  await sleep(400)
+  await page.evaluate(() => {
+    const dropdownItems = Array.from(document.querySelectorAll('[class*="glass-heavy"] button'))
+    const visitsItem = dropdownItems.find(b => b.textContent?.includes('Vet Visits'))
+    if (visitsItem) visitsItem.click()
+  })
+  await sleep(600)
+
+  const maxVisitDetails = await page.evaluate(() => {
+    const body = document.body.innerText
+    return {
+      hasEarInfection: body.includes('Ear infection'),
+      hasOtitis: body.includes('Otitis externa'),
+      hasOtomax: body.includes('Otomax'),
+      hasCost120: body.includes('$120') || body.includes('120'),
+      hasDrLee: body.includes('Dr. Lee'),
+      hasVaccinationBooster: body.includes('Vaccination booster'),
+      hasCost65: body.includes('$65') || body.includes('65'),
+    }
+  })
+  assert(maxVisitDetails.hasEarInfection, 'Max\'s visit reason "Ear infection" is visible', 'TL2')
+  assert(maxVisitDetails.hasOtitis, 'Max\'s visit diagnosis "Otitis externa" is visible', 'TL2')
+  assert(maxVisitDetails.hasOtomax, 'Max\'s visit prescription "Otomax" is visible', 'TL2')
+  assert(maxVisitDetails.hasDrLee, 'Vet name "Dr. Lee" is visible', 'TL2')
+
+  // ════════════════════════════════════════════════
+  // Screenshot
+  // ════════════════════════════════════════════════
+
+  await page.screenshot({ path: 'tests/health-visit-tab.png', fullPage: true })
+  console.log('\n📸 Screenshot saved to tests/health-visit-tab.png')
+
+  // ════════════════════════════════════════════════
+  // Summary
+  // ════════════════════════════════════════════════
+
+  console.log(`\n${'='.repeat(50)}`)
+  console.log(`📊 Results: ${passed} passed, ${failed} failed`)
+  const tl1Total = testResults.filter(r => r.level === 'TL1').length
+  const tl2Total = testResults.filter(r => r.level === 'TL2').length
+  const tl1Pass = testResults.filter(r => r.level === 'TL1' && r.passed).length
+  const tl2Pass = testResults.filter(r => r.level === 'TL2' && r.passed).length
+  console.log(`📋 By Test Level:`)
+  console.log(`   TL1 (UI Rendering):     ${tl1Pass}/${tl1Total} passed`)
+  console.log(`   TL2 (Tab/Pet Switching): ${tl2Pass}/${tl2Total} passed`)
+  console.log(`${'='.repeat(50)}`)
+
+  await browser.close()
+  process.exit(failed > 0 ? 1 : 0)
+}
+
+run().catch(err => {
+  console.error('Test failed:', err)
+  process.exit(1)
+})
