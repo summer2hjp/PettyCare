@@ -1,0 +1,39 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: docker/web/Dockerfile
+    container_name: pettycare-web
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:80"
+    networks:
+      - pettycare
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: pettycare-tunnel
+    restart: unless-stopped
+    network_mode: "host"
+    command:
+      - tunnel
+      - --edge
+      - 198.41.192.47:7844
+      - --edge
+      - 198.41.192.67:7844
+      - --edge
+      - 198.41.192.107:7844
+      - --edge
+      - 198.41.192.167:7844
+      - --edge
+      - 198.41.192.207:7844
+      - --edge
+      - 198.41.200.47:7844
+      - --edge
+      - 198.41.200.67:7844
+      - run
+    env_file: docker/cloudflared/.env
+
+networks:
+  pettycare:
+    driver: bridge
