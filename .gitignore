@@ -34,3 +34,6 @@ tmp/
 
 # CodeGraph — static analysis artifacts
 .codegraph/
+
+# Brainstorming visual companion artifacts
+.superpowers/

@@ -32,7 +32,6 @@ export default function App() {
 
   const editingPet = page.page === 'pet-form' && page.petId ? getPet(page.petId) : undefined
 
-
   const navigateTo = (navId: string) => {
     setCurrentNav(navId)
     if (navId === 'pets') setPage({ page: 'pets' })
