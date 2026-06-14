@@ -27,22 +27,6 @@ function SkeletonCard() {
   )
 }
 
-function ScrollIndicator({ total, current }: { total: number; current: number }) {
-  return (
-    <div className="flex items-center justify-center gap-1.5 mt-3">
-      {Array.from({ length: total }).map((_, i) => (
-        <span
-          key={i}
-          className={cn(
-            'w-1.5 h-1.5 rounded-full transition-all duration-300',
-            i === current ? 'bg-apple-blue w-3' : 'bg-apple-separator'
-          )}
-        />
-      ))}
-    </div>
-  )
-}
-
 export function DashboardSection({
   title,
   subtitle,
