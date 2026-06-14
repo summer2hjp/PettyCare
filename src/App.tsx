@@ -49,7 +49,9 @@ export default function App() {
       >
         {page.page === 'dashboard' && (
           <DashboardPage onNavigate={(navPage) => {
-            setCurrentNav(navPage)
+            // Map sub-pages to parent sidebar nav items for correct highlight
+            const navId = navPage === 'pet-form' || navPage === 'pet-detail' ? 'pets' : navPage
+            setCurrentNav(navId)
             setPage({ page: navPage as any })
           }} />
         )}
