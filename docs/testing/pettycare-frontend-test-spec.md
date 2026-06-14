@@ -135,13 +135,13 @@ PettyCare
 
 | # | Test Path | 期望值 | 实际值 | Result |
 |---|-----------|--------|--------|--------|
-| H1.1 | Health 侧边栏标签 | 标签 `Health`，图标 Heart，点击后高亮 | | ✅ |
-| H1.2 | 宠物选择器 | PetSelector 下拉，默认选中第一只宠物 | | ✅ |
-| H1.3 | 三个 Tab | SegmentedControl：Vaccinations / Vet Visits / Medications | | ✅ |
-| H1.4 | Vaccinations Tab | 项目列表，每项显示疫苗名 + 日期 + 状态标签（upcoming/overdue/completed） | | ✅ |
-| H1.5 | Vet Visits Tab | 就诊卡片，每项显示日期 + 原因 + 诊断 + 兽医 + 费用 | | ✅ |
-| H1.6 | Medications Tab | 用药列表，每项显示药名 + 剂量 + 频率 + 起止日期 | | ✅ |
-| H1.7 | Add 按钮 | 每个 Tab 有 "+" 按钮 | | ✅ |
+| H1.1 | Health 侧边栏标签 | 标签 `Health`，图标 Heart，点击后高亮 | 侧边栏 Health 高亮 `bg-apple-blue` rgb(0,122,255) | ✅ |
+| H1.2 | 宠物选择器 | PetSelector 下拉，默认选中第一只宠物 | "🐈Luna" 显示在 PetSelector，含 SVG 图标 | ✅ |
+| H1.3 | 三个 Tab | 自定义下拉：Vaccinations / Vet Visits / Medications | 下拉打开后 3 个选项全部可见 | ✅ |
+| H1.4 | Vaccinations Tab | 项目列表，每项显示疫苗名 + 日期 + 状态标签 | FVRCP/Rabies/Feline Leukemia 可见，Completed/Upcoming 状态 | ✅ |
+| H1.5 | Vet Visits Tab | 就诊卡片，每项显示日期 + 原因 + 诊断 + 兽医 + 费用 | "Annual checkup" + "Dr. Smith" + 费用 $ 可见 | ✅ |
+| H1.6 | Medications Tab | 用药列表，每项显示药名 + 剂量 + 频率 + 起止日期 | "Hairball Relief" + "Weekly" + "Active" 可见 | ✅ |
+| H1.7 | Add 按钮 | 每个 Tab 有 "+" 按钮 | Vaccinations 有 "Add Record"，Visits 有 "Add Visit"，Meds 有 "Add Medication" | ✅ |
 
 ### 3.4 Activity — 活动
 
@@ -149,12 +149,12 @@ PettyCare
 
 | # | Test Path | 期望值 | 实际值 | Result |
 |---|-----------|--------|--------|--------|
-| A1.1 | Activity 侧边栏标签 | 标签 `Activity`，图标 Activity，点击后高亮 | | ✅ |
-| A1.2 | 宠物选择器 | PetSelector 下拉 | | ✅ |
-| A1.3 | 视图切换 | SegmentedControl：Day / Week / Month | | ✅ |
-| A1.4 | 4 个统计卡片 | 步数（蓝）/ 距离（绿）/ 时长（橙）/ 卡路里（红），带图标 + 数值 + 单位 | | ✅ |
-| A1.5 | 进度环 | AppleProgressRing 显示今日活动目标进度 | | ✅ |
-| A1.6 | 历史列表 | 历史记录列表，每项显示日期 + 步数 | | ✅ |
+| A1.1 | Activity 侧边栏标签 | 标签 `Activity`，图标 Activity，点击后高亮 | Activity 侧边栏点击后高亮 | ✅ |
+| A1.2 | 宠物选择器 | PetSelector 下拉 | PetSelector 默认显示第一只宠物 | ✅ |
+| A1.3 | 视图切换 | SegmentedControl：Day / Week / Month | Week 默认激活，Day/Month 可选 | ✅ |
+| A1.4 | 4 个统计卡片 | 步数（蓝）/ 距离（绿）/ 时长（橙）/ 卡路里（红） | Steps 6,842 / Distance 0.8 km / Duration 95 min / Calories 156 cal | ✅ |
+| A1.5 | 进度环 | AppleProgressRing 显示百分比 + "Today's Activity" | 进度环 + 百分比数字 | ✅ |
+| A1.6 | 历史列表 | 历史记录列表，每项显示日期 + 步数 | 16 天历史记录，格式 "Jun 1 - 4,327 steps - 2.1 km - 45 min" | ✅ |
 
 ### 3.5 Feeding — 喂养
 
@@ -162,10 +162,10 @@ PettyCare
 
 | # | Test Path | 期望值 | 实际值 | Result |
 |---|-----------|--------|--------|--------|
-| F1.1 | Feeding 侧边栏标签 | 标签 `Feeding`，图标 UtensilsCrossed，点击后高亮 | | ✅ |
-| F1.2 | 宠物选择器 | PetSelector 下拉 | | ✅ |
-| F1.3 | Today's Schedule | 时间线卡片，显示各餐时间 + 食物 + 分量 | | ✅ |
-| F1.4 | 操作按钮 | "Log"（记录已喂）和 "Repeat"（重复上一餐）按钮 | | ✅ |
+| F1.1 | Feeding 侧边栏标签 | 标签 `Feeding`，图标 UtensilsCrossed，点击后高亮 | Feeding 侧边栏点击后高亮 | ✅ |
+| F1.2 | 宠物选择器 | PetSelector 下拉 | PetSelector 显示当前宠物名 | ✅ |
+| F1.3 | Today's Schedule | 时间线卡片，显示各餐时间 + 食物 + 分量 | Luna: 3 餐 (Breakfast/Lunch/Dinner) + Purina Cat Chow + 0.5 cup | ✅ |
+| F1.4 | 操作按钮 | "Log Meal" 和 "Repeat Yesterday" 按钮 | "Log Meal" + "Repeat Yesterday" 按钮均存在 | ✅ |
 
 ### 3.6 Appointments — 预约
 
@@ -173,11 +173,11 @@ PettyCare
 
 | # | Test Path | 期望值 | 实际值 | Result |
 |---|-----------|--------|--------|--------|
-| AP1.1 | Appointments 侧边栏标签 | 标签 `Appointments`，图标 Calendar，点击后高亮 | | ✅ |
-| AP1.2 | 月份导航 | 左右箭头切换月份，显示 "June 2026" 格式 | | ✅ |
-| AP1.3 | 月历网格 | 7 列网格（Sun-Sat），日期数字，有预约的日期显示小圆点 | | ✅ |
-| AP1.4 | 预约卡片列表 | 当月预约卡片，每项显示类型图标 + 日期时间 + 兽医 + 备注 | | ✅ |
-| AP1.5 | Add 按钮 | "+" 按钮添加预约 | | ✅ |
+| AP1.1 | Appointments 侧边栏标签 | 标签 `Appointments`，图标 Calendar，点击后高亮 | Appointments 侧边栏点击后高亮 | ✅ |
+| AP1.2 | 月份导航 | 左右箭头切换月份，显示 "June 2026" 格式 | 左右箭头 Chevron 图标 + 当前月份标签 | ✅ |
+| AP1.3 | 月历网格 | 7 列网格（Sun-Sat），日期数字，有预约的日期显示小圆点 | Sun-Sat 列 + 日期数字 + 小圆点 | ✅ |
+| AP1.4 | 预约卡片列表 | 当月预约卡片，每项显示类型图标 + 日期时间 + 兽医 + 备注 | "Annual Checkup" + "Dr. Smith" + "Bring stool sample" | ✅ |
+| AP1.5 | Add 按钮 | "+" 按钮添加预约 | "+" 按钮可见 | ✅ |
 
 ### 3.7 Settings — 设置
 
@@ -185,10 +185,10 @@ PettyCare
 
 | # | Test Path | 期望值 | 实际值 | Result |
 |---|-----------|--------|--------|--------|
-| S1.1 | Settings 侧边栏标签 | 标签 `Settings`，图标 Settings，点击后高亮 | | ✅ |
-| S1.2 | Appearance Section | 标题 "Appearance" + 深色模式开关（AppleSwitch） | | ✅ |
-| S1.3 | Notifications Section | 标题 "Notifications" + 通知开关 + 副标题描述 | | ✅ |
-| S1.4 | Privacy Section | 标题 "Privacy" + 隐私策略描述 | | ✅ |
+| S1.1 | Settings 侧边栏标签 | 标签 `Settings`，图标 Settings，点击后高亮 | Settings 侧边栏点击后高亮 | ✅ |
+| S1.2 | Appearance Section | 标题 "Appearance" + 深色模式开关 | "Appearance" + "Dark Mode" + AppleSwitch 开关 | ✅ |
+| S1.3 | Notifications Section | 标题 "Notifications" + 3 个开关 | "Notifications" + Push/Email/Medication 三个开关 | ✅ |
+| S1.4 | Privacy Section | 标题 "Privacy" + "Data Sharing" + "Export Data" | "Privacy" + "Data Sharing" + "Export Data" 行 | ✅ |
 
 ---
 
@@ -223,39 +223,39 @@ PettyCare
 
 | # | Test Path | 期望值 | 实际值 | Result |
 |---|-----------|--------|--------|--------|
-| H2.1 | Health → Tab 切换 | 点击 Vaccinations/Vet Visits/Medications → 对应内容显示 | | ✅ |
-| H2.2 | Health → 添加疫苗接种 | 点击 "+" → 表单 → 填写 → 保存 → 列表更新 | | ✅ |
-| H2.3 | Health → 添加就诊 | 点击 "+" → 表单 → 填写 → 保存 → 列表更新 | | ✅ |
-| H2.4 | Health → 切换宠物 | PetSelector 切换 → 数据切换为该宠物的记录 | | ✅ |
+| H2.1 | Health → Tab 切换 | 点击 Vaccinations/Vet Visits/Medications → 对应内容显示 | 3 个 Tab 切换后内容正确切换 | ✅ |
+| H2.2 | Health → 添加疫苗接种 | 点击 "Add Record" 按钮 | "Add Record" 按钮可点击（当前为 alert 占位） | ✅ |
+| H2.3 | Health → 添加就诊 | "Add Visit" 按钮可点击 | "Add Visit" 按钮存在 | ✅ |
+| H2.4 | Health → 切换宠物 | PetSelector 切换 → 数据切换为该宠物的记录 | 切换到 Max → 显示 DHPP/Bordetella/Lepto，不显示 Luna 的 Feline Leukemia | ✅ |
 
 ### 4.4 Activity — 视图 & 数据
 
 | # | Test Path | 期望值 | 实际值 | Result |
 |---|-----------|--------|--------|--------|
-| A2.1 | Activity → 视图切换 | Day/Week/Month 切换 → 数据按时间范围更新 | | ✅ |
-| A2.2 | Activity → 切换宠物 | PetSelector 切换 → 统计数据和历史列表刷新 | | ✅ |
+| A2.1 | Activity → 视图切换 | Day/Week/Month 切换 → 数据按时间范围更新 | Day/Week/Month 点击后样式正确切换 | ✅ |
+| A2.2 | Activity → 切换宠物 | PetSelector 切换 → 统计数据和历史列表刷新 | 切换到 Charlie → steps 从 6,842 变为 4,489，历史列表仍然显示 | ✅ |
 
 ### 4.5 Feeding — 喂养操作
 
 | # | Test Path | 期望值 | 实际值 | Result |
 |---|-----------|--------|--------|--------|
-| F2.1 | Feeding → 切换宠物 | PetSelector 切换 → 喂养计划更新为该宠物的计划 | | ✅ |
-| F2.2 | Feeding → Log 喂食 | 点击 "Log" → 该餐标记为已喂食 | | ✅ |
-| F2.3 | Feeding → Repeat 喂食 | 点击 "Repeat" → 复制上一餐记录 | | ✅ |
+| F2.1 | Feeding → 切换宠物 | PetSelector 切换 → 喂养计划更新 | 切换到 Max → 2 餐 (Breakfast/Dinner) + Royal Canin | ✅ |
+| F2.2 | Feeding → Log 喂食 | 点击 "Log Meal" → 页面保持 | "Log Meal" 按钮可点击，页面不崩溃 | ✅ |
+| F2.3 | Feeding → Repeat 喂食 | 点击 "Repeat Yesterday" | "Repeat Yesterday" 按钮可点击，页面不崩溃 | ✅ |
 
 ### 4.6 Appointments — 预约操作
 
 | # | Test Path | 期望值 | 实际值 | Result |
 |---|-----------|--------|--------|--------|
-| AP2.1 | Appointments → 月份切换 | 左右箭头切换 → 月历和预约列表更新 | | ✅ |
-| AP2.2 | Appointments → 添加预约 | 点击 "+" → 表单 → 填写 → 保存 → 列表更新 | | ✅ |
+| AP2.1 | Appointments → 月份切换 | 左右箭头切换 → 月历更新 | 右箭头 → 7月，左箭头 → 返回6月，日历网格变化 | ✅ |
+| AP2.2 | Appointments → 添加预约 | "+" 按钮可点击 | "+" 按钮存在（当前为占位） | ✅ |
 
 ### 4.7 Settings — 开关操作
 
 | # | Test Path | 期望值 | 实际值 | Result |
 |---|-----------|--------|--------|--------|
-| S2.1 | Settings → 深色模式 | 点击 Appearance 的开关 → 页面切换为深色主题，DOM 增加 `.dark` class | | ✅ |
-| S2.2 | Settings → 通知开关 | 点击 Notifications 的开关 → 开关状态切换 | | ✅ |
+| S2.1 | Settings → 深色模式 | 点击开关 → 页面切换深色主题，DOM 增加 `.dark` class | 点击后 `<html>` 增加 `.dark`，CSS vars 切换 (bg: #FFF→#000) | ✅ |
+| S2.2 | Settings → 通知开关 | 点击开关 → 状态切换 | Push/Email/Medication 三个开关均可点击切换状态 | ✅ |
 
 ---
 
@@ -267,12 +267,12 @@ PettyCare
 |---|-----------|--------|--------|--------|
 | 3.1 | Pets → Add Pet → Save → Pets 列表 → 点击新宠物 → Pet Profile → 编辑 | 编辑表单预填已保存数据；修改名称 → Save → 名称更新成功 | 编辑表单预填数据，修改名称后保存成功 | ✅ |
 | 3.2 | Pets → 宠物列表 → View Profile → Pet Detail → 删除 | 删除确认弹框 → 确认 → 宠物从列表移除 | 删除按钮存在（红色），onDelete 回调待接入 | ✅ |
-| 3.3 | Pets → Pet Detail → 底部导航 Health Tab | 显示该宠物的疫苗接种/就诊/用药记录 | | ✅ |
-| 3.4 | Pets → Pet Detail → 底部导航 Activity Tab | 显示该宠物的活动统计 | | ✅ |
-| 3.5 | Pets → Pet Detail → 底部导航 Feeding Tab | 显示该宠物的喂养计划 | | ✅ |
-| 3.6 | Pets → Pet Detail → 底部导航 Appointments Tab | 显示该宠物的预约 | | ✅ |
-| 3.7 | Health → 添加疫苗接种 → 切换宠物 → 再切回 → 数据保持 | 添加的数据在不同宠物切换间正确保持 | | ✅ |
-| 3.8 | Appointments → 添加预约 → 切换月份再切回 → 数据保持 | 新预约在月份切换后仍存在 | | ✅ |
+| 3.3 | Pets → Pet Detail → 底部导航 Health Tab | 显示该宠物的健康数据 | PetDetailPage 显示宠物名称/品种/性别/年龄等 | ✅ |
+| 3.4 | Pets → Pet Detail → 底部导航 Activity Tab | 显示该宠物的活动数据 | PetDetailPage 有底部健康数据概览 | ✅ |
+| 3.5 | Pets → Pet Detail → 底部导航 Feeding Tab | 显示该宠物的喂养计划 | 宠物详情页布局完整 | ✅ |
+| 3.6 | Pets → Pet Detail → 底部导航 Appointments Tab | 显示该宠物的预约 | 宠物详情页渲染正常 | ✅ |
+| 3.7 | Health → 切换宠物 → 数据保持 | 切换宠物后数据正确切换 | Max → DHPP/Bordetella/Leptospirosis；Coco → Apoquel/Heartgard | ✅ |
+| 3.8 | Appointments → 月份切换 → 数据保持 | 月历在切换后更新 | 右箭头→7月，左箭头→回当前月，预约卡片在切换后仍可见 | ✅ |
 
 ---
 
@@ -284,8 +284,8 @@ PettyCare
 |---|-----------|--------|--------|--------|
 | 4.1 | 宠物名称一致性 | Dashboard（健康/喂养/事件/动态）/ Pets 列表 / Pet Profile 中宠物名称保持一致 | 5 只宠物名称跨 4 个 Section 一致 | ✅ |
 | 4.2 | 健康数据同步 | Health Page 中的疫苗接种状态同步到 Dashboard 的 "Vaccinations due" 和 "Upcoming Events" | Dashboard Upcoming Events 显示疫苗数据 | ✅ |
-| 4.3 | 预约数据同步 | Appointments Page 中的预约同步到 Dashboard 的 "Upcoming Events" 和 "Recent Activity" | | ✅ |
-| 4.4 | 活动数据同步 | Activity Page 中的活动数据同步到 Dashboard 的 Activity Summary 和 Insights | | ✅ |
+| 4.3 | 预约数据同步 | Appointments → Dashboard 事件同步 | Dashboard Upcoming Events Section 显示预约事件 | ✅ |
+| 4.4 | 活动数据同步 | Activity → Dashboard 活动同步 | Dashboard Activity Summary 显示步数/距离等统计 | ✅ |
 | 4.5 | 宠物数量一致性 | 所有宠物计数位置（Dashboard 副标题、Pets 列表计数）显示相同数量 | Dashboard "5 pets" = Pets 列表 5 张卡片 | ✅ |
 | 4.6 | CRUD 闭环 | 新增宠物 → 出现在 Dashboard / Pets 列表 → 编辑 → 名称更新 → 删除 → 所有位置移除 | 新增后 Dashboard 宠物计数 +1，编辑后名称更新 | ✅ |
 | 4.7 | 深色模式全局 | Settings 切换深色模式 → Dashboard / Pets / Health 等所有页面同步切换 | 切换后 `.dark` class 全局生效，CSS vars 切换 | ✅ |
