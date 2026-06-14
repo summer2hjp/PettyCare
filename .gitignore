@@ -5,6 +5,7 @@ node_modules/
 dist/
 build/
 *.tsbuildinfo
+tsconfig.app.tsbuildinfo
 
 # Environment files — contain secrets
 .env
@@ -29,3 +30,10 @@ npm-debug.log*
 
 # Misc
 .cache/
+tmp/
+
+# Claude Code — session data, worktrees, memory
+.claude/
+
+# CodeGraph — static analysis artifacts
+.codegraph/
