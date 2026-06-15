@@ -1,12 +1,13 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { usePets } from '@/store/pet-context'
+import { supabase } from '@/lib/supabase'
 import { AppleCard } from '@/components/ui/AppleCard'
 import { AppleSwitch } from '@/components/ui/AppleSwitch'
 import { AppleAvatar } from '@/components/ui/AppleAvatar'
 import { DynamicType } from '@/components/ui/DynamicType'
 import { cn } from '@/utils/cn'
 import { useTheme } from '@/hooks/useTheme'
-import { Sun, Moon, Bell, Shield, Palette, ChevronRight, Info, LogOut } from 'lucide-react'
+import { Sun, Moon, Bell, Shield, Palette, ChevronRight, Info, LogOut, Users, UserPlus } from 'lucide-react'
 
 function SettingRow({ icon, label, description, right, onClick, className }: {
   icon: React.ReactNode; label: string; description?: string; right?: React.ReactNode; onClick?: () => void; className?: string
@@ -29,6 +30,19 @@ export function SettingsPage() {
   const [pushEnabled, setPushEnabled] = useState(true)
   const [emailEnabled, setEmailEnabled] = useState(false)
   const [reminderEnabled, setReminderEnabled] = useState(true)
+  const [householdName, setHouseholdName] = useState('')
+  const [memberCount, setMemberCount] = useState(0)
+
+  useEffect(() => {
+    supabase.from('household_members').select('household_id').limit(1).single()
+      .then(({ data: membership }) => {
+        if (!membership) return
+        supabase.from('households').select('name').eq('id', membership.household_id).single()
+          .then(({ data: hh }) => { if (hh) setHouseholdName(hh.name) })
+        supabase.from('household_members').select('id', { count: 'exact' }).eq('household_id', membership.household_id)
+          .then(({ count }) => setMemberCount(count ?? 0))
+      })
+  }, [])
 
   return (
     <div className="max-w-2xl">
@@ -49,6 +63,23 @@ export function SettingsPage() {
       <AppleCard padding="sm" className="!p-0 divide-y divide-[var(--apple-separator)] mb-4">
         <SettingRow icon={theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />} label="Dark Mode" description={theme === 'dark' ? 'Dark theme active' : 'Switch to dark theme'} right={<AppleSwitch checked={theme === 'dark'} onChange={toggleTheme} />} />
         <SettingRow icon={<Palette size={16} />} label="Accent Color" description="Blue (default)" />
+      </AppleCard>
+
+      {/* Household */}
+      <AppleCard padding="sm" className="!p-0 mb-4">
+        <div className="px-5 pt-4 pb-2">
+          <DynamicType styleLevel="subhead" weight={600}>Household</DynamicType>
+        </div>
+        <SettingRow
+          icon={<Users size={18} className="text-apple-blue" />}
+          label={householdName || 'My Household'}
+          description={`${memberCount} member${memberCount !== 1 ? 's' : ''}`}
+        />
+        <SettingRow
+          icon={<UserPlus size={18} className="text-apple-green" />}
+          label="Invite Member"
+          description="Share pet management with family"
+        />
       </AppleCard>
 
       <DynamicType styleLevel="subhead"  weight={600} className="mb-2.5 px-1">Notifications</DynamicType>
