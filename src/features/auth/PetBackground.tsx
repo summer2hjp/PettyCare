@@ -24,8 +24,6 @@ const ROTATION_INTERVAL = 5 * 60 * 1000 // 5 minutes
 export function PetBackground({ children }: { children: React.ReactNode }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [loaded, setLoaded] = useState(false)
-  const [nextLoaded, setNextLoaded] = useState(false)
-
   useEffect(() => {
     // Preload first image
     const img = new Image()
@@ -35,12 +33,9 @@ export function PetBackground({ children }: { children: React.ReactNode }) {
     // Start rotation timer
     const timer = setInterval(() => {
       const nextIndex = (currentIndex + 1) % PET_IMAGES.length
-      // Preload next image
+      // Preload next image before switching
       const nextImg = new Image()
-      nextImg.onload = () => {
-        setCurrentIndex(nextIndex)
-        setNextLoaded(true)
-      }
+      nextImg.onload = () => setCurrentIndex(nextIndex)
       nextImg.src = PET_IMAGES[nextIndex].url
     }, ROTATION_INTERVAL)
 
@@ -48,7 +43,6 @@ export function PetBackground({ children }: { children: React.ReactNode }) {
   }, [currentIndex])
 
   const current = PET_IMAGES[currentIndex]
-  const next = PET_IMAGES[(currentIndex + 1) % PET_IMAGES.length]
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-black">
