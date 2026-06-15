@@ -9,73 +9,8 @@ import { formatDate } from '@/utils/date'
 import { cn } from '@/utils/cn'
 import { Plus, Syringe, Stethoscope, Pill, ChevronRight, ChevronDown } from 'lucide-react'
 import type { Vaccination, VetVisit, Medication } from '@/types/health'
+import { supabase } from '@/lib/supabase'
 
-const perPetVaccinations: Record<string, Vaccination[]> = {
-  '1': [
-    { id: 'v1', petId: '1', name: 'FVRCP', scheduledDate: '2025-04-10', status: 'completed', administeredDate: '2024-04-10', vetName: 'Dr. Smith' },
-    { id: 'v2', petId: '1', name: 'Rabies', scheduledDate: '2025-08-15', status: 'upcoming', notes: '3-year vaccine' },
-    { id: 'v3', petId: '1', name: 'Feline Leukemia', scheduledDate: '2025-11-01', status: 'upcoming' },
-  ],
-  '2': [
-    { id: 'v4', petId: '2', name: 'Rabies', scheduledDate: '2025-03-10', status: 'completed', administeredDate: '2024-03-10', vetName: 'Dr. Smith' },
-    { id: 'v5', petId: '2', name: 'DHPP', scheduledDate: '2025-06-15', status: 'overdue', notes: 'Annual booster overdue!' },
-    { id: 'v6', petId: '2', name: 'Bordetella', scheduledDate: '2025-09-01', status: 'upcoming', notes: 'Kennel cough' },
-    { id: 'v7', petId: '2', name: 'Leptospirosis', scheduledDate: '2025-12-01', status: 'upcoming' },
-  ],
-  '3': [
-    { id: 'v8', petId: '3', name: 'DHPP', scheduledDate: '2025-02-20', status: 'completed', administeredDate: '2024-02-20', vetName: 'Dr. Lee' },
-    { id: 'v9', petId: '3', name: 'Rabies', scheduledDate: '2025-10-15', status: 'upcoming' },
-  ],
-  '4': [
-    { id: 'v10', petId: '4', name: 'FVRCP', scheduledDate: '2025-05-05', status: 'completed', administeredDate: '2024-05-05', vetName: 'Dr. Smith' },
-    { id: 'v11', petId: '4', name: 'Rabies', scheduledDate: '2025-07-20', status: 'upcoming' },
-  ],
-  '5': [
-    { id: 'v12', petId: '5', name: 'None', scheduledDate: '2025-01-01', status: 'completed', notes: 'Hamster vaccinations N/A' },
-  ],
-}
-
-const perPetVisits: Record<string, VetVisit[]> = {
-  '1': [
-    { id: 'vi1', petId: '1', date: '2024-12-10', reason: 'Annual checkup', diagnosis: 'Healthy', vetName: 'Dr. Smith', cost: 85 },
-    { id: 'vi2', petId: '1', date: '2024-08-15', reason: 'Hairball issues', diagnosis: 'Mild digestive upset', prescription: 'Hairball gel', vetName: 'Dr. Smith', cost: 95 },
-  ],
-  '2': [
-    { id: 'vi3', petId: '2', date: '2024-12-10', reason: 'Annual checkup', diagnosis: 'Healthy', vetName: 'Dr. Smith', cost: 85 },
-    { id: 'vi4', petId: '2', date: '2024-09-05', reason: 'Ear infection', diagnosis: 'Otitis externa', prescription: 'Otomax 2x/day', vetName: 'Dr. Lee', cost: 120, followUpDate: '2024-09-19' },
-    { id: 'vi5', petId: '2', date: '2024-06-20', reason: 'Vaccination booster', vetName: 'Dr. Smith', cost: 65 },
-  ],
-  '3': [
-    { id: 'vi6', petId: '3', date: '2024-11-20', reason: 'Skin allergy', diagnosis: 'Atopic dermatitis', prescription: 'Apoquel', vetName: 'Dr. Lee', cost: 150 },
-    { id: 'vi7', petId: '3', date: '2024-07-10', reason: 'Grooming + checkup', vetName: 'Dr. Smith', cost: 55 },
-  ],
-  '4': [
-    { id: 'vi8', petId: '4', date: '2024-10-05', reason: 'Annual checkup', diagnosis: 'Healthy', vetName: 'Dr. Smith', cost: 85 },
-  ],
-  '5': [
-    { id: 'vi9', petId: '5', date: '2024-09-01', reason: 'New pet checkup', diagnosis: 'Healthy', vetName: 'Dr. Smith', cost: 50 },
-  ],
-}
-
-const perPetMedications: Record<string, Medication[]> = {
-  '1': [
-    { id: 'm1', petId: '1', name: 'Hairball Relief', dosage: '1 tube', frequency: 'Weekly', startDate: '2024-08-15', isActive: true },
-  ],
-  '2': [
-    { id: 'm2', petId: '2', name: 'Heartgard Plus', dosage: '1 chew', frequency: 'Monthly', startDate: '2024-01-15', isActive: true },
-    { id: 'm3', petId: '2', name: 'NexGard', dosage: '1 tablet', frequency: 'Monthly', startDate: '2024-01-15', isActive: true },
-  ],
-  '3': [
-    { id: 'm4', petId: '3', name: 'Apoquel', dosage: '1 tablet', frequency: 'Twice daily', startDate: '2024-11-20', isActive: true },
-    { id: 'm5', petId: '3', name: 'Heartgard Plus', dosage: '1 chew', frequency: 'Monthly', startDate: '2024-01-15', isActive: true },
-  ],
-  '4': [],
-  '5': [],
-}
-
-export function mockVaccinations(petId: string): Vaccination[] { return perPetVaccinations[petId] ?? [] }
-export function mockVisits(petId: string): VetVisit[] { return perPetVisits[petId] ?? [] }
-export function mockMedications(petId: string): Medication[] { return perPetMedications[petId] ?? [] }
 
 function VaccinationRow({ v }: { v: Vaccination }) {
   const statusColor = v.status === 'completed' ? 'bg-apple-green' : v.status === 'overdue' ? 'bg-apple-red' : 'bg-apple-orange'
@@ -154,9 +89,24 @@ export function HealthPage() {
   ]
   const currentTab = tabOptions.find(t => t.value === tab)
 
-  const vaccinations = mockVaccinations(selectedPetId)
-  const visits = mockVisits(selectedPetId)
-  const medications = mockMedications(selectedPetId)
+  const [vaccinations, setVaccinations] = useState<Vaccination[]>([])
+  const [visits, setVisits] = useState<VetVisit[]>([])
+  const [meds, setMeds] = useState<Medication[]>([])
+
+  useEffect(() => {
+    supabase.from('vaccinations').select('*').eq('pet_id', selectedPetId)
+      .then(({ data }) => setVaccinations(data as Vaccination[] ?? []))
+  }, [selectedPetId])
+
+  useEffect(() => {
+    supabase.from('vet_visits').select('*').eq('pet_id', selectedPetId)
+      .then(({ data }) => setVisits(data as VetVisit[] ?? []))
+  }, [selectedPetId])
+
+  useEffect(() => {
+    supabase.from('medications').select('*').eq('pet_id', selectedPetId)
+      .then(({ data }) => setMeds(data as Medication[] ?? []))
+  }, [selectedPetId])
 
   return (
     <div>
@@ -218,11 +168,11 @@ export function HealthPage() {
           <div className="flex justify-end mb-3">
             <AppleButton variant="secondary" size="sm" icon={<Plus size={14} />} onClick={() => alert('Add medication coming soon!')}>Add Medication</AppleButton>
           </div>
-          {medications.length === 0 ? (
+          {meds.length === 0 ? (
             <AppleCard padding="lg"><EmptyState title="No medications" description="Add your pet's first medication" /></AppleCard>
           ) : (
             <AppleCard padding="sm" className="!p-0 divide-y divide-[var(--apple-separator)]">
-              {medications.map(m => <MedicationRow key={m.id} m={m} />)}
+              {meds.map(m => <MedicationRow key={m.id} m={m} />)}
             </AppleCard>
           )}
         </div>
