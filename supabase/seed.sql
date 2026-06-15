@@ -120,7 +120,7 @@ VALUES
 --    Dogs get more activity, cats moderate, hamster light
 -- =============================================================================
 INSERT INTO activity_records (id, pet_id, date, steps, distance, duration, calories)
-SELECT gen_random_uuid(), pet_id, date::date, steps, distance, duration, calories
+SELECT gen_random_uuid(), pet_id::uuid, date::date, steps, distance, duration, calories
 FROM (VALUES
   -- Luna (cat - moderate activity)
   ('b0000000-0000-0000-0000-000000000001', '2025-05-31', 3200, 1.2, 25, 90),
