@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
 import { usePets } from '@/store/pet-context'
 import { AppleCard } from '@/components/ui/AppleCard'
 import { AppleSegmentedControl } from '@/components/ui/AppleSegmentedControl'
@@ -12,15 +13,6 @@ import { Footprints, Timer, Flame, TrendingUp, Dog } from 'lucide-react'
 
 type ViewMode = 'day' | 'week' | 'month'
 export interface ActivityRecord { date: string; steps: number; distance: number; duration: number; calories: number }
-
-export function mockActivity(_petId: string): ActivityRecord[] {
-  const records: ActivityRecord[] = []
-  for (let i = 14; i >= 0; i--) {
-    const d = new Date(); d.setDate(d.getDate() - i)
-    records.push({ date: d.toISOString().slice(0, 10), steps: Math.floor(Math.random() * 8000) + 2000, distance: parseFloat((Math.random() * 3 + 0.5).toFixed(1)), duration: Math.floor(Math.random() * 90) + 15, calories: Math.floor(Math.random() * 300) + 80 })
-  }
-  return records
-}
 
 function StatCard({ icon, label, value, unit, color }: { icon: React.ReactNode; label: string; value: string; unit: string; color: string }) {
   return (
@@ -43,7 +35,15 @@ export function ActivityPage() {
   const { pets } = usePets()
   const [selectedPetId, setSelectedPetId] = useState(pets[0]?.id ?? '')
   const [view, setView] = useState<ViewMode>('week')
-  const records = mockActivity(selectedPetId)
+  const [records, setRecords] = useState<ActivityRecord[]>([])
+
+  useEffect(() => {
+    supabase.from('activity_records')
+      .select('*')
+      .eq('pet_id', selectedPetId)
+      .order('date', { ascending: true })
+      .then(({ data }) => setRecords(data as ActivityRecord[] ?? []))
+  }, [selectedPetId])
   const today = records[records.length - 1]
   const weekAvg = records.slice(-7).reduce((a, r) => ({ steps: a.steps + r.steps, distance: a.distance + r.distance, duration: a.duration + r.duration, calories: a.calories + r.calories }), { steps: 0, distance: 0, duration: 0, calories: 0 })
   const avgSteps = Math.round(weekAvg.steps / 7)
