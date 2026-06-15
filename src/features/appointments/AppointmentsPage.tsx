@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { usePets } from '@/store/pet-context'
 import { AppleCard } from '@/components/ui/AppleCard'
 import { AppleButton } from '@/components/ui/AppleButton'
@@ -8,6 +8,7 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { formatDate, isToday } from '@/utils/date'
 import { cn } from '@/utils/cn'
 import { Plus, ChevronLeft, ChevronRight, Calendar as CalendarIcon, Stethoscope, Syringe, Scissors } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
 
 export interface Appointment { id: string; petId: string; date: string; time: string; type: string; vet: string; notes?: string }
 
@@ -21,32 +22,20 @@ const typeIcons: Record<string, React.ReactNode> = {
 
 const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
-export function mockAppointments(petId: string): Appointment[] {
-  const now = new Date()
-  const today = now.toISOString().slice(0, 10)
-  const tom = new Date(now); tom.setDate(tom.getDate() + 1)
-  const nw = new Date(now); nw.setDate(nw.getDate() + 7)
-  const all: Record<string, Appointment[]> = {
-    '1': [
-      { id: 'a1', petId: '1', date: today, time: '10:00', type: 'Annual Checkup', vet: 'Dr. Smith', notes: 'Bring stool sample' },
-      { id: 'a2', petId: '1', date: tom.toISOString().slice(0, 10), time: '14:30', type: 'Vaccination', vet: 'Dr. Smith' },
-    ],
-    '2': [
-      { id: 'a3', petId: '2', date: tom.toISOString().slice(0, 10), time: '09:00', type: 'Dental Cleaning', vet: 'Dr. Lee', notes: 'Fast after 8pm' },
-      { id: 'a4', petId: '2', date: nw.toISOString().slice(0, 10), time: '11:00', type: 'Follow-up', vet: 'Dr. Lee' },
-    ],
-    '3': [{ id: 'a5', petId: '3', date: today, time: '16:00', type: 'Skin Check', vet: 'Dr. Lee' }],
-    '4': [{ id: 'a6', petId: '4', date: nw.toISOString().slice(0, 10), time: '10:30', type: 'Annual Checkup', vet: 'Dr. Smith' }],
-    '5': [],
-  }
-  return all[petId] ?? []
-}
-
 export function AppointmentsPage() {
   const { pets } = usePets()
   const [selectedPetId, setSelectedPetId] = useState(pets[0]?.id ?? '')
   const [viewDate, setViewDate] = useState(new Date())
-  const appointments = mockAppointments(selectedPetId)
+  const [appointments, setAppointments] = useState<Appointment[]>([])
+
+  useEffect(() => {
+    supabase.from('appointments')
+      .select('*')
+      .eq('pet_id', selectedPetId)
+      .order('date', { ascending: true })
+      .then(({ data }) => setAppointments(data as Appointment[] ?? []))
+  }, [selectedPetId])
+
   const year = viewDate.getFullYear(); const month = viewDate.getMonth()
   const daysInMonth = new Date(year, month + 1, 0).getDate()
   const firstDay = new Date(year, month, 1).getDay()
