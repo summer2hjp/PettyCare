@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { usePets } from '@/store/pet-context'
+import { supabase } from '@/lib/supabase'
 import { AppleCard } from '@/components/ui/AppleCard'
 import { AppleButton } from '@/components/ui/AppleButton'
 import { PetSelector } from '@/components/pet/PetSelector'
@@ -20,20 +21,21 @@ export const schedules: Record<string, FeedingSchedule[]> = {
   '5': [{ time: '09:00', label: 'Morning' }, { time: '21:00', label: 'Evening' }],
 }
 
-export function mockFeedingRecords(petId: string): FeedingRecord[] {
-  const today = new Date().toISOString().slice(0, 10)
-  const sched = schedules[petId] ?? schedules['1']
-  return sched.map((s, i) => ({
-    id: `f${petId}-${i}`, petId, time: `${today}T${s.time}:00`,
-    food: petId === '1' ? 'Purina Cat Chow' : petId === '2' ? 'Royal Canin Large' : petId === '3' ? "Hill's Science Diet" : petId === '4' ? 'Friskies' : 'Sunflower seeds',
-    portion: petId === '5' ? '1 tbsp' : `${(i + 1) * 0.5} cup`,
-  }))
-}
-
 export function FeedingPage() {
   const { pets } = usePets()
   const [selectedPetId, setSelectedPetId] = useState(pets[0]?.id ?? '')
-  const records = mockFeedingRecords(selectedPetId)
+  const [records, setRecords] = useState<FeedingRecord[]>([])
+
+  useEffect(() => {
+    const today = new Date().toISOString().slice(0, 10)
+    supabase.from('feeding_records')
+      .select('*')
+      .eq('pet_id', selectedPetId)
+      .gte('meal_time', today)
+      .order('meal_time', { ascending: true })
+      .then(({ data }) => setRecords(data as FeedingRecord[] ?? []))
+  }, [selectedPetId])
+
   const todaySched = schedules[selectedPetId] ?? schedules['1']
 
   return (
