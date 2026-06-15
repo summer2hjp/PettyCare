@@ -10,6 +10,8 @@ import { FeedingPage } from '@/features/feeding/FeedingPage'
 import { AppointmentsPage } from '@/features/appointments/AppointmentsPage'
 import { DashboardPage } from '@/features/dashboard/DashboardPage'
 import { SettingsPage } from '@/features/settings/SettingsPage'
+import { AuthProvider } from '@/store/auth-context'
+import { AuthGuard } from '@/features/auth/AuthGuard'
 import { LayoutDashboard, PawPrint, Heart, Activity, UtensilsCrossed, Calendar, Settings } from 'lucide-react'
 import type { NavItem } from '@/components/ui/AppleSidebar'
 
@@ -41,6 +43,8 @@ export default function App() {
   const pageTitle = page.page === 'dashboard' ? 'Welcome back 👋' : ''
 
   return (
+    <AuthProvider>
+      <AuthGuard>
     <RootLayout
         navItems={navItems}
         activeItem={currentNav}
@@ -99,5 +103,7 @@ export default function App() {
           />
         )}
     </RootLayout>
+      </AuthGuard>
+    </AuthProvider>
   )
 }
