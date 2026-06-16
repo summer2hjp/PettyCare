@@ -29,6 +29,12 @@ const radiusClasses: Record<MomentType, string> = {
   growth: 'rounded-xl',
 }
 
+const sizeClasses: Record<MomentType, string> = {
+  daily: 'min-w-[70px]',
+  interaction: 'min-w-[90px]',
+  growth: 'min-w-[140px]',
+}
+
 export function MomentCard({ moment, type, onClick, className, style }: MomentCardProps) {
   const [imgError, setImgError] = useState(false)
   const [imgLoaded, setImgLoaded] = useState(false)
@@ -42,7 +48,7 @@ export function MomentCard({ moment, type, onClick, className, style }: MomentCa
         radiusClasses[type],
         glassClasses[type],
         aspectClasses[type],
-        'min-w-[140px]',
+        sizeClasses[type],
         className
       )}
       style={style}
@@ -77,15 +83,15 @@ export function MomentCard({ moment, type, onClick, className, style }: MomentCa
       {/* Caption overlay */}
       {moment.caption && (
         <div className={cn(
-          'absolute bottom-0 left-0 right-0 p-2',
+          'absolute bottom-0 left-0 right-0 p-1',
           type === 'interaction'
             ? 'bg-gradient-to-t from-black/60 to-transparent'
             : 'bg-white/20 backdrop-blur-sm'
         )}>
           <DynamicType
-            styleLevel="caption2"
+            styleLevel={type === 'growth' ? 'caption2' : 'caption1'}
             weight={600}
-            className="text-white truncate"
+            className="text-white truncate text-[10px] leading-tight"
             style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
           >
             {moment.caption}
