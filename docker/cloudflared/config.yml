@@ -1,0 +1,6 @@
+ingress:
+  - hostname: pettycare.huangjp.de5.net
+    service: http://pettycare-web:80
+  - hostname: oauth.huangjp.de5.net
+    service: http://host.docker.internal:3001
+  - service: http_status:404

@@ -114,7 +114,7 @@ export function PetSelectorStrip({ pets, activePetId, onSelect, loading }: PetSe
   )
 }
 
-/** Glassmorphism pet avatar — squircle, glass background, fallback to emoji */
+/** Glassmorphism pet avatar — circular, no background, image or emoji only */
 function GlassAvatar({ pet }: { pet: Pet }) {
   const [failed, setFailed] = useState(false)
   const speciesEmoji: Record<string, string> = {
@@ -124,14 +124,14 @@ function GlassAvatar({ pet }: { pet: Pet }) {
 
   if (failed) {
     return (
-      <div className="w-10 h-10 rounded-xl glass-light flex items-center justify-center">
+      <div className="w-10 h-10 rounded-full flex items-center justify-center">
         <span className="text-lg">{speciesEmoji[pet.species] ?? '🐾'}</span>
       </div>
     )
   }
 
   return (
-    <div className="w-10 h-10 rounded-xl overflow-hidden glass-light">
+    <div className="w-10 h-10 rounded-full overflow-hidden">
       <img
         src={src}
         alt={pet.name}
