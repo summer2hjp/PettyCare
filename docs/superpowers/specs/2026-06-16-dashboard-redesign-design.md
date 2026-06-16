@@ -1,4 +1,4 @@
-# Dashboard Redesign — Pet-Centric Gallery Dashboard
+# Dashboard Redesign — Pet-Centric Gallery Dashboard (Glassmorphism)
 
 **Date**: 2026-06-16
 **Status**: Draft
@@ -7,6 +7,8 @@
 ## Overview
 
 Refactor the Dashboard tab from a data-category grid to a pet-centric gallery layout. The new design centers on pet photos organized into three thematic galleries — daily life, interaction moments, and growth trajectory — while retaining key health/activity/feeding data in more compact cards.
+
+**Design language**: Glassmorphism — frosted glass cards with `backdrop-filter: blur()`, translucent backgrounds, inner border highlights, tinted shadows, and subtle noise/grain on the page background.
 
 ## Scope
 
@@ -53,6 +55,42 @@ CREATE POLICY "Users can CRUD their household's pet moments" ON pet_moments
     )
   );
 ```
+
+## Design Language: Glassmorphism
+
+All cards in the redesigned Dashboard use frosted glass panels instead of solid Apple-style backgrounds.
+
+### Glass Variation by Component
+
+| Element | Glass Level | blur() | RGBA Background | Highlight Border |
+|---------|-------------|--------|-----------------|------------------|
+| PetSelector card | light | 10px | `rgba(255,255,255,0.5)` | `0.5px inset rgba(255,255,255,0.5)` |
+| PetHero photo card | medium | 20px | `rgba(255,255,255,0.3)` | `0.5px inset rgba(255,255,255,0.4)` |
+| PetHero stat card | light | 10px | `rgba(255,255,255,0.5)` | `0.5px inset rgba(255,255,255,0.5)` |
+| MomentCard (daily) | light | 10px | `rgba(255,255,255,0.4)` | `0.5px inset rgba(255,255,255,0.5)` |
+| MomentCard (interaction) | medium | 20px | `rgba(255,255,255,0.3)` | `0.5px inset rgba(255,255,255,0.4)` |
+| GrowthCard | light | 10px | `rgba(255,255,255,0.5)` | `0.5px inset rgba(255,255,255,0.5)` |
+| DataCardRow card | light | 10px | `rgba(255,255,255,0.5)` | `0.5px inset rgba(255,255,255,0.5)` |
+| PhotoPreview backdrop | heavy | 40px | `rgba(0,0,0,0.4)` | none |
+| QuickActions card | light | 10px | `rgba(255,255,255,0.5)` | `0.5px inset rgba(255,255,255,0.5)` |
+
+### Dark Mode Adaptation
+
+In dark mode, glass backgrounds switch to darker tint:
+- light → `rgba(0,0,0,0.25)` + border `rgba(255,255,255,0.06)`
+- medium → `rgba(0,0,0,0.35)` + border `rgba(255,255,255,0.08)`
+- heavy → `rgba(0,0,0,0.5)` + border `rgba(255,255,255,0.1)`
+
+### Page Background
+
+A subtle CSS noise/grain overlay (`data:image/svg+xml,...`) on the page background prevents the glass cards from looking like flat vectors. The base background is a soft, warm-white or light gradient (not pure white).
+
+### Component Usage
+
+- All cards use `GlassPanel` (existing component) instead of `AppleCard`
+- The 3 built-in glass intensities (`glass-light`, `glass`, `glass-heavy`) map directly to the table above
+- Buttons, inputs, and navigation chrome keep their current style (not glass)
+- PhotoPreview backdrop uses `backdrop-blur-xl` on a dark overlay
 
 ## Component Architecture
 
@@ -195,21 +233,22 @@ States:
 ```
 DashboardPage
 ├── PetSelectorStrip (new)
-│   └── AppleAvatar[]
+│   └── GlassPanel (light) + AppleAvatar[]
 ├── PetHeroCard (new)
-│   ├── GlassPanel (pet photo + info)
-│   ├── AppleProgressRing (health score)
-│   └── Activity stat display
-├── DashboardSection
+│   ├── GlassPanel (medium, pet photo + info overlay)
+│   ├── GlassPanel (light, health score)
+│   └── GlassPanel (light, activity stats)
+├── DashboardSection (glassmorphism variant)
 │   ├── MomentSection 'daily' (new)
-│   │   └── MomentCard[] (1:1)
+│   │   └── GlassPanel (light) wrapping MomentCard[] (1:1)
 │   ├── MomentSection 'interaction' (new)
-│   │   └── MomentCard[] (4:3)
+│   │   └── GlassPanel (medium) wrapping MomentCard[] (4:3)
 │   ├── GrowthTimelineSection (new)
-│   │   └── MomentCard[] (timeline)
+│   │   └── GlassPanel (light) wrapping GrowthCard[] (timeline)
 │   └── DataCardRow (new)
-│       └── AppleCard[] (4 compact cards)
-├── QuickActionsSection (existing, kept)
+│       └── GlassPanel (light) wrapping 4 compact stat cards
+├── QuickActionsSection (glassmorphism variant)
+│   └── GlassPanel (light) wrapping QuickAction buttons
 └── PhotoPreview (new, full-screen modal)
 ```
 
@@ -242,16 +281,17 @@ interface UsePetMomentsResult {
 
 ## Card Styles
 
-| Component | Border Radius | Shadow | Background | Hover |
-|-----------|--------------|--------|------------|-------|
-| PetSelector item | `rounded-apple-xl` | none | `--apple-fill` | active blue ring |
-| PetHeroCard pet photo | `rounded-apple-xl` | `shadow-apple-md` | `GlassPanel` overlay | none |
-| PetHeroCard stat card | `rounded-apple-xl` | `shadow-apple-md` | `--apple-systemBackground` | none |
-| MomentCard (daily) | `rounded-apple` | `shadow-apple-sm` | transparent | scale+shadow |
-| MomentCard (interaction) | `rounded-apple-xl` | `shadow-apple-md` | transparent | scale+shadow |
-| GrowthCard | `rounded-apple` | `shadow-apple-md` | `--apple-systemBackground` | scale+shadow |
-| DataCardRow card | `rounded-apple-lg` | `shadow-apple-sm` | `--apple-systemBackground` | cursor-pointer |
-| PhotoPreview backdrop | n/a | n/a | `rgba(0,0,0,0.6)` blurred | n/a |
+| Component | Border Radius | Glass Level | Hover |
+|-----------|--------------|-------------|-------|
+| PetSelector item | `rounded-xl` | light | active ring + scale(105) |
+| PetHeroCard pet photo | `rounded-2xl` | medium | none |
+| PetHeroCard stat card | `rounded-2xl` | light | translateY(-2px) |
+| MomentCard (daily) | `rounded-xl` | light | scale(1.02) + translateY(-2px) |
+| MomentCard (interaction) | `rounded-2xl` | medium | scale(1.02) + translateY(-2px) |
+| GrowthCard | `rounded-xl` | light | scale(1.02) + translateY(-2px) |
+| DataCardRow card | `rounded-xl` | light | cursor-pointer + translateY(-1px) |
+| PhotoPreview backdrop | n/a | heavy (40px blur) | n/a |
+| QuickActions card | `rounded-xl` | light | scale(1.03) |
 
 ## Image Handling
 
@@ -374,8 +414,9 @@ Phase 3 (Integration):
 ## Design Principles Applied
 
 - **Pet-first**: Photos drive the layout, not data categories
-- **Apple HIG**: SF-aligned typography, 8pt spacing, frosted glass, semantic colors
+- **Glassmorphism**: Frosted glass surfaces with depth, blur, and tinted translucency
 - **Progressive disclosure**: Photos above data, smooth transitions
 - **Consistent state coverage**: loading/empty/error/data for every component
 - **Type-specific imagery**: Each pet species gets a unique visual treatment
+- **Depth hierarchy**: Glass intensity (light/medium/heavy) communicates elevation — lighter cards float higher, heavier backdrop sits below
 - **Responsive scroll**: Horizontal galleries on desktop, full-width on mobile
