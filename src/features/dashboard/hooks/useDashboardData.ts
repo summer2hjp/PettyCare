@@ -72,7 +72,7 @@ function getUrgencyLabel(dateStr: string): DashboardUpcomingEvent['urgency'] {
   return 'later'
 }
 
-export function useDashboardData(): DashboardData {
+export function useDashboardData(selectedPetId?: string | null): DashboardData {
   const { pets } = usePets()
   const [data, setData] = useState<DashboardData>({
     loading: true,
@@ -91,37 +91,39 @@ export function useDashboardData(): DashboardData {
 
     async function loadData(): Promise<void> {
       try {
+        const targetPets = selectedPetId ? pets.filter(p => p.id === selectedPetId) : pets
+
         // ── Health: Vaccinations ──
-        const vaccQueries = pets.map(p =>
+        const vaccQueries = targetPets.map(p =>
           supabase.from('vaccinations').select('*').eq('pet_id', p.id)
         )
         const vaccResults = await Promise.all(vaccQueries)
         const allVaccinations: Vaccination[] = vaccResults.flatMap((result, idx) => {
           const { data, error } = result
           if (error) throw error
-          return (data ?? []).map(v => ({ ...(v as Vaccination), petId: pets[idx].id }))
+          return (data ?? []).map(v => ({ ...(v as Vaccination), petId: targetPets[idx].id }))
         })
 
         // ── Health: Medications ──
-        const medQueries = pets.map(p =>
+        const medQueries = targetPets.map(p =>
           supabase.from('medications').select('*').eq('pet_id', p.id)
         )
         const medResults = await Promise.all(medQueries)
         const allMedications: Medication[] = medResults.flatMap((result, idx) => {
           const { data, error } = result
           if (error) throw error
-          return (data ?? []).map(m => ({ ...(m as Medication), petId: pets[idx].id }))
+          return (data ?? []).map(m => ({ ...(m as Medication), petId: targetPets[idx].id }))
         })
 
         // ── Health: Vet Visits ──
-        const visitQueries = pets.map(p =>
+        const visitQueries = targetPets.map(p =>
           supabase.from('visits').select('*').eq('pet_id', p.id)
         )
         const visitResults = await Promise.all(visitQueries)
         const allVisits: VetVisit[] = visitResults.flatMap((result, idx) => {
           const { data, error } = result
           if (error) throw error
-          return (data ?? []).map(v => ({ ...(v as VetVisit), petId: pets[idx].id }))
+          return (data ?? []).map(v => ({ ...(v as VetVisit), petId: targetPets[idx].id }))
         })
 
         const totalUpcoming: number = allVaccinations.filter(
@@ -136,7 +138,7 @@ export function useDashboardData(): DashboardData {
           )[0]
           : null
 
-        const { score, status } = computeHealthScore(pets.length, totalUpcoming, totalActiveMed)
+        const { score, status } = computeHealthScore(targetPets.length, totalUpcoming, totalActiveMed)
         const health: DashboardHealthData = {
           score,
           status,
@@ -146,7 +148,7 @@ export function useDashboardData(): DashboardData {
         }
 
         // ── Activity ──
-        const firstPetId = pets[0]?.id ?? ''
+        const firstPetId = targetPets[0]?.id ?? ''
         let activity: DashboardActivityData = {
           steps: 0,
           distance: 0,
@@ -194,7 +196,7 @@ export function useDashboardData(): DashboardData {
         }
 
         // ── Feeding ──
-        const feedingQueries = pets.map(p =>
+        const feedingQueries = targetPets.map(p =>
           supabase.from('feeding_records').select('*').eq('pet_id', p.id)
         )
         const feedingResults = await Promise.all(feedingQueries)
@@ -203,32 +205,32 @@ export function useDashboardData(): DashboardData {
           if (error) throw error
           const records: FeedingRecord[] = (data ?? []) as FeedingRecord[]
           return records.map((r: FeedingRecord, i: number) => ({
-            id: `feed-${pets[idx].id}-${i}`,
+            id: `feed-${targetPets[idx].id}-${i}`,
             time: r.time,
             label: '',
             food: r.food ?? '',
             portion: r.portion ?? '',
-            petName: pets[idx].name,
+            petName: targetPets[idx].name,
             status: (new Date(r.time) < new Date() ? 'completed' : 'upcoming') as 'completed' | 'upcoming',
           }))
         }).sort((a: FeedingMeal, b: FeedingMeal) => new Date(a.time).getTime() - new Date(b.time).getTime())
 
         // ── Events ──
-        const apptQueries = pets.map(p =>
+        const apptQueries = targetPets.map(p =>
           supabase.from('appointments').select('*').eq('pet_id', p.id)
         )
         const apptResults = await Promise.all(apptQueries)
         const allAppointments: Appointment[] = apptResults.flatMap((result, idx) => {
           const { data, error } = result
           if (error) throw error
-          return (data ?? []).map(a => ({ ...(a as Appointment), petId: pets[idx].id }))
+          return (data ?? []).map(a => ({ ...(a as Appointment), petId: targetPets[idx].id }))
         })
 
         const events: DashboardUpcomingEvent[] = [
           ...allVaccinations
             .filter((v: Vaccination) => v.status === 'upcoming' || v.status === 'overdue')
             .map((v: Vaccination) => {
-              const pet = pets.find(p => p.id === v.petId)
+              const pet = targetPets.find(p => p.id === v.petId)
               return {
                 id: `ev-vacc-${v.id}`,
                 title: `${pet?.name ?? 'Unknown'}: ${v.name}`,
@@ -239,7 +241,7 @@ export function useDashboardData(): DashboardData {
               }
             }),
           ...allAppointments.map((a: Appointment) => {
-            const pet = pets.find(p => p.id === a.petId)
+            const pet = targetPets.find(p => p.id === a.petId)
             return {
               id: `ev-appt-${a.id}`,
               title: `${pet?.name ?? 'Unknown'}: ${a.type}`,
