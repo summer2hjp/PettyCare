@@ -41,16 +41,18 @@ function generateLocalMoments(pets: Pet[], type: MomentType): PetMoment[] {
   const moments: PetMoment[] = []
 
   for (const pet of pets) {
-    // Try up to 2 local images per pet
+    // Try up to 2 local images per pet, with descending dates for display order
     for (let i = 1; i <= 2; i++) {
       const imageUrl = `/picture/${pet.name.toLowerCase()}-${i}.jpeg`
+      const date = new Date()
+      date.setDate(date.getDate() - (i - 1)) // newest first
       moments.push({
         id: `local-${pet.id}-${type}-${i}`,
         petId: pet.id,
         imageUrl,
         caption: captions[(i - 1) % captions.length],
         momentType: type,
-        takenAt: new Date().toISOString().split('T')[0],
+        takenAt: date.toISOString().split('T')[0],
         createdAt: new Date().toISOString(),
       })
     }
