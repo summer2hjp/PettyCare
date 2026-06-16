@@ -37,7 +37,7 @@ export function MomentCard({ moment, type, onClick, className, style }: MomentCa
     <button
       onClick={onClick}
       className={cn(
-        'shrink-0 overflow-hidden relative cursor-pointer',
+        'shrink-0 self-start overflow-hidden relative cursor-pointer',
         'transition-all duration-300 hover:scale-[1.02] hover:-translate-y-0.5 hover:shadow-xl',
         radiusClasses[type],
         glassClasses[type],

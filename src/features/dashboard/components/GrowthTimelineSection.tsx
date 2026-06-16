@@ -129,7 +129,7 @@ export function GrowthTimelineSection({
                 {index > 0 && (
                   <ChevronRight size={20} className="text-apple-tertiaryLabel shrink-0" />
                 )}
-                <div className="relative shrink-0 w-[140px]">
+                <div className="relative shrink-0 self-start" style={{ width: 70 }}>
                   {selecting && (
                     <button
                       onClick={() => toggleSelect(moment.id)}
