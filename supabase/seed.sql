@@ -326,5 +326,5 @@ FROM (VALUES
 -- Done. Summary:
 --   1 household, 5 pets, 12 vaccinations, 9 vet visits, 5 medications,
 --   75 activity records (15 per pet), 12 feeding records, 6 appointments,
---   12 reminders, 37 pet moments
+--   12 reminders, 39 pet moments
 -- =============================================================================
