@@ -17,37 +17,14 @@ CREATE INDEX idx_pet_moments_pet_date ON pet_moments(pet_id, taken_at DESC);
 ALTER TABLE pet_moments ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Users can read their household's pet moments" ON pet_moments
-  FOR SELECT USING (
-    pet_id IN (
-      SELECT id FROM pets WHERE household_id IN (
-        SELECT household_id FROM household_members WHERE user_id = auth.uid()
-      )
-    )
-  );
+  FOR SELECT USING (public.can_access_pet(pet_id));
 
 CREATE POLICY "Users can insert their household's pet moments" ON pet_moments
-  FOR INSERT WITH CHECK (
-    pet_id IN (
-      SELECT id FROM pets WHERE household_id IN (
-        SELECT household_id FROM household_members WHERE user_id = auth.uid()
-      )
-    )
-  );
+  FOR INSERT WITH CHECK (public.can_access_pet(pet_id));
 
 CREATE POLICY "Users can update their household's pet moments" ON pet_moments
-  FOR UPDATE USING (
-    pet_id IN (
-      SELECT id FROM pets WHERE household_id IN (
-        SELECT household_id FROM household_members WHERE user_id = auth.uid()
-      )
-    )
-  );
+  FOR UPDATE USING (public.can_access_pet(pet_id))
+  WITH CHECK (public.can_access_pet(pet_id));
 
 CREATE POLICY "Users can delete their household's pet moments" ON pet_moments
-  FOR DELETE USING (
-    pet_id IN (
-      SELECT id FROM pets WHERE household_id IN (
-        SELECT household_id FROM household_members WHERE user_id = auth.uid()
-      )
-    )
-  );
+  FOR DELETE USING (public.can_access_pet(pet_id));
