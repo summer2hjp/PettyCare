@@ -1,7 +1,6 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import { cn } from '@/utils/cn'
 import { GlassPanel } from '@/components/ui/GlassPanel'
-import { AppleAvatar } from '@/components/ui/AppleAvatar'
 import { DynamicType } from '@/components/ui/DynamicType'
 import type { Pet } from '@/types/pet'
 
@@ -95,12 +94,7 @@ export function PetSelectorStrip({ pets, activePetId, onSelect, loading }: PetSe
                   isActive && 'ring-2 ring-apple-blue scale-105'
                 )}
               >
-                <AppleAvatar
-                  src={pet.avatarUrl ? `/picture/${pet.avatarUrl}` : `/picture/${pet.name.toLowerCase()}-1.jpeg`}
-                  name={pet.name}
-                  size="md"
-                  className="bg-white/20 ring-0"
-                />
+                <GlassAvatar pet={pet} />
                 <DynamicType
                   styleLevel="caption2"
                   weight={isActive ? 600 : 400}
@@ -116,6 +110,34 @@ export function PetSelectorStrip({ pets, activePetId, onSelect, loading }: PetSe
           )
         })}
       </div>
+    </div>
+  )
+}
+
+/** Glassmorphism pet avatar — squircle, glass background, fallback to emoji */
+function GlassAvatar({ pet }: { pet: Pet }) {
+  const [failed, setFailed] = useState(false)
+  const speciesEmoji: Record<string, string> = {
+    dog: '🐕', cat: '🐱', bird: '🐦', fish: '🐟', rabbit: '🐰', hamster: '🐹', other: '🐾',
+  }
+  const src = pet.avatarUrl ? `/picture/${pet.avatarUrl}` : `/picture/${pet.name.toLowerCase()}-1.jpeg`
+
+  if (failed) {
+    return (
+      <div className="w-10 h-10 rounded-xl glass-light flex items-center justify-center">
+        <span className="text-lg">{speciesEmoji[pet.species] ?? '🐾'}</span>
+      </div>
+    )
+  }
+
+  return (
+    <div className="w-10 h-10 rounded-xl overflow-hidden glass-light">
+      <img
+        src={src}
+        alt={pet.name}
+        className="w-full h-full object-cover"
+        onError={() => setFailed(true)}
+      />
     </div>
   )
 }
