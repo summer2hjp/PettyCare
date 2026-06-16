@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { usePets } from '@/store/pet-context'
 import { useDashboardData } from '@/features/dashboard/hooks/useDashboardData'
 import { usePetMoments } from '@/features/dashboard/hooks/usePetMoments'
-import { PetSelectorStrip } from '@/features/dashboard/components/PetSelectorStrip'
 import { PetHeroCard } from '@/features/dashboard/components/PetHeroCard'
 import { MomentSection } from '@/features/dashboard/components/MomentSection'
 import { GrowthTimelineSection } from '@/features/dashboard/components/GrowthTimelineSection'
@@ -13,7 +12,6 @@ import { QuickActionsSection } from '@/features/dashboard/components/QuickAction
 import { PhotoPreview } from '@/features/dashboard/components/PhotoPreview'
 import type { DashboardAction } from '@/features/dashboard/types/dashboard'
 import type { PetMoment } from '@/types/moments'
-import type { Pet } from '@/types/pet'
 
 interface DashboardPageProps {
   onNavigate: (page: string) => void
@@ -21,13 +19,12 @@ interface DashboardPageProps {
 
 export function DashboardPage({ onNavigate }: DashboardPageProps) {
   const { pets, loading: petsLoading } = usePets()
-  const [selectedPetId, setSelectedPetId] = useState<string | null>(null)
-  const data = useDashboardData(selectedPetId)
+  const data = useDashboardData()
 
   // Fetch moments for each type (with local image fallback)
-  const dailyMoments = usePetMoments({ petId: selectedPetId, type: 'daily', limit: 12, pets })
-  const interactionMoments = usePetMoments({ petId: selectedPetId, type: 'interaction', limit: 8, pets })
-  const growthMoments = usePetMoments({ petId: selectedPetId, type: 'growth', limit: 10, pets })
+  const dailyMoments = usePetMoments({ petId: null, type: 'daily', limit: 12, pets })
+  const interactionMoments = usePetMoments({ petId: null, type: 'interaction', limit: 8, pets })
+  const growthMoments = usePetMoments({ petId: null, type: 'growth', limit: 10, pets })
 
   // Photo preview state
   const [previewMoments, setPreviewMoments] = useState<PetMoment[] | null>(null)
@@ -42,34 +39,12 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     onNavigate(action.navigateTo.page)
   }
 
-  const activePet: Pet | undefined = selectedPetId
-    ? pets.find(p => p.id === selectedPetId)
-    : undefined
-
   const overallLoading = data.loading || petsLoading
 
   return (
     <div>
       {/* Quick Actions — always on top */}
       <QuickActionsSection actions={data.actions} onAction={handleAction} />
-
-      {/* Pet Selector Strip */}
-      <PetSelectorStrip
-        pets={pets}
-        activePetId={selectedPetId}
-        onSelect={setSelectedPetId}
-        loading={petsLoading}
-      />
-
-      {/* Pet Hero Card — only when a specific pet is selected */}
-      {activePet && (
-        <PetHeroCard
-          pet={activePet}
-          health={data.health}
-          activity={data.activity}
-          loading={overallLoading}
-        />
-      )}
 
       {/* Daily Life Moments */}
       <MomentSection
