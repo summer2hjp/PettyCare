@@ -1,99 +1,129 @@
 // src/features/dashboard/DashboardPage.tsx
+
+import { useState } from 'react'
 import { usePets } from '@/store/pet-context'
-import { DashboardSection } from '@/features/dashboard/components/DashboardSection'
-import { HealthSummarySection } from '@/features/dashboard/components/HealthSummarySection'
-import { ActivitySummarySection } from '@/features/dashboard/components/ActivitySummarySection'
-import { FeedingScheduleSection } from '@/features/dashboard/components/FeedingScheduleSection'
-import { UpcomingEventsSection } from '@/features/dashboard/components/UpcomingEventsSection'
-import { RecentActivitySection } from '@/features/dashboard/components/RecentActivitySection'
-import { InsightsSection } from '@/features/dashboard/components/InsightsSection'
-import { QuickActionsSection } from '@/features/dashboard/components/QuickActionsSection'
 import { useDashboardData } from '@/features/dashboard/hooks/useDashboardData'
+import { usePetMoments } from '@/features/dashboard/hooks/usePetMoments'
+import { PetSelectorStrip } from '@/features/dashboard/components/PetSelectorStrip'
+import { PetHeroCard } from '@/features/dashboard/components/PetHeroCard'
+import { MomentSection } from '@/features/dashboard/components/MomentSection'
+import { GrowthTimelineSection } from '@/features/dashboard/components/GrowthTimelineSection'
+import { DataCardRow } from '@/features/dashboard/components/DataCardRow'
+import { QuickActionsSection } from '@/features/dashboard/components/QuickActionsSection'
+import { PhotoPreview } from '@/features/dashboard/components/PhotoPreview'
 import type { DashboardAction } from '@/features/dashboard/types/dashboard'
+import type { PetMoment } from '@/types/moments'
+import type { Pet } from '@/types/pet'
 
 interface DashboardPageProps {
   onNavigate: (page: string) => void
 }
 
 export function DashboardPage({ onNavigate }: DashboardPageProps) {
-  const { pets } = usePets()
-  const data = useDashboardData()
+  const { pets, loading: petsLoading } = usePets()
+  const [selectedPetId, setSelectedPetId] = useState<string | null>(null)
+  const data = useDashboardData(selectedPetId)
+
+  // Fetch moments for each type
+  const dailyMoments = usePetMoments({ petId: selectedPetId, type: 'daily', limit: 12 })
+  const interactionMoments = usePetMoments({ petId: selectedPetId, type: 'interaction', limit: 8 })
+  const growthMoments = usePetMoments({ petId: selectedPetId, type: 'growth', limit: 10 })
+
+  // Photo preview state
+  const [previewMoments, setPreviewMoments] = useState<PetMoment[] | null>(null)
+  const [previewIndex, setPreviewIndex] = useState(0)
+
+  const openPreview = (moments: PetMoment[], index: number) => {
+    setPreviewMoments(moments)
+    setPreviewIndex(index)
+  }
 
   const handleAction = (action: DashboardAction) => {
     onNavigate(action.navigateTo.page)
   }
 
+  const activePet: Pet | undefined = selectedPetId
+    ? pets.find(p => p.id === selectedPetId)
+    : undefined
+
+  const overallLoading = data.loading || petsLoading
+
   return (
     <div>
-      {/* Quick Actions (no loading/empty/error wrapper — always shown) */}
+      {/* Pet Selector Strip */}
+      <PetSelectorStrip
+        pets={pets}
+        activePetId={selectedPetId}
+        onSelect={setSelectedPetId}
+        loading={petsLoading}
+      />
+
+      {/* Pet Hero Card — only when a specific pet is selected */}
+      {activePet && (
+        <PetHeroCard
+          pet={activePet}
+          health={data.health}
+          activity={data.activity}
+          loading={overallLoading}
+        />
+      )}
+
+      {/* Quick Actions */}
       <QuickActionsSection actions={data.actions} onAction={handleAction} />
 
-      {/* Health Overview */}
-      <DashboardSection
-        title="Health Overview"
-        subtitle={pets.length > 0 ? `${pets.length} pet${pets.length > 1 ? 's' : ''}` : undefined}
-        action={{ label: 'View All', onClick: () => onNavigate('health') }}
-        loading={data.loading}
-        error={data.error}
-        empty={!data.health}
-        emptyMessage="Add health records to see an overview"
-        onRetry={() => window.location.reload()}
-      >
-        {data.health && <HealthSummarySection data={data.health} />}
-      </DashboardSection>
+      {/* Daily Life Moments */}
+      <MomentSection
+        title="📸 宠物的日常"
+        subtitle={activePet ? activePet.name : undefined}
+        moments={dailyMoments.moments}
+        momentType="daily"
+        loading={dailyMoments.loading}
+        error={dailyMoments.error}
+        emptyMessage="还没有日常记录，快去拍一张吧 📸"
+        onMomentClick={(index) => openPreview(dailyMoments.moments, index)}
+        onRetry={dailyMoments.refresh}
+      />
 
-      {/* Activity Summary */}
-      <DashboardSection
-        title="Activity"
-        action={{ label: 'View All', onClick: () => onNavigate('activity') }}
-        loading={data.loading}
-        empty={!data.activity || data.activity.steps === 0}
-        emptyMessage="No activity data yet — take your pet for a walk!"
-      >
-        {data.activity && <ActivitySummarySection data={data.activity} />}
-      </DashboardSection>
+      {/* Interaction Moments */}
+      <MomentSection
+        title="💕 互动瞬间"
+        subtitle={activePet ? activePet.name : undefined}
+        moments={interactionMoments.moments}
+        momentType="interaction"
+        loading={interactionMoments.loading}
+        error={interactionMoments.error}
+        emptyMessage="还没有互动记录，和宠物一起玩吧 🎾"
+        onMomentClick={(index) => openPreview(interactionMoments.moments, index)}
+        onRetry={interactionMoments.refresh}
+      />
 
-      {/* Feeding Schedule */}
-      <DashboardSection
-        title="Feeding Schedule"
-        action={{ label: 'View All', onClick: () => onNavigate('feeding') }}
-        loading={data.loading}
-        empty={data.feeding.length === 0}
-        emptyMessage="No feeding schedule set up"
-      >
-        <FeedingScheduleSection meals={data.feeding} />
-      </DashboardSection>
+      {/* Growth Timeline */}
+      <GrowthTimelineSection
+        moments={growthMoments.moments}
+        loading={growthMoments.loading}
+        error={growthMoments.error}
+        onMomentClick={(index) => openPreview(growthMoments.moments, index)}
+        onRetry={growthMoments.refresh}
+      />
 
-      {/* Upcoming Events */}
-      <DashboardSection
-        title="Upcoming Events"
-        action={{ label: 'View All', onClick: () => onNavigate('appointments') }}
-        loading={data.loading}
-        empty={data.events.length === 0}
-        emptyMessage="No upcoming appointments or vaccinations"
-      >
-        <UpcomingEventsSection events={data.events} />
-      </DashboardSection>
+      {/* Data Card Row */}
+      <DataCardRow
+        health={data.health}
+        feeding={data.feeding}
+        events={data.events}
+        insights={data.insights}
+        loading={overallLoading}
+        onNavigate={onNavigate}
+      />
 
-      {/* Recent Activity */}
-      <DashboardSection
-        title="Recent Activity"
-        loading={data.loading}
-        empty={data.timeline.length === 0}
-        emptyMessage="No recent activity to show"
-      >
-        <RecentActivitySection entries={data.timeline} />
-      </DashboardSection>
-
-      {/* Insights */}
-      <DashboardSection
-        title="Insights"
-        loading={data.loading}
-        empty={data.insights.length === 0}
-        emptyMessage="Check back later for data insights"
-      >
-        <InsightsSection insights={data.insights} />
-      </DashboardSection>
+      {/* Photo Preview Modal */}
+      {previewMoments && (
+        <PhotoPreview
+          moments={previewMoments}
+          initialIndex={previewIndex}
+          onClose={() => setPreviewMoments(null)}
+        />
+      )}
     </div>
   )
 }
