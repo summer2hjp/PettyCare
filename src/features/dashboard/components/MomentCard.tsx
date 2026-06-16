@@ -29,12 +29,6 @@ const radiusClasses: Record<MomentType, string> = {
   growth: 'rounded-xl',
 }
 
-const sizeClasses: Record<MomentType, string> = {
-  daily: 'min-w-[70px]',
-  interaction: 'min-w-[90px]',
-  growth: 'min-w-[140px]',
-}
-
 export function MomentCard({ moment, type, onClick, className, style }: MomentCardProps) {
   const [imgError, setImgError] = useState(false)
   const [imgLoaded, setImgLoaded] = useState(false)
@@ -48,10 +42,9 @@ export function MomentCard({ moment, type, onClick, className, style }: MomentCa
         radiusClasses[type],
         glassClasses[type],
         aspectClasses[type],
-        sizeClasses[type],
         className
       )}
-      style={style}
+      style={{ minWidth: type === 'growth' ? 140 : type === 'interaction' ? 90 : 70, ...style }}
     >
       {!imgLoaded && !imgError && (
         <div className="absolute inset-0 flex items-center justify-center animate-pulse bg-white/10">
