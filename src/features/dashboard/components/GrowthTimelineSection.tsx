@@ -154,7 +154,7 @@ export function GrowthTimelineSection({
                         selecting ? 'cursor-pointer' : 'cursor-pointer group-hover:scale-[1.02] group-hover:-translate-y-0.5 group-hover:shadow-xl'
                       )}
                     >
-                      <div className="aspect-square relative">
+                      <div className="aspect-[3/4] relative">
                         <img
                           src={moment.imageUrl}
                           alt={moment.caption ?? ''}
