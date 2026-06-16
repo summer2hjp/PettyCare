@@ -3,7 +3,7 @@
 import { DynamicType } from '@/components/ui/DynamicType'
 import { GlassPanel } from '@/components/ui/GlassPanel'
 import { GlassMomentSkeleton } from './GlassMomentSkeleton'
-import { ChevronRight, Clock } from 'lucide-react'
+import { ChevronRight, Clock, Plus } from 'lucide-react'
 import type { PetMoment } from '@/types/moments'
 
 interface GrowthTimelineSectionProps {
@@ -12,6 +12,7 @@ interface GrowthTimelineSectionProps {
   error?: string | null
   onMomentClick: (index: number) => void
   onRetry?: () => void
+  onUpload?: () => void
 }
 
 function formatDate(dateStr: string): string {
@@ -25,6 +26,7 @@ export function GrowthTimelineSection({
   error,
   onMomentClick,
   onRetry,
+  onUpload,
 }: GrowthTimelineSectionProps) {
   const sorted = [...moments].sort(
     (a, b) => new Date(a.takenAt).getTime() - new Date(b.takenAt).getTime()
@@ -33,7 +35,18 @@ export function GrowthTimelineSection({
   return (
     <div className="mb-6">
       <div className="flex items-center justify-between mb-3 px-1">
-        <DynamicType styleLevel="title3" weight={600}>📈 成长轨迹</DynamicType>
+        <div className="flex items-center gap-2">
+          <DynamicType styleLevel="title3" weight={600}>📈 成长轨迹</DynamicType>
+          {onUpload && (
+            <button
+              onClick={onUpload}
+              className="w-6 h-6 rounded-full glass-light flex items-center justify-center hover:scale-110 transition-transform"
+              title="上传照片"
+            >
+              <Plus size={14} />
+            </button>
+          )}
+        </div>
       </div>
 
       {error ? (

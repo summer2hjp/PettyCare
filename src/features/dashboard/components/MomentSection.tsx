@@ -2,7 +2,7 @@
 
 import { useRef, useState, useEffect } from 'react'
 import { DynamicType } from '@/components/ui/DynamicType'
-import { ChevronRight, Camera } from 'lucide-react'
+import { ChevronRight, Camera, Plus } from 'lucide-react'
 import { MomentCard } from './MomentCard'
 import { GlassMomentSkeleton } from './GlassMomentSkeleton'
 import type { PetMoment, MomentType } from '@/types/moments'
@@ -18,6 +18,7 @@ interface MomentSectionProps {
   onViewAll?: () => void
   onMomentClick: (index: number) => void
   onRetry?: () => void
+  onUpload?: (type: MomentType) => void
 }
 
 export function MomentSection({
@@ -31,6 +32,7 @@ export function MomentSection({
   onViewAll,
   onMomentClick,
   onRetry,
+  onUpload,
 }: MomentSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [canScrollRight, setCanScrollRight] = useState(false)
@@ -62,6 +64,15 @@ export function MomentSection({
             <DynamicType styleLevel="caption1" className="text-apple-tertiaryLabel">
               {subtitle}
             </DynamicType>
+          )}
+          {onUpload && (
+            <button
+              onClick={() => onUpload(momentType)}
+              className="ml-1 w-6 h-6 rounded-full glass-light flex items-center justify-center hover:scale-110 transition-transform"
+              title="上传照片"
+            >
+              <Plus size={14} />
+            </button>
           )}
         </div>
         {onViewAll && (

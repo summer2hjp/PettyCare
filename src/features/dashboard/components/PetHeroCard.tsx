@@ -65,12 +65,11 @@ export function PetHeroCard({ pet, health, activity, loading }: PetHeroCardProps
               src={`/picture/${pet.avatarUrl}`}
               alt={pet.name}
               className="w-full h-full object-cover"
-              onError={(e) => {
+              onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
                 // Fall back to local image, then emoji
-                (e.target as HTMLImageElement).src = `/picture/${pet.name.toLowerCase()}-1.jpeg`
-                e.target.onerror = () => {
-                  (e.target as HTMLImageElement).style.display = 'none'
-                }
+                const img = e.currentTarget
+                img.src = `/picture/${pet.name.toLowerCase()}-1.jpeg`
+                img.onerror = () => { img.style.display = 'none' }
               }}
             />
           ) : (
