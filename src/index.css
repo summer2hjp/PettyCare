@@ -22,25 +22,25 @@
   --apple-pink: #FF2D55;
   --apple-brown: #A2845E;
 
-  /* ── Semantic tokens (Tailwind classes resolve to these via var()) ── */
-  --apple-label: #000000;
-  --apple-secondaryLabel: #3C3C4399;
-  --apple-tertiaryLabel: #3C3C434C;
-  --apple-quaternaryLabel: #3C3C432E;
-  --apple-placeholderText: #3C3C434C;
-  --apple-separator: #3C3C4349;
-  --apple-opaqueSeparator: #C6C6C8;
+  /* ── Semantic tokens — warm pet-care palette ── */
+  --apple-label: #2C2C2C;
+  --apple-secondaryLabel: #8B7E74CC;
+  --apple-tertiaryLabel: #8B7E744D;
+  --apple-quaternaryLabel: #8B7E742E;
+  --apple-placeholderText: #8B7E744D;
+  --apple-separator: #D6CEC44D;
+  --apple-opaqueSeparator: #D6CEC4;
   --apple-link: #007AFF;
-  --apple-systemBackground: #FFFFFF;
-  --apple-secondarySystemBackground: #F2F2F7;
-  --apple-tertiarySystemBackground: #FFFFFF;
-  --apple-systemGroupedBackground: #F2F2F7;
-  --apple-secondarySystemGroupedBackground: #FFFFFF;
-  --apple-tertiarySystemGroupedBackground: #F2F2F7;
-  --apple-fill: #78788033;
-  --apple-secondaryFill: #78788028;
-  --apple-tertiaryFill: #7676801E;
-  --apple-quaternaryFill: #74748014;
+  --apple-systemBackground: #F8F4EF;
+  --apple-secondarySystemBackground: #F0EBE3;
+  --apple-tertiarySystemBackground: #F5F0E9;
+  --apple-systemGroupedBackground: #EBE5DC;
+  --apple-secondarySystemGroupedBackground: #FAF6F0;
+  --apple-tertiarySystemGroupedBackground: #E8E1D6;
+  --apple-fill: #B8A89833;
+  --apple-secondaryFill: #B8A89828;
+  --apple-tertiaryFill: #B8A8981E;
+  --apple-quaternaryFill: #B8A89814;
 
   /* ── Shadow tokens ── */
   --apple-shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.04);
@@ -140,7 +140,7 @@ html.theme-transitioning *::after {
 
 @layer components {
   .glass {
-    background-color: rgba(255, 255, 255, 0.72);
+    background-color: rgba(245, 238, 228, 0.72);
     backdrop-filter: blur(40px) saturate(1.2);
     -webkit-backdrop-filter: blur(40px) saturate(1.2);
   }
@@ -149,7 +149,7 @@ html.theme-transitioning *::after {
   }
 
   .glass-light {
-    background-color: rgba(255, 255, 255, 0.48);
+    background-color: rgba(245, 238, 228, 0.48);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   }
@@ -158,7 +158,7 @@ html.theme-transitioning *::after {
   }
 
   .glass-heavy {
-    background-color: rgba(255, 255, 255, 0.85);
+    background-color: rgba(250, 246, 240, 0.85);
     backdrop-filter: blur(60px) saturate(1.4);
     -webkit-backdrop-filter: blur(60px) saturate(1.4);
   }
