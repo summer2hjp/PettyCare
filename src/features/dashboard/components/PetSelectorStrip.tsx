@@ -1,4 +1,4 @@
-import { useRef, useEffect, type ReactNode } from 'react'
+import { useRef, useEffect } from 'react'
 import { cn } from '@/utils/cn'
 import { GlassPanel } from '@/components/ui/GlassPanel'
 import { AppleAvatar } from '@/components/ui/AppleAvatar'

@@ -26,7 +26,6 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(pet?.avatarUrl ? `/picture/${pet.avatarUrl}` : null)
-  const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -45,7 +44,6 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
     if (!file) return
     const url = URL.createObjectURL(file)
     setPreviewUrl(url)
-    setPendingAvatarFile(file)
   }
 
   const validate = () => {
@@ -66,7 +64,6 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
       if (isEdit && pet) await updatePet(pet.id, form)
       else await addPet(form)
       onSaved?.()
-      setPendingAvatarFile(null)
     } catch (err) {
       console.error('Save pet error:', err)
       const msg = err instanceof Error ? err.message : (err as Record<string, unknown>)?.message as string || JSON.stringify(err)

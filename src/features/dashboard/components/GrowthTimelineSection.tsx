@@ -1,6 +1,5 @@
 // src/features/dashboard/components/GrowthTimelineSection.tsx
 
-import { cn } from '@/utils/cn'
 import { DynamicType } from '@/components/ui/DynamicType'
 import { GlassPanel } from '@/components/ui/GlassPanel'
 import { GlassMomentSkeleton } from './GlassMomentSkeleton'

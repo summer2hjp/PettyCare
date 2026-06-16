@@ -1,7 +1,6 @@
 // src/features/dashboard/components/MomentSection.tsx
 
 import { useRef, useState, useEffect } from 'react'
-import { cn } from '@/utils/cn'
 import { DynamicType } from '@/components/ui/DynamicType'
 import { ChevronRight, Camera } from 'lucide-react'
 import { MomentCard } from './MomentCard'

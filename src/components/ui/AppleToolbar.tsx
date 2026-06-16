@@ -1,4 +1,4 @@
-import { Search, Bell, Sun, Moon, X } from 'lucide-react'
+import { Search, Bell, Sun, Moon, X, LogOut } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import { useState, useRef, useEffect } from 'react'
 
@@ -8,8 +8,10 @@ interface AppleToolbarProps {
   onSearch?: (value: string) => void
   notificationCount?: number
   userAvatar?: string
+  userEmail?: string
   isDark?: boolean
   onThemeToggle?: () => void
+  onSignOut?: () => void
   className?: string
 }
 
@@ -62,13 +64,17 @@ export function AppleToolbar({
   onSearch,
   notificationCount = 0,
   userAvatar,
+  userEmail,
   isDark = false,
   onThemeToggle,
+  onSignOut,
   className,
 }: AppleToolbarProps) {
   const [searchOpen, setSearchOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
+  const userMenuRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (searchOpen) {
@@ -91,6 +97,18 @@ export function AppleToolbar({
     }
     return () => document.removeEventListener('mousedown', handleClick)
   }, [searchOpen])
+
+  useEffect(() => {
+    const handleClick = (e: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
+        setUserMenuOpen(false)
+      }
+    }
+    if (userMenuOpen) {
+      document.addEventListener('mousedown', handleClick)
+    }
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [userMenuOpen])
 
   return (
     <>
@@ -153,11 +171,33 @@ export function AppleToolbar({
             {isDark ? <Sun size={18} className="text-apple-label" /> : <Moon size={18} className="text-apple-label" />}
           </button>
 
-          <div className="w-8 h-8 flex items-center justify-center shrink-0">
-            {userAvatar ? (
-              <img src={userAvatar} alt="" className="w-full h-full rounded-full object-cover" />
-            ) : (
-              <span className="text-lg">👤</span>
+          <div className="relative shrink-0" ref={userMenuRef}>
+            <button
+              onClick={() => setUserMenuOpen(!userMenuOpen)}
+              className="w-8 h-8 flex items-center justify-center rounded-full transition-colors"
+            >
+              {userAvatar ? (
+                <img src={userAvatar} alt="" className="w-full h-full rounded-full object-cover" />
+              ) : (
+                <span className="text-lg">👤</span>
+              )}
+            </button>
+
+            {userMenuOpen && (
+              <div className="absolute right-0 top-10 w-56 rounded-xl bg-[var(--apple-systemBackground)] shadow-apple-xl dark:shadow-dark-apple-xl border border-apple-separator py-1.5 z-50">
+                {userEmail && (
+                  <div className="px-4 py-2 border-b border-apple-separator">
+                    <p className="text-sm text-apple-label font-medium truncate">{userEmail}</p>
+                  </div>
+                )}
+                <button
+                  onClick={() => { setUserMenuOpen(false); onSignOut?.() }}
+                  className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-apple-label hover:bg-apple-secondaryFill transition-colors"
+                >
+                  <LogOut size={15} />
+                  Sign Out
+                </button>
+              </div>
             )}
           </div>
         </div>

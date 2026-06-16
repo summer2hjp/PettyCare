@@ -2,6 +2,7 @@ import { type ReactNode, useState } from 'react'
 import { AppleSidebar, type NavItem } from '@/components/ui/AppleSidebar'
 import { AppleToolbar } from '@/components/ui/AppleToolbar'
 import { useTheme } from '@/hooks/useTheme'
+import { useAuth } from '@/store/auth-context'
 import { cn } from '@/utils/cn'
 
 interface RootLayoutProps {
@@ -22,6 +23,7 @@ export function RootLayout({
   className,
 }: RootLayoutProps) {
   const { theme, toggleTheme } = useTheme()
+  const { user, signOut } = useAuth()
   const [searchValue, setSearchValue] = useState('')
 
   return (
@@ -39,6 +41,8 @@ export function RootLayout({
           onSearch={setSearchValue}
           isDark={theme === 'dark'}
           onThemeToggle={toggleTheme}
+          userEmail={user?.email}
+          onSignOut={signOut}
         />
 
         <main className={cn('flex-1 overflow-y-auto p-5 bg-[var(--apple-secondarySystemBackground)]', className)}>

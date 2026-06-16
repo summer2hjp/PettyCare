@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
 import { supabase } from '@/lib/supabase'
+import { toSnakeCase } from '@/utils/case'
 import type { Pet, PetFormData } from '@/types/pet'
 
 interface PetContextType {
@@ -42,7 +43,7 @@ export function PetProvider({ children }: { children: ReactNode }) {
 
     const { data: newPet, error: err } = await supabase
       .from('pets')
-      .insert({ ...data, household_id: members.household_id })
+      .insert({ ...toSnakeCase(data), household_id: members.household_id })
       .select()
       .single()
     if (err) throw err
@@ -52,7 +53,7 @@ export function PetProvider({ children }: { children: ReactNode }) {
   const updatePet = useCallback(async (id: string, data: Partial<PetFormData>) => {
     const { error: err } = await supabase
       .from('pets')
-      .update({ ...data, updated_at: new Date().toISOString() })
+      .update({ ...toSnakeCase(data), updated_at: new Date().toISOString() })
       .eq('id', id)
     if (err) throw err
     setPets(prev => prev.map(p => p.id === id ? { ...p, ...data } as Pet : p))

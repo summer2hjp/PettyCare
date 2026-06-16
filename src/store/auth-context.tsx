@@ -32,12 +32,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signIn = async (email: string, password: string): Promise<string | null> => {
     const { error } = await supabase.auth.signInWithPassword({ email, password })
-    return error?.message ?? null
+    if (!error) return null
+    if (error.message.includes('Email not confirmed')) {
+      return 'Please check your email and confirm your account before signing in'
+    }
+    if (error.message.includes('Invalid login credentials')) {
+      return 'Account not found — please sign up first, or check your password'
+    }
+    return error.message
   }
 
   const signUp = async (email: string, password: string): Promise<string | null> => {
-    const { error } = await supabase.auth.signUp({ email, password })
-    return error?.message ?? null
+    const { data, error } = await supabase.auth.signUp({ email, password })
+    if (error) return error.message
+    if (data.user && data.user.identities?.length === 0) {
+      return 'An account with this email already exists — please sign in'
+    }
+    return null
   }
 
   const signOut = async () => {

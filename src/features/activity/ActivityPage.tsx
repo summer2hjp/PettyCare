@@ -7,6 +7,7 @@ import { AppleProgressRing } from '@/components/ui/AppleProgressRing'
 import { PetSelector } from '@/components/pet/PetSelector'
 import { DynamicType } from '@/components/ui/DynamicType'
 import { EmptyState } from '@/components/common/EmptyState'
+import { LoadingState } from '@/components/common/LoadingState'
 import { formatDate } from '@/utils/date'
 import { cn } from '@/utils/cn'
 import { Footprints, Timer, Flame, TrendingUp, Dog } from 'lucide-react'
@@ -36,14 +37,38 @@ export function ActivityPage() {
   const [selectedPetId, setSelectedPetId] = useState(pets[0]?.id ?? '')
   const [view, setView] = useState<ViewMode>('week')
   const [records, setRecords] = useState<ActivityRecord[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    setLoading(true)
     supabase.from('activity_records')
       .select('*')
       .eq('pet_id', selectedPetId)
       .order('date', { ascending: true })
-      .then(({ data }) => setRecords(data as ActivityRecord[] ?? []))
+      .then(({ data }) => {
+        setRecords(data as ActivityRecord[] ?? [])
+        setLoading(false)
+      })
   }, [selectedPetId])
+
+  if (loading) return (
+    <div>
+      <div className="flex items-center mb-5">
+        <PetSelector selectedPetId={selectedPetId} onChange={setSelectedPetId} />
+      </div>
+      <LoadingState lines={4} card />
+    </div>
+  )
+
+  if (records.length === 0) return (
+    <div>
+      <div className="flex items-center mb-5">
+        <PetSelector selectedPetId={selectedPetId} onChange={setSelectedPetId} />
+      </div>
+      <EmptyState icon="🏃" title="No activity data" description="Start tracking your pet's activity to see stats and history here" />
+    </div>
+  )
+
   const today = records[records.length - 1]
   const weekAvg = records.slice(-7).reduce((a, r) => ({ steps: a.steps + r.steps, distance: a.distance + r.distance, duration: a.duration + r.duration, calories: a.calories + r.calories }), { steps: 0, distance: 0, duration: 0, calories: 0 })
   const avgSteps = Math.round(weekAvg.steps / 7)
