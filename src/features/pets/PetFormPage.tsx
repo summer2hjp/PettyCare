@@ -44,6 +44,8 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
     if (!file) return
     const url = URL.createObjectURL(file)
     setPreviewUrl(url)
+    // Store the filename as avatar reference (MVP: file must be manually placed in public/picture/)
+    set('avatarUrl', file.name)
   }
 
   const validate = () => {

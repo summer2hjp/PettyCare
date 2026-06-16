@@ -50,6 +50,9 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
 
   return (
     <div>
+      {/* Quick Actions — always on top */}
+      <QuickActionsSection actions={data.actions} onAction={handleAction} />
+
       {/* Pet Selector Strip */}
       <PetSelectorStrip
         pets={pets}
@@ -67,9 +70,6 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
           loading={overallLoading}
         />
       )}
-
-      {/* Quick Actions */}
-      <QuickActionsSection actions={data.actions} onAction={handleAction} />
 
       {/* Daily Life Moments */}
       <MomentSection

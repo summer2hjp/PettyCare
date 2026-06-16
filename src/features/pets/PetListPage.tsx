@@ -58,7 +58,12 @@ export function PetListPage({ onSelect, onAdd }: PetListPageProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filtered.map(pet => (
             <AppleCard key={pet.id} hoverable onClick={() => onSelect?.(pet.id)} className="flex flex-col items-center text-center py-6">
-              <AppleAvatar name={pet.name} size="xl" className="mb-3" />
+              <AppleAvatar
+                name={pet.name}
+                size="xl"
+                className="mb-3"
+                src={pet.avatarUrl ? `/picture/${pet.avatarUrl}` : `/picture/${pet.name.toLowerCase()}-1.jpeg`}
+              />
               <DynamicType styleLevel="headline" weight={600}>{pet.name}</DynamicType>
               <DynamicType styleLevel="caption1"  className="mt-0.5">{speciesEmoji[pet.species] ?? '🐾'} {pet.breed}</DynamicType>
               <DynamicType styleLevel="caption2"  className="mt-2"><span className="text-lg">{pet.gender === 'male' ? '♂' : '♀'}</span> · {calculateAge(pet.birthDate)} · {pet.weight}{pet.weightUnit}</DynamicType>

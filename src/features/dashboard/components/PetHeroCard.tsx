@@ -59,14 +59,18 @@ export function PetHeroCard({ pet, health, activity, loading }: PetHeroCardProps
     <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-6">
       {/* Pet Profile Card */}
       <GlassPanel intensity="medium" className="relative overflow-hidden p-0" as="div">
-        <div className="aspect-[16/9] relative">
+        <div className="aspect-[16/9] relative bg-gradient-to-br from-white/10 to-white/5">
           {pet.avatarUrl ? (
             <img
               src={`/picture/${pet.avatarUrl}`}
               alt={pet.name}
               className="w-full h-full object-cover"
               onError={(e) => {
-                (e.target as HTMLImageElement).style.display = 'none'
+                // Fall back to local image, then emoji
+                (e.target as HTMLImageElement).src = `/picture/${pet.name.toLowerCase()}-1.jpeg`
+                e.target.onerror = () => {
+                  (e.target as HTMLImageElement).style.display = 'none'
+                }
               }}
             />
           ) : (
