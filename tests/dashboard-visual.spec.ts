@@ -36,14 +36,115 @@ async function run() {
     }
   }
 
+  // ─────────────────────────────────────────────────
+  //  AUTH: Ensure signed in before dashboard tests
+  // ─────────────────────────────────────────────────
+  async function ensureAuthenticated() {
+    await page.goto(BASE_URL, { waitUntil: 'networkidle0' })
+    await sleep(2000)
+
+    const bodyAfterLoad = await page.evaluate(() => document.body.innerText)
+    if (bodyAfterLoad.includes('Welcome back') || bodyAfterLoad.includes('Dashboard')) return
+
+    console.log('🔑 Signing in as test user...')
+
+    // Switch to register mode
+    await page.evaluate(() => {
+      const btn = Array.from(document.querySelectorAll('button'))
+        .find(b => b.textContent?.trim() === 'Sign up' && !b.closest('nav'))
+      if (btn) btn.click()
+    })
+    await sleep(600)
+
+    // Fill auth form using native setter (works with React controlled inputs)
+    await page.evaluate(() => {
+      const emailInput = document.querySelector<HTMLInputElement>('input[type="email"]')
+      const passInput = document.querySelector<HTMLInputElement>('input[type="password"]')
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set
+      if (emailInput && setter) {
+        setter.call(emailInput, 'test@pettycare.com')
+        emailInput.dispatchEvent(new Event('input', { bubbles: true }))
+        emailInput.dispatchEvent(new Event('change', { bubbles: true }))
+      }
+      if (passInput && setter) {
+        setter.call(passInput, 'test123456')
+        passInput.dispatchEvent(new Event('input', { bubbles: true }))
+        passInput.dispatchEvent(new Event('change', { bubbles: true }))
+      }
+    })
+    await sleep(300)
+
+    // Submit sign up
+    await page.evaluate(() => {
+      const btn = Array.from(document.querySelectorAll('button'))
+        .find(b => b.textContent?.trim() === 'Create account')
+      if (btn) btn.click()
+    })
+    await sleep(2000)
+
+    // Check if signup failed (user already exists → still on register form)
+    const afterSignup = await page.evaluate(() => {
+      const buttons = Array.from(document.querySelectorAll('button'))
+      return {
+        hasSignIn: buttons.some(b => b.textContent?.trim() === 'Sign in'),
+        hasCreateAccount: buttons.some(b => b.textContent?.trim() === 'Create account'),
+      }
+    })
+
+    if (afterSignup.hasCreateAccount && !afterSignup.hasSignIn) {
+      // Signup failed — switch to login mode
+      await page.evaluate(() => {
+        const btn = Array.from(document.querySelectorAll('button'))
+          .find(b => b.textContent?.trim() === 'Sign in')
+        if (btn) btn.click()
+      })
+      await sleep(600)
+    }
+
+    // Fill login form
+    await page.evaluate(() => {
+      const emailInput = document.querySelector<HTMLInputElement>('input[type="email"]')
+      const passInput = document.querySelector<HTMLInputElement>('input[type="password"]')
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set
+      if (emailInput && setter) {
+        setter.call(emailInput, 'test@pettycare.com')
+        emailInput.dispatchEvent(new Event('input', { bubbles: true }))
+        emailInput.dispatchEvent(new Event('change', { bubbles: true }))
+      }
+      if (passInput && setter) {
+        setter.call(passInput, 'test123456')
+        passInput.dispatchEvent(new Event('input', { bubbles: true }))
+        passInput.dispatchEvent(new Event('change', { bubbles: true }))
+      }
+    })
+    await sleep(300)
+
+    // Sign in
+    await page.evaluate(() => {
+      const btn = Array.from(document.querySelectorAll('button'))
+        .find(b => b.textContent?.trim() === 'Sign in')
+      if (btn) btn.click()
+    })
+
+    // Wait for dashboard to render
+    await sleep(3000)
+    const dashboardReady = await page.evaluate(() =>
+      document.body.innerText.includes('Dashboard') || document.body.innerText.includes('Welcome back')
+    )
+    console.log(`  ${dashboardReady ? '✅' : '❌'} Authenticated (dashboard ready: ${dashboardReady})`)
+  }
+
   // ════════════════════════════════════════════════
   // TL1: UI RENDERING & STYLE VERIFICATION
   // ════════════════════════════════════════════════
 
+  // ─── Auth Step: Ensure signed in ───
+  await ensureAuthenticated()
+
   // ─── Test 1: Page loads ───
   console.log('\n📋 [TL1] Dashboard Page Load')
   await page.goto(BASE_URL, { waitUntil: 'networkidle0' })
-  await sleep(1000)
+  await sleep(1500)
   const title = await page.title()
   assert(title.includes('PettyCare'), `Page title is "${title}"`, 'TL1')
 
@@ -136,6 +237,80 @@ async function run() {
     return styledCount >= cards.length * 0.5
   })
   assert(hasSemanticColors, 'Dashboard cards use Apple semantic colors', 'TL1')
+
+  // ─── Test 23: PetSelectorStrip renders with pet avatars ───
+  console.log('\n📋 [TL1] Pet Selector Strip')
+  assert(bodyText.includes('My Pets'), 'PetSelectorStrip shows "My Pets" heading', 'TL1')
+  assert(bodyText.includes('All'), 'PetSelectorStrip has "All" pets button', 'TL1')
+  const petSelectorInfo = await page.evaluate(() => {
+    const body = document.body.innerText
+    const petNames = ['Luna', 'Max', 'Coco', 'Bella', 'Charlie'].filter(n => body.includes(n))
+    const glassEls = document.querySelectorAll('.glass-light').length
+    return { petNames, glassEls }
+  })
+  assert(petSelectorInfo.petNames.length >= 1,
+    `PetSelectorStrip shows ${petSelectorInfo.petNames.length} pet names`, 'TL1')
+  assert(petSelectorInfo.glassEls >= 1,
+    `Page has ${petSelectorInfo.glassEls} glass-light elements for pet selector`, 'TL1')
+  console.log(`  ℹ️  Pet names found: ${petSelectorInfo.petNames.join(', ') || 'none'}, glass-light: ${petSelectorInfo.glassEls}`)
+
+  // ─── Test 24: MomentSection daily gallery renders ───
+  console.log('\n📋 [TL1] Daily Moments Gallery')
+  assert(bodyText.includes('📸 宠物的日常'), 'Daily moments heading "📸 宠物的日常" renders', 'TL1')
+  const dailySection = await page.evaluate(() => {
+    const sections = Array.from(document.querySelectorAll('.mb-6'))
+    const daily = sections.find(s => s.textContent?.includes('📸 宠物的日常'))
+    if (!daily) return { exists: false, glassElements: 0 }
+    const cards = daily.querySelectorAll('.snap-start')
+    return { exists: true, glassElements: daily.querySelectorAll('.glass-light').length, cardCount: cards.length }
+  })
+  assert(dailySection.exists, 'Daily moments section container found in DOM', 'TL1')
+  console.log(`  ℹ️  Daily moments: ${dailySection.cardCount} cards, ${dailySection.glassElements} glass elements`)
+
+  // ─── Test 25: MomentSection interaction gallery renders ───
+  console.log('\n📋 [TL1] Interaction Moments Gallery')
+  assert(bodyText.includes('💕 互动瞬间'), 'Interaction moments heading "💕 互动瞬间" renders', 'TL1')
+  const interactionSection = await page.evaluate(() => {
+    const sections = Array.from(document.querySelectorAll('.mb-6'))
+    const interaction = sections.find(s => s.textContent?.includes('💕 互动瞬间'))
+    if (!interaction) return { exists: false, glassElements: 0 }
+    const cards = interaction.querySelectorAll('.snap-start')
+    return { exists: true, glassElements: interaction.querySelectorAll('.glass-light, .glass').length, cardCount: cards.length }
+  })
+  assert(interactionSection.exists, 'Interaction moments section container found in DOM', 'TL1')
+  console.log(`  ℹ️  Interaction moments: ${interactionSection.cardCount} cards, ${interactionSection.glassElements} glass elements`)
+
+  // ─── Test 26: GrowthTimelineSection renders ───
+  console.log('\n📋 [TL1] Growth Timeline')
+  assert(bodyText.includes('📈 成长轨迹'), 'Growth timeline heading "📈 成长轨迹" renders', 'TL1')
+  const growthSection = await page.evaluate(() => {
+    const sections = Array.from(document.querySelectorAll('.mb-6'))
+    const growth = sections.find(s => s.textContent?.includes('📈 成长轨迹'))
+    if (!growth) return { exists: false, glassElements: 0 }
+    return { exists: true, glassElements: growth.querySelectorAll('.glass-light').length, entries: growth.querySelectorAll('button').length }
+  })
+  assert(growthSection.exists, 'Growth timeline section container found in DOM', 'TL1')
+  console.log(`  ℹ️  Growth timeline: ${growthSection.entries} entries, ${growthSection.glassElements} glass elements`)
+
+  // ─── Test 27: DataCardRow shows stat cards ───
+  console.log('\n📋 [TL1] Data Cards Overview')
+  assert(bodyText.includes('Overview'), 'DataCardRow shows "Overview" section heading', 'TL1')
+  assert(bodyText.includes('Health'), 'DataCardRow has "Health" stat card label', 'TL1')
+  assert(bodyText.includes('Feeding'), 'DataCardRow has "Feeding" stat card label', 'TL1')
+  assert(bodyText.includes('Events'), 'DataCardRow has "Events" stat card label', 'TL1')
+  assert(bodyText.includes('Insight'), 'DataCardRow has "Insight" stat card label', 'TL1')
+
+  // ─── Test 28: GlassPanel / glassmorphism styling present on cards ───
+  console.log('\n📋 [TL1] Glassmorphism Design System')
+  const glassAll = await page.evaluate(() => {
+    const light = document.querySelectorAll('.glass-light').length
+    const medium = document.querySelectorAll('.glass').length
+    const heavy = document.querySelectorAll('.glass-heavy').length
+    return { light, medium, heavy, total: light + medium + heavy }
+  })
+  assert(glassAll.total >= 5,
+    `Glassmorphism styling widely used: ${glassAll.total} elements (light:${glassAll.light}, medium:${glassAll.medium}, heavy:${glassAll.heavy})`, 'TL1')
+  console.log(`  ℹ️  Glass elements: ${glassAll.light} light, ${glassAll.medium} medium, ${glassAll.heavy} heavy`)
 
   // ─── Screenshot ───
   await page.screenshot({ path: 'tests/dashboard-fullpage.png', fullPage: true })
