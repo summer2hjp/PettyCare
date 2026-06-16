@@ -96,9 +96,10 @@ export function PetSelectorStrip({ pets, activePetId, onSelect, loading }: PetSe
                 )}
               >
                 <AppleAvatar
-                  src={pet.avatarUrl ? `/picture/${pet.avatarUrl}` : undefined}
+                  src={pet.avatarUrl ? `/picture/${pet.avatarUrl}` : `/picture/${pet.name.toLowerCase()}-1.jpeg`}
                   name={pet.name}
                   size="md"
+                  className="bg-white/20 ring-0"
                 />
                 <DynamicType
                   styleLevel="caption2"
