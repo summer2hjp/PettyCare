@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react'
+import { useRef, useEffect } from 'react'
 import { cn } from '@/utils/cn'
 import { GlassPanel } from '@/components/ui/GlassPanel'
 import { DynamicType } from '@/components/ui/DynamicType'
@@ -13,11 +13,9 @@ interface PetSelectorStripProps {
 
 function SkeletonPet() {
   return (
-    <div className="flex flex-col items-center gap-1.5 min-w-[72px]">
-      <div className="w-14 h-14 rounded-2xl glass-light animate-pulse flex items-center justify-center">
-        <div className="w-6 h-6 rounded-full bg-white/20" />
-      </div>
+    <div className="flex flex-col items-center gap-1.5 min-w-[60px]">
       <div className="h-3 w-12 skeleton rounded" />
+      <div className="h-3 w-8 skeleton rounded" />
     </div>
   )
 }
@@ -38,7 +36,6 @@ export function PetSelectorStrip({ pets, activePetId, onSelect, loading }: PetSe
   if (loading) {
     return (
       <div className="mb-6">
-        <DynamicType styleLevel="title3" weight={600} className="mb-3 px-1">My Pets</DynamicType>
         <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-none px-1">
           <SkeletonPet />
           <SkeletonPet />
@@ -53,7 +50,6 @@ export function PetSelectorStrip({ pets, activePetId, onSelect, loading }: PetSe
 
   return (
     <div className="mb-6">
-      <DynamicType styleLevel="title3" weight={600} className="mb-3 px-1">My Pets</DynamicType>
       <div ref={scrollRef} className="flex gap-3 overflow-x-auto scrollbar-none snap-x snap-mandatory px-1 pb-1">
         {/* "All Pets" button — only if more than 1 pet */}
         {pets.length > 1 && (
@@ -64,13 +60,10 @@ export function PetSelectorStrip({ pets, activePetId, onSelect, loading }: PetSe
             <GlassPanel
               intensity="light"
               className={cn(
-                'flex flex-col items-center justify-center gap-1.5 w-[80px] py-3 px-2 cursor-pointer transition-all duration-300',
+                'flex flex-col items-center justify-center gap-1 w-[60px] py-2.5 px-2 cursor-pointer transition-all duration-300',
                 activePetId === null && 'ring-2 ring-apple-blue scale-105'
               )}
             >
-              <div className="w-10 h-10 rounded-full bg-white/40 flex items-center justify-center">
-                <span className="text-lg">🐾</span>
-              </div>
               <DynamicType styleLevel="caption2" weight={activePetId === null ? 600 : 400}>
                 All
               </DynamicType>
@@ -90,15 +83,14 @@ export function PetSelectorStrip({ pets, activePetId, onSelect, loading }: PetSe
               <GlassPanel
                 intensity="light"
                 className={cn(
-                  'flex flex-col items-center gap-1.5 w-[80px] py-3 px-2 cursor-pointer transition-all duration-300',
+                  'flex flex-col items-center gap-0.5 w-[60px] py-2.5 px-2 cursor-pointer transition-all duration-300',
                   isActive && 'ring-2 ring-apple-blue scale-105'
                 )}
               >
-                <GlassAvatar pet={pet} />
                 <DynamicType
                   styleLevel="caption2"
                   weight={isActive ? 600 : 400}
-                  className="text-center truncate w-full px-0.5"
+                  className="text-center truncate w-full"
                 >
                   {pet.name}
                 </DynamicType>
@@ -110,34 +102,6 @@ export function PetSelectorStrip({ pets, activePetId, onSelect, loading }: PetSe
           )
         })}
       </div>
-    </div>
-  )
-}
-
-/** Glassmorphism pet avatar — circular, no background, image or emoji only */
-function GlassAvatar({ pet }: { pet: Pet }) {
-  const [failed, setFailed] = useState(false)
-  const speciesEmoji: Record<string, string> = {
-    dog: '🐕', cat: '🐱', bird: '🐦', fish: '🐟', rabbit: '🐰', hamster: '🐹', other: '🐾',
-  }
-  const src = pet.avatarUrl ? `/picture/${pet.avatarUrl}` : `/picture/${pet.name.toLowerCase()}-1.jpeg`
-
-  if (failed) {
-    return (
-      <div className="w-10 h-10 rounded-full flex items-center justify-center">
-        <span className="text-lg">{speciesEmoji[pet.species] ?? '🐾'}</span>
-      </div>
-    )
-  }
-
-  return (
-    <div className="w-10 h-10 rounded-full overflow-hidden">
-      <img
-        src={src}
-        alt={pet.name}
-        className="w-full h-full object-cover"
-        onError={() => setFailed(true)}
-      />
     </div>
   )
 }
