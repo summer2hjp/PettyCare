@@ -24,10 +24,10 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
   const [selectedPetId, setSelectedPetId] = useState<string | null>(null)
   const data = useDashboardData(selectedPetId)
 
-  // Fetch moments for each type
-  const dailyMoments = usePetMoments({ petId: selectedPetId, type: 'daily', limit: 12 })
-  const interactionMoments = usePetMoments({ petId: selectedPetId, type: 'interaction', limit: 8 })
-  const growthMoments = usePetMoments({ petId: selectedPetId, type: 'growth', limit: 10 })
+  // Fetch moments for each type (with local image fallback)
+  const dailyMoments = usePetMoments({ petId: selectedPetId, type: 'daily', limit: 12, pets })
+  const interactionMoments = usePetMoments({ petId: selectedPetId, type: 'interaction', limit: 8, pets })
+  const growthMoments = usePetMoments({ petId: selectedPetId, type: 'growth', limit: 10, pets })
 
   // Photo preview state
   const [previewMoments, setPreviewMoments] = useState<PetMoment[] | null>(null)

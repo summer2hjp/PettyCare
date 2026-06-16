@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { cn } from '@/utils/cn'
 import { GlassPanel } from '@/components/ui/GlassPanel'
 import { DynamicType } from '@/components/ui/DynamicType'
@@ -69,9 +70,7 @@ export function PetHeroCard({ pet, health, activity, loading }: PetHeroCardProps
               }}
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/10 to-white/5">
-              <span className="text-5xl">{speciesEmoji[pet.species] ?? '🐾'}</span>
-            </div>
+            <LocalPetImage pet={pet} speciesEmoji={speciesEmoji[pet.species] ?? '🐾'} />
           )}
           {/* Glass overlay with pet info */}
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent p-4">
@@ -185,5 +184,25 @@ export function PetHeroCard({ pet, health, activity, loading }: PetHeroCardProps
         )}
       </GlassPanel>
     </div>
+  )
+}
+
+/** Tries to load public/picture/{petName}-1.jpeg, falls back to species emoji */
+function LocalPetImage({ pet, speciesEmoji }: { pet: Pet; speciesEmoji: string }) {
+  const [failed, setFailed] = useState(false)
+  if (failed) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-white/10 to-white/5">
+        <span className="text-5xl">{speciesEmoji}</span>
+      </div>
+    )
+  }
+  return (
+    <img
+      src={`/picture/${pet.name.toLowerCase()}-1.jpeg`}
+      alt={pet.name}
+      className="w-full h-full object-cover"
+      onError={() => setFailed(true)}
+    />
   )
 }

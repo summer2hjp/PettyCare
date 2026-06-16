@@ -3,11 +3,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { PetMoment, MomentType } from '@/types/moments'
+import type { Pet } from '@/types/pet'
 
 interface UsePetMomentsOptions {
   petId: string | null  // null = all pets
   type: MomentType
   limit?: number
+  pets?: Pet[]          // for generating local fallback images
 }
 
 interface UsePetMomentsResult {
@@ -29,7 +31,35 @@ function mapRow(row: Record<string, unknown>): PetMoment {
   }
 }
 
-export function usePetMoments({ petId, type, limit = 20 }: UsePetMomentsOptions): UsePetMomentsResult {
+function generateLocalMoments(pets: Pet[], type: MomentType): PetMoment[] {
+  const momentCaptions: Record<MomentType, string[]> = {
+    daily: ['晒太阳 🌤️', '玩耍时间 🎾', '打个盹 💤'],
+    interaction: ['一起散步 🚶', '摸摸头 🤗', '喂食时光 🍽️'],
+    growth: ['第一天到家 🐣', '慢慢长大 🌱', '现在的样子 ✨'],
+  }
+  const captions = momentCaptions[type]
+  const moments: PetMoment[] = []
+
+  for (const pet of pets) {
+    // Try up to 2 local images per pet
+    for (let i = 1; i <= 2; i++) {
+      const imageUrl = `/picture/${pet.name.toLowerCase()}-${i}.jpeg`
+      moments.push({
+        id: `local-${pet.id}-${type}-${i}`,
+        petId: pet.id,
+        imageUrl,
+        caption: captions[(i - 1) % captions.length],
+        momentType: type,
+        takenAt: new Date().toISOString().split('T')[0],
+        createdAt: new Date().toISOString(),
+      })
+    }
+  }
+
+  return moments
+}
+
+export function usePetMoments({ petId, type, limit = 20, pets = [] }: UsePetMomentsOptions): UsePetMomentsResult {
   const [moments, setMoments] = useState<PetMoment[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -52,13 +82,28 @@ export function usePetMoments({ petId, type, limit = 20 }: UsePetMomentsOptions)
       const { data, error: queryError } = await query
       if (queryError) throw queryError
 
-      setMoments((data ?? []).map(r => mapRow(r as Record<string, unknown>)))
+      const dbMoments = (data ?? []).map(r => mapRow(r as Record<string, unknown>))
+
+      // If DB has data, use it; otherwise fall back to local images from public/picture/
+      if (dbMoments.length > 0) {
+        setMoments(dbMoments)
+      } else {
+        // Filter pets if a specific pet is selected
+        const targetPets = petId ? pets.filter(p => p.id === petId) : pets
+        setMoments(generateLocalMoments(targetPets, type))
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to load moments')
+      // On error, fall back to local images instead of showing error
+      const targetPets = petId ? pets.filter(p => p.id === petId) : pets
+      if (targetPets.length > 0) {
+        setMoments(generateLocalMoments(targetPets, type))
+      } else {
+        setError(err instanceof Error ? err.message : 'Failed to load moments')
+      }
     } finally {
       setLoading(false)
     }
-  }, [petId, type, limit])
+  }, [petId, type, limit, pets])
 
   useEffect(() => {
     fetchMoments()
