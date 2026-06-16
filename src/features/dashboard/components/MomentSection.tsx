@@ -163,7 +163,7 @@ export function MomentSection({
         <div className="relative">
           <div
             ref={scrollRef}
-            className="flex gap-3 overflow-x-auto scrollbar-none snap-x snap-mandatory pb-1"
+            className="flex gap-1.5 overflow-x-auto scrollbar-none snap-x snap-mandatory pb-1"
           >
             {moments.map((moment, index) => (
               <div key={moment.id} className="relative shrink-0">
