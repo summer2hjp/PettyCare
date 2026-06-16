@@ -64,7 +64,7 @@ export function PetSelectorStrip({ pets, activePetId, onSelect, loading }: PetSe
             <GlassPanel
               intensity="light"
               className={cn(
-                'flex flex-col items-center justify-center gap-1 w-[72px] h-[92px] cursor-pointer transition-all duration-300',
+                'flex flex-col items-center justify-center gap-1.5 w-[80px] py-3 px-2 cursor-pointer transition-all duration-300',
                 activePetId === null && 'ring-2 ring-apple-blue scale-105'
               )}
             >
@@ -90,7 +90,7 @@ export function PetSelectorStrip({ pets, activePetId, onSelect, loading }: PetSe
               <GlassPanel
                 intensity="light"
                 className={cn(
-                  'flex flex-col items-center gap-1 w-[72px] py-2 cursor-pointer transition-all duration-300',
+                  'flex flex-col items-center gap-1.5 w-[80px] py-3 px-2 cursor-pointer transition-all duration-300',
                   isActive && 'ring-2 ring-apple-blue scale-105'
                 )}
               >
