@@ -21,7 +21,7 @@ export function GlassMomentSkeleton({ count = 4, aspectRatio = 'square', classNa
           className={cn(
             'shrink-0 rounded-xl glass-light',
             aspectClasses[aspectRatio],
-            'min-w-[140px]'
+            'min-w-[140px]',
           )}
         >
           <div className="w-full h-full flex items-center justify-center animate-pulse">
