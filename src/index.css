@@ -35,7 +35,7 @@
   --apple-secondarySystemBackground: #F0EBE3;
   --apple-tertiarySystemBackground: #F5F0E9;
   --apple-systemGroupedBackground: #EBE5DC;
-  --apple-secondarySystemGroupedBackground: #FAF6F0;
+  --apple-secondarySystemGroupedBackground: #F0F0F0;
   --apple-tertiarySystemGroupedBackground: #E8E1D6;
   --apple-fill: #B8A89833;
   --apple-secondaryFill: #B8A89828;
@@ -140,7 +140,7 @@ html.theme-transitioning *::after {
 
 @layer components {
   .glass {
-    background-color: rgba(245, 238, 228, 0.72);
+    background-color: rgba(235, 235, 235, 0.72);
     backdrop-filter: blur(40px) saturate(1.2);
     -webkit-backdrop-filter: blur(40px) saturate(1.2);
   }
@@ -149,7 +149,7 @@ html.theme-transitioning *::after {
   }
 
   .glass-light {
-    background-color: rgba(245, 238, 228, 0.48);
+    background-color: rgba(235, 235, 235, 0.48);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
   }
@@ -158,7 +158,7 @@ html.theme-transitioning *::after {
   }
 
   .glass-heavy {
-    background-color: rgba(250, 246, 240, 0.85);
+    background-color: rgba(240, 240, 240, 0.85);
     backdrop-filter: blur(60px) saturate(1.4);
     -webkit-backdrop-filter: blur(60px) saturate(1.4);
   }
