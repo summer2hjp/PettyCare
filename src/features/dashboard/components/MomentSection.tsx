@@ -164,8 +164,8 @@ export function MomentSection({
           <div
             ref={scrollRef}
             className={cn(
-              'flex gap-3 overflow-x-auto scrollbar-none pb-1',
-              selecting ? '' : 'snap-x snap-mandatory'
+              'flex gap-3 overflow-x-auto pb-1',
+              selecting ? '' : 'scrollbar-none snap-x snap-mandatory'
             )}
           >
             {moments.map((moment, index) => (

@@ -117,8 +117,8 @@ export function GrowthTimelineSection({
         </div>
       ) : (
         <div className={cn(
-          'flex items-center gap-2 overflow-x-auto scrollbar-none pb-1 px-1',
-          selecting ? '' : 'snap-x snap-mandatory'
+          'flex items-center gap-2 overflow-x-auto pb-1 px-1',
+          selecting ? '' : 'scrollbar-none snap-x snap-mandatory'
         )}>
           {sorted.map((moment, index) => {
             const isFirst = index === 0
