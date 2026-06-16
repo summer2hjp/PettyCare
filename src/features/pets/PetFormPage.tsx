@@ -23,6 +23,11 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
     weightUnit: pet?.weightUnit ?? 'kg', color: pet?.color ?? '', microchipId: pet?.microchipId ?? '', notes: pet?.notes ?? '',
   })
   const [errors, setErrors] = useState<Partial<Record<keyof PetFormData, string>>>({})
+  const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(pet?.avatarUrl ? `/picture/${pet.avatarUrl}` : null)
+  const [pendingAvatarFile, setPendingAvatarFile] = useState<File | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') onBack?.() }
@@ -35,6 +40,14 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
     if (errors[key]) setErrors(prev => ({ ...prev, [key]: undefined }))
   }
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    const url = URL.createObjectURL(file)
+    setPreviewUrl(url)
+    setPendingAvatarFile(file)
+  }
+
   const validate = () => {
     const errs: typeof errors = {}
     if (!form.name.trim()) errs.name = 'Required'
@@ -45,11 +58,22 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
     return Object.keys(errs).length === 0
   }
 
-  const handleSubmit = () => {
-    if (!validate()) return
-    if (isEdit && pet) updatePet(pet.id, form)
-    else addPet(form)
-    onSaved?.()
+  const handleSubmit = async () => {
+    if (!validate() || saving) return
+    setSaving(true)
+    setSaveError(null)
+    try {
+      if (isEdit && pet) await updatePet(pet.id, form)
+      else await addPet(form)
+      onSaved?.()
+      setPendingAvatarFile(null)
+    } catch (err) {
+      console.error('Save pet error:', err)
+      const msg = err instanceof Error ? err.message : (err as Record<string, unknown>)?.message as string || JSON.stringify(err)
+      setSaveError(msg)
+    } finally {
+      setSaving(false)
+    }
   }
 
   return (
@@ -60,9 +84,36 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
         <div className="grid grid-cols-2 gap-3 mb-2">
           <AppleButton variant="secondary" size="sm" onClick={onBack} className="justify-self-start">Cancel</AppleButton>
           <div className="flex justify-end">
-            <AppleButton variant="secondary" size="sm" onClick={handleSubmit}>Save</AppleButton>
+            <AppleButton variant="secondary" size="sm" onClick={handleSubmit} disabled={saving}>
+              {saving ? 'Saving...' : 'Save'}
+            </AppleButton>
           </div>
         </div>
+        {/* Avatar upload */}
+        <div className="flex items-center gap-4 py-2">
+          <div className="w-20 h-20 rounded-2xl bg-[var(--apple-fill)] flex items-center justify-center overflow-hidden shrink-0 border border-[var(--apple-separator)]">
+            {previewUrl ? (
+              <img src={previewUrl} alt="Pet preview" className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-3xl">🐾</span>
+            )}
+          </div>
+          <div className="flex-1 min-w-0">
+            <DynamicType styleLevel="body" weight={600}>Pet Photo</DynamicType>
+            <DynamicType styleLevel="caption1" className="text-apple-secondaryLabel mt-0.5">Upload a photo of your pet</DynamicType>
+            <div className="mt-2">
+              <AppleButton variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
+                {previewUrl ? 'Change Photo' : 'Upload Photo'}
+              </AppleButton>
+            </div>
+          </div>
+          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
+        </div>
+        {saveError && (
+          <div className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-2.5 mb-3">
+            <p className="text-[13px] text-apple-red font-semibold">{saveError}</p>
+          </div>
+        )}
         <div className="grid grid-cols-2 gap-3">
           <Field label="Name" error={errors.name}>
             <input type="text" value={form.name} onChange={e => set('name', e.target.value)} placeholder="Pet's name" className={fieldInput(errors.name)} />
