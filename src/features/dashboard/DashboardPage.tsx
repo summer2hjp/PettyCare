@@ -44,16 +44,46 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
   }
 
   const handleUpload = useCallback(async (type: MomentType) => {
-    // Use the first pet if available, otherwise prompt user to add a pet first
     if (pets.length === 0) {
       alert('请先在 Quick Actions 中添加宠物')
       return
     }
-
     setUploadingType(type)
-    // Trigger file picker — next tick so React renders loading state
     setTimeout(() => fileInputRef.current?.click(), 0)
   }, [pets.length])
+
+  const handleDelete = useCallback(async (moment: PetMoment) => {
+    try {
+      const { error } = await supabase
+        .from('pet_moments')
+        .delete()
+        .eq('id', moment.id)
+      if (error) throw error
+      dailyMoments.refresh()
+      interactionMoments.refresh()
+      growthMoments.refresh()
+    } catch (err) {
+      console.error('Delete failed:', err)
+      alert('删除失败: ' + (err instanceof Error ? err.message : 'Unknown error'))
+    }
+  }, [dailyMoments, interactionMoments, growthMoments])
+
+  const handleBatchDelete = useCallback(async (toDelete: PetMoment[]) => {
+    try {
+      const ids = toDelete.map(m => m.id)
+      const { error } = await supabase
+        .from('pet_moments')
+        .delete()
+        .in('id', ids)
+      if (error) throw error
+      dailyMoments.refresh()
+      interactionMoments.refresh()
+      growthMoments.refresh()
+    } catch (err) {
+      console.error('Batch delete failed:', err)
+      alert('批量删除失败: ' + (err instanceof Error ? err.message : 'Unknown error'))
+    }
+  }, [dailyMoments, interactionMoments, growthMoments])
 
   const handleFileSelected = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -131,6 +161,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
         onMomentClick={(index) => openPreview(dailyMoments.moments, index)}
         onRetry={dailyMoments.refresh}
         onUpload={handleUpload}
+        onBatchDelete={handleBatchDelete}
       />
 
       {/* Interaction Moments */}
@@ -145,6 +176,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
         onMomentClick={(index) => openPreview(interactionMoments.moments, index)}
         onRetry={interactionMoments.refresh}
         onUpload={handleUpload}
+        onBatchDelete={handleBatchDelete}
       />
 
       {/* Growth Timeline */}
@@ -173,6 +205,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
           moments={previewMoments}
           initialIndex={previewIndex}
           onClose={() => setPreviewMoments(null)}
+          onDelete={handleDelete}
         />
       )}
     </div>

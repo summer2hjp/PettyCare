@@ -2,16 +2,17 @@ import { useState, useEffect, useCallback } from 'react'
 import { cn } from '@/utils/cn'
 import { DynamicType } from '@/components/ui/DynamicType'
 import { GlassPanel } from '@/components/ui/GlassPanel'
-import { X, ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react'
+import { X, ChevronLeft, ChevronRight, RefreshCw, Trash2 } from 'lucide-react'
 import type { PetMoment } from '@/types/moments'
 
 interface PhotoPreviewProps {
   moments: PetMoment[]
   initialIndex: number
   onClose: () => void
+  onDelete?: (moment: PetMoment) => void
 }
 
-export function PhotoPreview({ moments, initialIndex, onClose }: PhotoPreviewProps) {
+export function PhotoPreview({ moments, initialIndex, onClose, onDelete }: PhotoPreviewProps) {
   const [currentIndex, setCurrentIndex] = useState(initialIndex)
   const [imgError, setImgError] = useState(false)
   const [imgLoaded, setImgLoaded] = useState(false)
@@ -70,13 +71,30 @@ export function PhotoPreview({ moments, initialIndex, onClose }: PhotoPreviewPro
       )}
       onClick={handleClose}
     >
-      {/* Close button */}
-      <button
-        onClick={(e) => { e.stopPropagation(); handleClose() }}
-        className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full glass-heavy flex items-center justify-center hover:bg-white/20 transition-colors"
-      >
-        <X size={20} className="text-white" />
-      </button>
+      {/* Top buttons */}
+      <div className="absolute top-4 right-4 z-10 flex items-center gap-2">
+        {onDelete && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              if (confirm('确定删除这张照片吗？')) {
+                onDelete(current)
+                if (moments.length <= 1) handleClose()
+              }
+            }}
+            className="w-10 h-10 rounded-full glass-heavy flex items-center justify-center hover:bg-white/20 transition-colors hover:text-red-400"
+            title="删除照片"
+          >
+            <Trash2 size={18} />
+          </button>
+        )}
+        <button
+          onClick={(e) => { e.stopPropagation(); handleClose() }}
+          className="w-10 h-10 rounded-full glass-heavy flex items-center justify-center hover:bg-white/20 transition-colors"
+        >
+          <X size={20} className="text-white" />
+        </button>
+      </div>
 
       {/* Left arrow */}
       {currentIndex > 0 && (
