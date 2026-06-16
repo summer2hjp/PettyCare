@@ -73,16 +73,11 @@ export function MomentCard({ moment, type, onClick, className, style }: MomentCa
         />
       )}
 
-      {/* Caption overlay */}
-      {moment.caption && (
-        <div className={cn(
-          'absolute bottom-0 left-0 right-0 p-1.5',
-          type === 'interaction'
-            ? 'bg-gradient-to-t from-black/60 to-transparent'
-            : 'bg-white/20 backdrop-blur-sm'
-        )}>
+      {/* Caption overlay — only for growth */}
+      {moment.caption && type === 'growth' && (
+        <div className="absolute bottom-0 left-0 right-0 p-1.5 bg-gradient-to-t from-black/60 to-transparent">
           <DynamicType
-            styleLevel={type === 'growth' ? 'caption2' : 'caption1'}
+            styleLevel="caption2"
             weight={600}
             className="text-white truncate text-[11px] leading-tight"
             style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
