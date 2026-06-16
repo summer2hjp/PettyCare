@@ -44,7 +44,7 @@ export function MomentCard({ moment, type, onClick, className, style }: MomentCa
         aspectClasses[type],
         className
       )}
-      style={{ width: 140, minWidth: 140, ...style }}
+      style={{ width: type === 'daily' ? 420 : type === 'interaction' ? 280 : 140, minWidth: type === 'daily' ? 420 : type === 'interaction' ? 280 : 140, ...style }}
     >
       {!imgLoaded && !imgError && (
         <div className="absolute inset-0 flex items-center justify-center animate-pulse bg-white/10">
