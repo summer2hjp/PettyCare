@@ -2,79 +2,92 @@ import puppeteer from 'puppeteer';
 import { createClient } from '@supabase/supabase-js';
 import { readFileSync } from 'fs';
 
-// Read env
 const env = readFileSync('.env.local', 'utf-8');
 const supabaseUrl = env.match(/VITE_SUPABASE_URL=(.+)/)?.[1];
 const supabaseKey = env.match(/VITE_SUPABASE_ANON_KEY=(.+)/)?.[1];
 
 async function main() {
-  // First, sign in via Supabase API to get a session
-  const supabase = createClient(supabaseUrl, supabaseKey);
+  // Sign in via Supabase API
+  const supabase = createClient(supabaseUrl, supabaseKey, {
+    auth: { autoRefreshToken: false, persistSession: false },
+    global: { fetch: (...args) => fetch(...args) }
+  });
+
+  console.log('Signing in...');
   const { data: { session }, error } = await supabase.auth.signInWithPassword({
     email: 'admin@admin.com',
     password: 'admin',
   });
 
   if (error) {
-    console.log('Supabase sign in failed:', error.message);
-    // If account doesn't exist, try creating it
-    console.log('Attempting to create account...');
-    const { error: signUpError } = await supabase.auth.signUp({
-      email: 'admin@admin.com',
-      password: 'admin',
-    });
-    if (signUpError) {
-      console.log('Sign up also failed:', signUpError.message);
-      // Try with different credentials: maybe 'admin' has another email form
-      console.log('Trying alternative login methods...');
-    }
-    console.log('Session:', null);
-  } else {
-    console.log('Got session for:', session?.user?.email);
+    console.log('Sign in failed:', error.message);
+    // Try puppeteer login via form instead
+    await loginViaForm();
+    return;
   }
+  console.log('Session obtained for:', session?.user?.email);
+  await loginViaSession(session);
+}
 
-  // Now launch browser with the session cookie
+async function loginViaSession(session) {
   const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
   const page = await browser.newPage();
   await page.setViewport({ width: 1440, height: 900 });
 
-  // Set Supabase auth in localStorage (Supabase JS client reads from here)
-  if (session?.access_token) {
-    const projectRef = supabaseUrl.match(/https:\/\/(.+)\.supabase\.co/)?.[1];
-    const storageKey = `sb-${projectRef}-auth-token`;
+  const projectRef = supabaseUrl.match(/https:\/\/(.+)\.supabase\.co/)?.[1];
+  const storageKey = `sb-${projectRef}-auth-token`;
 
-    await page.goto('http://localhost:5173', { waitUntil: 'domcontentloaded', timeout: 15000 });
+  // Go to app and inject session before React mounts
+  await page.goto('http://localhost:5173', { waitUntil: 'domcontentloaded', timeout: 15000 });
+  await page.evaluate(({ key, value }) => {
+    localStorage.setItem(key, JSON.stringify(value));
+  }, { key: storageKey, value: session });
 
-    // Set auth session in localStorage before React initializes
-    await page.evaluate(({ key, value }) => {
-      localStorage.setItem(key, JSON.stringify(value));
-    }, { key: storageKey, value: session });
+  await page.reload({ waitUntil: 'networkidle2', timeout: 20000 });
+  await new Promise(r => setTimeout(r, 3000));
+  await capture(page, browser);
+}
 
-    // Reload so React picks up the session
-    await page.reload({ waitUntil: 'networkidle2', timeout: 20000 });
-    await new Promise(r => setTimeout(r, 3000));
+async function loginViaForm() {
+  console.log('Trying puppeteer form login...');
+  const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1440, height: 900 });
+  await page.goto('http://localhost:5173', { waitUntil: 'networkidle2', timeout: 20000 });
+  await new Promise(r => setTimeout(r, 2000));
 
-    console.log('Auth set in localStorage with key:', storageKey);
-  } else {
-    await page.goto('http://localhost:5173', { waitUntil: 'networkidle2', timeout: 20000 });
-    await new Promise(r => setTimeout(r, 5000));
+  // Type credentials
+  const emailInput = await page.$('input[placeholder="Email"]');
+  if (emailInput) {
+    await emailInput.click({ clickCount: 3 });
+    await emailInput.type('admin@admin.com', { delay: 20 });
+  }
+  const passwordInput = await page.$('input[placeholder="Password"]');
+  if (passwordInput) {
+    await passwordInput.click({ clickCount: 3 });
+    await passwordInput.type('admin', { delay: 20 });
   }
 
-  // Check what page we're on
-  const pageInfo = await page.evaluate(() => ({
+  await page.keyboard.press('Enter');
+  await new Promise(r => setTimeout(r, 5000));
+  await capture(page, browser);
+}
+
+async function capture(page, browser) {
+  const info = await page.evaluate(() => ({
     url: window.location.href,
-    body: document.body?.innerText?.substring(0, 400),
     headings: Array.from(document.querySelectorAll('h2, h3, [class*="title3"]'))
       .map(el => el.textContent?.trim())
       .filter(Boolean),
     glassCount: document.querySelectorAll('.glass-light, .glass, .glass-heavy').length,
     petElements: document.querySelectorAll('[class*="PetSelector"], [class*="pet"]').length,
+    bodyPreview: document.body?.innerText?.substring(0, 400),
   }));
-  console.log('Dashboard info:', JSON.stringify(pageInfo, null, 2));
+  console.log('Dashboard:', JSON.stringify(info, null, 2));
 
   await page.screenshot({ path: '/tmp/dashboard-app.png', fullPage: true });
-  console.log('Screenshot saved');
-
+  console.log('Screenshot saved to /tmp/dashboard-app.png');
   await browser.close();
 }
+
 main();

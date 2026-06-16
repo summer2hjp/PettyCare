@@ -44,7 +44,7 @@ export function MomentCard({ moment, type, onClick, className, style }: MomentCa
         aspectClasses[type],
         className
       )}
-      style={{ minWidth: type === 'growth' ? 140 : type === 'interaction' ? 90 : 70, ...style }}
+      style={{ minWidth: type === 'growth' ? 70 : type === 'interaction' ? 45 : 35, ...style }}
     >
       {!imgLoaded && !imgError && (
         <div className="absolute inset-0 flex items-center justify-center animate-pulse bg-white/10">
@@ -76,7 +76,7 @@ export function MomentCard({ moment, type, onClick, className, style }: MomentCa
       {/* Caption overlay */}
       {moment.caption && (
         <div className={cn(
-          'absolute bottom-0 left-0 right-0 p-1',
+          'absolute bottom-0 left-0 right-0 p-0.5',
           type === 'interaction'
             ? 'bg-gradient-to-t from-black/60 to-transparent'
             : 'bg-white/20 backdrop-blur-sm'
@@ -84,7 +84,7 @@ export function MomentCard({ moment, type, onClick, className, style }: MomentCa
           <DynamicType
             styleLevel={type === 'growth' ? 'caption2' : 'caption1'}
             weight={600}
-            className="text-white truncate text-[10px] leading-tight"
+            className="text-white truncate text-[7px] leading-tight"
             style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
           >
             {moment.caption}
