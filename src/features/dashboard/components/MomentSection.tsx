@@ -150,7 +150,7 @@ export function MomentSection({
       ) : loading ? (
         <GlassMomentSkeleton
           count={4}
-          aspectRatio={momentType === 'daily' ? 'square' : momentType === 'interaction' ? 'landscape' : 'portrait'}
+          aspectRatio="portrait"
         />
       ) : moments.length === 0 ? (
         <div className="rounded-xl glass-light p-6 flex flex-col items-center gap-2">

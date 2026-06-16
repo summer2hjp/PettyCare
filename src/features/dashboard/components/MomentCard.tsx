@@ -12,8 +12,8 @@ interface MomentCardProps {
 }
 
 const aspectClasses: Record<MomentType, string> = {
-  daily: 'aspect-square',
-  interaction: 'aspect-square',
+  daily: 'aspect-[3/4]',
+  interaction: 'aspect-[3/4]',
   growth: 'aspect-[3/4]',
 }
 
