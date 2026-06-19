@@ -1,8 +1,8 @@
 /**
- * Apple Spring Animation Parameters
+ * MiniMax Design System — Animation Tokens
  *
- * Maps iOS UIView spring animation equivalents to
- * Framer Motion spring presets and CSS cubic-bezier values.
+ * Uses smooth cubic-bezier timing and spring animations
+ * for a polished, modern feel.
  */
 
 import type { Spring } from 'framer-motion'

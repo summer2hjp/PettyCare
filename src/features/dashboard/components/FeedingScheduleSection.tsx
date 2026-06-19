@@ -38,28 +38,28 @@ export function FeedingScheduleSection({ meals }: FeedingScheduleSectionProps) {
             className={cn(
               'snap-start shrink-0 min-w-[180px]',
               isUpcoming && !timeRemaining && 'opacity-60',
-              isUpcoming && timeRemaining && 'ring-2 ring-apple-blue'
+              isUpcoming && timeRemaining && 'ring-2 ring-[var(--mm-link)]'
             )}
           >
             <div className="flex items-center gap-2 mb-1">
               {isCompleted ? (
-                <span className="w-5 h-5 rounded-full bg-apple-green/20 flex items-center justify-center">
-                  <Check size={12} className="text-apple-green" />
+                <span className="w-5 h-5 rounded-full bg-[#34C759]/20 flex items-center justify-center">
+                  <Check size={12} className="text-[#34C759]" />
                 </span>
               ) : (
-                <Clock size={14} className={cn(isUpcoming && timeRemaining ? 'text-apple-blue' : 'text-apple-secondaryLabel')} />
+                <Clock size={14} className={cn(isUpcoming && timeRemaining ? 'text-[var(--mm-link)]' : 'text-[var(--mm-secondaryLabel)]')} />
               )}
-              <DynamicType styleLevel="caption2" className={cn(isCompleted ? 'text-apple-green' : 'text-apple-secondaryLabel')}>
+              <DynamicType styleLevel="small" className={cn(isCompleted ? 'text-[#34C759]' : 'text-[var(--mm-secondaryLabel)]')}>
                 {isCompleted ? 'Completed' : isUpcoming && timeRemaining ? 'Next meal' : 'Pending'}
               </DynamicType>
             </div>
-            <DynamicType styleLevel="footnote" weight={600}>{meal.label}</DynamicType>
-            <DynamicType styleLevel="caption2" className="block text-apple-secondaryLabel">{meal.petName}</DynamicType>
-            <DynamicType styleLevel="caption2" className="block text-apple-secondaryLabel">{meal.food}</DynamicType>
+            <DynamicType styleLevel="button" weight={600}>{meal.label}</DynamicType>
+            <DynamicType styleLevel="small" className="block text-[var(--mm-secondaryLabel)]">{meal.petName}</DynamicType>
+            <DynamicType styleLevel="small" className="block text-[var(--mm-secondaryLabel)]">{meal.food}</DynamicType>
             <div className="flex items-center justify-between mt-1">
-              <DynamicType styleLevel="caption2" className="text-apple-secondaryLabel">{meal.portion}</DynamicType>
+              <DynamicType styleLevel="small" className="text-[var(--mm-secondaryLabel)]">{meal.portion}</DynamicType>
               {timeRemaining && (
-                <DynamicType styleLevel="caption2" className="text-apple-blue font-medium">{timeRemaining}</DynamicType>
+                <DynamicType styleLevel="small" className="text-[var(--mm-link)] font-medium">{timeRemaining}</DynamicType>
               )}
             </div>
           </AppleCard>

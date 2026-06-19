@@ -43,7 +43,7 @@ function StatCard({
         <div className="w-7 h-7 rounded-lg bg-white/30 flex items-center justify-center">
           {icon}
         </div>
-        <DynamicType styleLevel="caption2" className="text-apple-secondaryLabel">
+        <DynamicType styleLevel="small" className="text-[var(--mm-secondaryLabel)]">
           {label}
         </DynamicType>
       </div>
@@ -51,7 +51,7 @@ function StatCard({
         {value}
       </DynamicType>
       {sublabel && (
-        <DynamicType styleLevel="caption2" className="text-apple-tertiaryLabel mt-0.5">
+        <DynamicType styleLevel="small" className="text-[var(--mm-tertiaryLabel)] mt-0.5">
           {sublabel}
         </DynamicType>
       )}
@@ -63,7 +63,7 @@ function StatCard({
       <button
         type="button"
         className={cn(
-          'glass-light rounded-apple-xl p-4 text-left w-full transition-all duration-300',
+          'glass-light rounded-mm-lg p-4 text-left w-full transition-all duration-300',
           'cursor-pointer hover:-translate-y-0.5 hover:shadow-lg'
         )}
         onClick={onClick}
@@ -84,7 +84,7 @@ export function DataCardRow({ health, feeding, events, insights, loading, classN
   if (loading) {
     return (
       <div className={cn('mb-6', className)}>
-        <DynamicType styleLevel="title3" weight={600} className="mb-3 px-1">Overview</DynamicType>
+        <DynamicType styleLevel="section" weight={600} className="mb-3 px-1">Overview</DynamicType>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <StatCardSkeleton />
           <StatCardSkeleton />
@@ -113,10 +113,10 @@ export function DataCardRow({ health, feeding, events, insights, loading, classN
 
   return (
     <div className={cn('mb-6', className)}>
-      <DynamicType styleLevel="title3" weight={600} className="mb-3 px-1">Overview</DynamicType>
+      <DynamicType styleLevel="section" weight={600} className="mb-3 px-1">Overview</DynamicType>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <StatCard
-          icon={<Heart size={14} className="text-apple-red" />}
+          icon={<Heart size={14} className="text-[#FF3B30]" />}
           label="Health"
           value={healthValue}
           sublabel={healthSublabel}

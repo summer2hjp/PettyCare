@@ -21,7 +21,7 @@ function MiniBarChart({ data }: { data: number[] }) {
       {data.map((val, i) => (
         <div
           key={i}
-          className="flex-1 rounded-t-sm bg-apple-blue/60"
+          className="flex-1 rounded-t-sm bg-[var(--mm-link)]/60"
           style={{ height: `${(val / max) * 100}%` }}
         />
       ))}
@@ -39,11 +39,11 @@ export function InsightsSection({ insights }: InsightsSectionProps) {
         return (
           <AppleCard key={insight.id} padding="md" hoverable className="snap-start shrink-0 min-w-[180px]">
             <div className="flex items-center gap-1.5 mb-1">
-              <span className="text-apple-blue">{meta.icon}</span>
-              <DynamicType styleLevel="caption2" className="text-apple-secondaryLabel">{meta.label}</DynamicType>
+              <span className="text-[var(--mm-link)]">{meta.icon}</span>
+              <DynamicType styleLevel="small" className="text-[var(--mm-secondaryLabel)]">{meta.label}</DynamicType>
             </div>
-            <DynamicType styleLevel="footnote" weight={600}>{insight.title}</DynamicType>
-            <DynamicType styleLevel="caption2" className="block text-apple-secondaryLabel mt-0.5">
+            <DynamicType styleLevel="button" weight={600}>{insight.title}</DynamicType>
+            <DynamicType styleLevel="small" className="block text-[var(--mm-secondaryLabel)] mt-0.5">
               {insight.description}
             </DynamicType>
             {insight.trendData && insight.trendData.length > 0 && (

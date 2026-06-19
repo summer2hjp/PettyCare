@@ -34,7 +34,7 @@ function DynamicSearchLinks({ query, onSelect }: { query: string; onSelect: () =
 
   return (
     <div className="mt-5">
-      <p className="text-apple-subhead text-apple-label font-semibold mb-2.5">
+      <p className="text-mm-body text-[var(--mm-label)] font-semibold mb-2.5">
         {q ? 'Suggested Links' : 'Quick Links'}
       </p>
       <div className="flex flex-wrap gap-x-5 gap-y-2">
@@ -44,8 +44,8 @@ function DynamicSearchLinks({ query, onSelect }: { query: string; onSelect: () =
             onClick={onSelect}
             className={cn(
               'inline-flex items-center gap-1.5 py-1',
-              'text-apple-footnote text-apple-label font-medium',
-              'hover:text-apple-blue',
+              'text-mm-caption text-[var(--mm-label)] font-medium',
+              'hover:text-[var(--mm-link)]',
               'transition-colors duration-200',
             )}
           >
@@ -115,45 +115,44 @@ export function AppleToolbar({
       <header
         className={cn(
           'h-14 flex items-center px-6 relative z-30',
-          'bg-[var(--apple-secondarySystemBackground)]',
+          'bg-[var(--mm-background)] border-b border-[var(--mm-separator)]',
           className,
         )}
       >
         {title && (
           <div className="flex items-center gap-2 min-w-0">
-            <h1 className="text-apple-title-3 text-apple-label truncate">{title}</h1>
+            <h1 className="text-mm-body text-[var(--mm-label)] font-semibold truncate">{title}</h1>
           </div>
         )}
 
         <div className="flex items-center gap-1 ml-auto">
-          {/* Search trigger */}
           <button
             onClick={() => setSearchOpen(true)}
             className={cn(
               'w-9 h-9 flex items-center justify-center',
-              'rounded-full transition-colors duration-200',
-              'hover:[&>svg]:stroke-[2.5]',
+              'rounded-mm-md transition-colors duration-200',
+              'hover:bg-[var(--mm-fill)]',
             )}
           >
-            <Search size={20} className="text-apple-label" />
+            <Search size={20} className="text-[var(--mm-label)]" />
           </button>
 
           <button
             className={cn(
               'relative w-9 h-9 flex items-center justify-center',
-              'rounded-full transition-colors duration-200',
-              'hover:[&>svg]:stroke-[2.5]',
+              'rounded-mm-md transition-colors duration-200',
+              'hover:bg-[var(--mm-fill)]',
             )}
           >
-            <Bell size={20} className="text-apple-label" />
+            <Bell size={20} className="text-[var(--mm-label)]" />
             {notificationCount > 0 && (
               <span className={cn(
                 'absolute -top-0.5 -right-0.5',
                 'min-w-[18px] h-[18px] px-1',
                 'flex items-center justify-center',
-                'bg-apple-red rounded-apple-full',
+                'bg-[#FF3B30] rounded-mm-pill',
                 'text-[11px] font-semibold text-white',
-                'shadow-apple-sm',
+                'shadow-mm-subtle',
               )}>
                 {notificationCount > 99 ? '99+' : notificationCount}
               </span>
@@ -164,11 +163,11 @@ export function AppleToolbar({
             onClick={onThemeToggle}
             className={cn(
               'w-9 h-9 flex items-center justify-center',
-              'rounded-full transition-colors duration-200',
-              'hover:[&>svg]:stroke-[2.5]',
+              'rounded-mm-md transition-colors duration-200',
+              'hover:bg-[var(--mm-fill)]',
             )}
           >
-            {isDark ? <Sun size={18} className="text-apple-label" /> : <Moon size={18} className="text-apple-label" />}
+            {isDark ? <Sun size={18} className="text-[var(--mm-label)]" /> : <Moon size={18} className="text-[var(--mm-label)]" />}
           </button>
 
           <div className="relative shrink-0" ref={userMenuRef}>
@@ -184,15 +183,15 @@ export function AppleToolbar({
             </button>
 
             {userMenuOpen && (
-              <div className="absolute right-0 top-10 w-56 rounded-xl bg-[var(--apple-systemBackground)] shadow-apple-xl dark:shadow-dark-apple-xl border border-apple-separator py-1.5 z-50">
+              <div className="absolute right-0 top-10 w-56 rounded-mm-lg bg-[var(--mm-card)] shadow-mm-card border border-[var(--mm-separator)] py-1.5 z-50">
                 {userEmail && (
-                  <div className="px-4 py-2 border-b border-apple-separator">
-                    <p className="text-sm text-apple-label font-medium truncate">{userEmail}</p>
+                  <div className="px-4 py-2 border-b border-[var(--mm-separator)]">
+                    <p className="text-sm text-[var(--mm-label)] font-medium truncate">{userEmail}</p>
                   </div>
                 )}
                 <button
                   onClick={() => { setUserMenuOpen(false); onSignOut?.() }}
-                  className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-apple-label hover:bg-apple-secondaryFill transition-colors"
+                  className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--mm-label)] hover:bg-[var(--mm-fill)] transition-colors"
                 >
                   <LogOut size={15} />
                   Sign Out
@@ -203,21 +202,17 @@ export function AppleToolbar({
         </div>
       </header>
 
-      {/* Apple-style search overlay */}
       {searchOpen && (
         <div className="fixed inset-0 z-50 flex flex-col">
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/30 backdrop-blur-sm" />
+          <div className="absolute inset-0 bg-black/30" />
 
-          {/* Search panel — drops down from top */}
           <div
             ref={panelRef}
-            className="relative w-full bg-[var(--apple-secondarySystemBackground)] shadow-apple-xl animate-slide-down"
+            className="relative w-full bg-[var(--mm-background)] shadow-mm-card animate-slide-down"
           >
             <div className="max-w-3xl mx-auto px-6 py-8">
-              {/* Search input row */}
               <div className="flex items-center gap-3">
-                <Search size={22} className="text-apple-label shrink-0" />
+                <Search size={22} className="text-[var(--mm-label)] shrink-0" />
                 <input
                   ref={inputRef}
                   type="text"
@@ -226,9 +221,9 @@ export function AppleToolbar({
                   onChange={e => onSearch?.(e.target.value)}
                   onKeyDown={e => e.key === 'Escape' && setSearchOpen(false)}
                   className={cn(
-                    'flex-1 h-10 text-apple-title-3 text-apple-label text-left',
+                    'flex-1 h-10 text-mm-body text-[var(--mm-label)] text-left',
                     'bg-transparent',
-                    'placeholder:text-apple-placeholderText',
+                    'placeholder:text-[var(--mm-mutedLabel)]',
                     'border-none outline-none',
                   )}
                 />
@@ -236,18 +231,16 @@ export function AppleToolbar({
                   onClick={() => setSearchOpen(false)}
                   className={cn(
                     'w-8 h-8 flex items-center justify-center',
-                    'rounded-full transition-colors duration-200',
-                    'hover:[&>svg]:stroke-[2.5]',
+                    'rounded-mm-md transition-colors duration-200',
+                    'hover:bg-[var(--mm-fill)]',
                   )}
                 >
-                  <X size={20} className="text-apple-secondaryLabel" />
+                  <X size={20} className="text-[var(--mm-secondaryLabel)]" />
                 </button>
               </div>
 
-              {/* Divider */}
-              <div className="mt-4 border-t border-[var(--apple-separator)]" />
+              <div className="mt-4 border-t border-[var(--mm-separator)]" />
 
-              {/* Dynamic Links */}
               <DynamicSearchLinks
                 query={searchValue}
                 onSelect={() => setSearchOpen(false)}
@@ -255,7 +248,6 @@ export function AppleToolbar({
             </div>
           </div>
 
-          {/* Clickable rest of page to close */}
           <div
             className="flex-1 cursor-pointer"
             onClick={() => setSearchOpen(false)}
@@ -263,7 +255,6 @@ export function AppleToolbar({
         </div>
       )}
 
-      {/* Keyframes for slide-down animation */}
       <style>{`
         @keyframes slide-down {
           from { transform: translateY(-100%); opacity: 0; }

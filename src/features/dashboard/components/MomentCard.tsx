@@ -55,7 +55,7 @@ export function MomentCard({ moment, type, onClick, className, style }: MomentCa
       {imgError ? (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-white/5">
           <span className="text-2xl">🐾</span>
-          <DynamicType styleLevel="caption2" className="text-white/60">
+          <DynamicType styleLevel="small" className="text-white/60">
             Load failed
           </DynamicType>
         </div>
@@ -77,7 +77,7 @@ export function MomentCard({ moment, type, onClick, className, style }: MomentCa
       {moment.caption && type === 'growth' && (
         <div className="absolute bottom-0 left-0 right-0 p-1.5 bg-gradient-to-t from-black/60 to-transparent">
           <DynamicType
-            styleLevel="caption2"
+            styleLevel="small"
             weight={600}
             className="text-white truncate text-[11px] leading-tight"
             style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}

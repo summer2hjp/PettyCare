@@ -37,7 +37,7 @@ export function AppleSidebar({
     <aside
       className={cn(
         'w-60 h-full flex flex-col',
-        'bg-[var(--apple-secondarySystemBackground)]',
+        'bg-[var(--mm-background)] border-r border-[var(--mm-separator)]',
         'select-none',
         className,
       )}
@@ -49,8 +49,8 @@ export function AppleSidebar({
         className="px-5 pt-6 pb-4 block hover:opacity-80 transition-opacity duration-200"
       >
         <div className="flex items-center gap-1.5">
-          <span className="text-3xl">🐾</span>
-          <span className="text-apple-title-1 text-apple-label font-bold">{appName}</span>
+          <span className="text-2xl">🐾</span>
+          <span className="text-mm-card-title font-display text-[var(--mm-label)] font-bold">{appName}</span>
         </div>
       </a>
 
@@ -63,17 +63,17 @@ export function AppleSidebar({
               key={item.id}
               onClick={() => onNavigate?.(item.id)}
               className={cn(
-                'w-full flex items-center gap-3 px-3 py-2 rounded-apple-lg',
-                'text-apple-body text-apple-label font-medium',
+                'w-full flex items-center gap-3 px-3 py-2.5 rounded-mm-md',
+                'text-mm-body text-[var(--mm-label)] font-medium',
                 'transition-all duration-200',
-                'hover:bg-[var(--apple-fill)]',
+                'hover:bg-[var(--mm-fill)]',
                 isActive && [
-                  'bg-apple-blue text-white font-semibold',
-                  'shadow-apple-sm',
+                  'bg-[var(--mm-fill)] font-semibold',
+                  'border border-[var(--mm-separator)]',
                 ],
               )}
             >
-              <Icon size={20} strokeWidth={isActive ? 2.5 : 1.8} />
+              <Icon size={20} strokeWidth={isActive ? 2.5 : 1.8} className={isActive ? 'text-[var(--mm-link)]' : 'text-[var(--mm-secondaryLabel)]'} />
               <span>{item.label}</span>
             </button>
           )

@@ -142,7 +142,7 @@ export function PhotoPreview({ moments, initialIndex, onClose, onDelete }: Photo
                 img.onload = () => { setImgLoaded(true); setLoading(false) }
                 img.onerror = () => { setImgError(true); setLoading(false) }
               }}
-              className="px-4 py-2 rounded-lg glass-light text-white text-apple-footnote hover:bg-white/10 transition-colors"
+              className="px-4 py-2 rounded-lg glass-light text-white text-mm-caption hover:bg-white/10 transition-colors"
             >
               重试
             </button>
@@ -174,16 +174,16 @@ export function PhotoPreview({ moments, initialIndex, onClose, onDelete }: Photo
               {current.caption ?? '无标题'}
             </DynamicType>
             <div className="flex items-center gap-3 mt-0.5">
-              <DynamicType styleLevel="caption2" className="text-white/60">
+              <DynamicType styleLevel="small" className="text-white/60">
                 {current.takenAt}
               </DynamicType>
-              <DynamicType styleLevel="caption2" className="text-white/40">·</DynamicType>
-              <DynamicType styleLevel="caption2" className="text-white/60">
+              <DynamicType styleLevel="small" className="text-white/40">·</DynamicType>
+              <DynamicType styleLevel="small" className="text-white/60">
                 {typeLabel[current.momentType] ?? current.momentType}
               </DynamicType>
             </div>
           </div>
-          <DynamicType styleLevel="caption2" className="text-white/40">
+          <DynamicType styleLevel="small" className="text-white/40">
             {currentIndex + 1} / {moments.length}
           </DynamicType>
         </GlassPanel>

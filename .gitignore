@@ -10,6 +10,7 @@ tsconfig.app.tsbuildinfo
 # Environment files — contain secrets
 .env
 .env.local
+.env.save
 .env.production.local
 .env.development.local
 

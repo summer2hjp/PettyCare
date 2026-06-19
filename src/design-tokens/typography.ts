@@ -1,30 +1,33 @@
 /**
- * SF Pro Font Size Hierarchy
+ * MiniMax Design System — Typography Tokens
  *
- * Mirrors Apple's typography scale from the HIG.
- * Primary consumption: Tailwind classes (text-apple-body, etc.)
- * These JS exports are for programmatic use (charts, canvas, etc.).
+ * Multi-font system: DM Sans (UI), Outfit (display), Poppins (mid-tier), Roboto (data).
+ * Primary consumption: Tailwind classes (text-mm-body, font-display, etc.)
+ * These JS exports are for programmatic use.
  */
 
-export interface AppleFontLevel {
+export interface MMFontLevel {
   fontSize: number
   lineHeight: number
   fontWeight: 400 | 500 | 600 | 700
-  letterSpacing?: number
+  fontFamily: 'DM Sans' | 'Outfit' | 'Poppins' | 'Roboto'
 }
 
-export const appleTypography = {
-  largeTitle: { fontSize: 34, lineHeight: 41, fontWeight: 700, letterSpacing: 0.37 },
-  title1: { fontSize: 28, lineHeight: 34, fontWeight: 700, letterSpacing: 0.36 },
-  title2: { fontSize: 22, lineHeight: 28, fontWeight: 700, letterSpacing: 0.35 },
-  title3: { fontSize: 20, lineHeight: 25, fontWeight: 600, letterSpacing: 0.34 },
-  headline: { fontSize: 17, lineHeight: 22, fontWeight: 600, letterSpacing: -0.41 },
-  body: { fontSize: 17, lineHeight: 22, fontWeight: 400, letterSpacing: -0.41 },
-  callout: { fontSize: 16, lineHeight: 21, fontWeight: 400, letterSpacing: -0.32 },
-  subhead: { fontSize: 15, lineHeight: 20, fontWeight: 400, letterSpacing: -0.24 },
-  footnote: { fontSize: 13, lineHeight: 18, fontWeight: 400, letterSpacing: -0.08 },
-  caption1: { fontSize: 12, lineHeight: 16, fontWeight: 400, letterSpacing: 0 },
-  caption2: { fontSize: 11, lineHeight: 13, fontWeight: 400, letterSpacing: 0.07 },
-} as const satisfies Record<string, AppleFontLevel>
+export const mmTypography = {
+  hero: { fontSize: 80, lineHeight: 1.10, fontWeight: 500, fontFamily: 'Outfit' },
+  section: { fontSize: 31, lineHeight: 1.50, fontWeight: 600, fontFamily: 'Outfit' },
+  sectionAlt: { fontSize: 32, lineHeight: 0.88, fontWeight: 600, fontFamily: 'Roboto' },
+  cardTitle: { fontSize: 28, lineHeight: 1.71, fontWeight: 600, fontFamily: 'Outfit' },
+  subheading: { fontSize: 24, lineHeight: 1.50, fontWeight: 500, fontFamily: 'Poppins' },
+  feature: { fontSize: 18, lineHeight: 1.50, fontWeight: 500, fontFamily: 'Poppins' },
+  bodyLarge: { fontSize: 20, lineHeight: 1.50, fontWeight: 500, fontFamily: 'DM Sans' },
+  body: { fontSize: 16, lineHeight: 1.50, fontWeight: 400, fontFamily: 'DM Sans' },
+  bodyBold: { fontSize: 16, lineHeight: 1.50, fontWeight: 700, fontFamily: 'DM Sans' },
+  nav: { fontSize: 14, lineHeight: 1.50, fontWeight: 500, fontFamily: 'DM Sans' },
+  button: { fontSize: 13, lineHeight: 1.50, fontWeight: 600, fontFamily: 'DM Sans' },
+  caption: { fontSize: 13, lineHeight: 1.70, fontWeight: 400, fontFamily: 'DM Sans' },
+  small: { fontSize: 12, lineHeight: 1.50, fontWeight: 500, fontFamily: 'DM Sans' },
+  micro: { fontSize: 10, lineHeight: 1.50, fontWeight: 400, fontFamily: 'DM Sans' },
+} as const satisfies Record<string, MMFontLevel>
 
-export type AppleFontLevelName = keyof typeof appleTypography
+export type MMFontLevelName = keyof typeof mmTypography

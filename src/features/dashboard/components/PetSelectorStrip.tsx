@@ -61,10 +61,10 @@ export function PetSelectorStrip({ pets, activePetId, onSelect, loading }: PetSe
               intensity="light"
               className={cn(
                 'flex flex-col items-center justify-center gap-1 w-[60px] py-2.5 px-2 cursor-pointer transition-all duration-300',
-                activePetId === null && 'ring-2 ring-apple-blue scale-105'
+                activePetId === null && 'ring-2 ring-[var(--mm-link)] scale-105'
               )}
             >
-              <DynamicType styleLevel="caption2" weight={activePetId === null ? 600 : 400}>
+              <DynamicType styleLevel="small" weight={activePetId === null ? 600 : 400}>
                 All
               </DynamicType>
             </GlassPanel>
@@ -84,17 +84,17 @@ export function PetSelectorStrip({ pets, activePetId, onSelect, loading }: PetSe
                 intensity="light"
                 className={cn(
                   'flex flex-col items-center gap-0.5 w-[60px] py-2.5 px-2 cursor-pointer transition-all duration-300',
-                  isActive && 'ring-2 ring-apple-blue scale-105'
+                  isActive && 'ring-2 ring-[var(--mm-link)] scale-105'
                 )}
               >
                 <DynamicType
-                  styleLevel="caption2"
+                  styleLevel="small"
                   weight={isActive ? 600 : 400}
                   className="text-center truncate w-full"
                 >
                   {pet.name}
                 </DynamicType>
-                <DynamicType styleLevel="caption2" className="text-apple-tertiaryLabel">
+                <DynamicType styleLevel="small" className="text-[var(--mm-tertiaryLabel)]">
                   {pet.weight}{pet.weightUnit}
                 </DynamicType>
               </GlassPanel>

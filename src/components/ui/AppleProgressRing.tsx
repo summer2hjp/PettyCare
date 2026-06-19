@@ -7,7 +7,7 @@ interface AppleProgressRingProps {
 }
 
 export function AppleProgressRing({
-  progress, size = 72, strokeWidth = 6, color = 'var(--apple-blue)', trackColor = 'var(--apple-fill)', children, className,
+  progress, size = 72, strokeWidth = 6, color = 'var(--mm-link)', trackColor = 'var(--mm-fill)', children, className,
 }: AppleProgressRingProps) {
   const radius = (size - strokeWidth) / 2
   const circumference = 2 * Math.PI * radius

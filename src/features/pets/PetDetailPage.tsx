@@ -31,12 +31,12 @@ export function PetDetailPage({ petId, onBack, onEdit, onDelete }: PetDetailPage
   return (
     <div>
       <div className="flex items-center justify-between mb-5">
-        <button onClick={onBack} className="flex items-center gap-1.5 text-apple-subhead text-apple-blue hover:opacity-80 transition-opacity">
+        <button onClick={onBack} className="flex items-center gap-1.5 text-mm-caption text-[var(--mm-link)] hover:opacity-80 transition-opacity">
           <ArrowLeft size={18} /> Back
         </button>
         <div className="flex gap-2">
           <AppleButton variant="secondary" size="sm" icon={<Edit3 size={14} />} onClick={() => onEdit?.(pet.id)}>Edit</AppleButton>
-          <AppleButton variant="secondary" size="sm" icon={<Trash2 size={14} />} onClick={() => onDelete?.(pet.id)} className="text-apple-red">Delete</AppleButton>
+          <AppleButton variant="secondary" size="sm" icon={<Trash2 size={14} />} onClick={() => onDelete?.(pet.id)} className="text-[#FF3B30]">Delete</AppleButton>
         </div>
       </div>
 
@@ -44,17 +44,17 @@ export function PetDetailPage({ petId, onBack, onEdit, onDelete }: PetDetailPage
         <div className="flex items-start gap-6">
           <AppleAvatar name={pet.name} size="xl" />
           <div className="flex-1 min-w-0">
-            <DynamicType styleLevel="largeTitle" weight={700}>
+            <DynamicType styleLevel="cardTitle" weight={700}>
               <span className="text-2xl mr-1">{pet.gender === 'male' ? '♂' : '♀'}</span>
               {pet.name}
             </DynamicType>
-            <DynamicType styleLevel="body"  className="mt-2">{pet.breed} · {calculateAge(pet.birthDate)} · {pet.weight}{pet.weightUnit}</DynamicType>
+            <DynamicType styleLevel="body" color="secondary" className="mt-2">{pet.breed} · {calculateAge(pet.birthDate)} · {pet.weight}{pet.weightUnit}</DynamicType>
           </div>
           <div className="hidden sm:flex flex-col items-center gap-1">
-            <AppleProgressRing progress={healthScore / 100} size={72} color={healthScore >= 80 ? 'var(--apple-green)' : 'var(--apple-orange)'}>
-              <DynamicType styleLevel="footnote" weight={700}>{healthScore}%</DynamicType>
+            <AppleProgressRing progress={healthScore / 100} size={72} color={healthScore >= 80 ? '#34C759' : '#FF9500'}>
+              <DynamicType styleLevel="button" weight={700}>{healthScore}%</DynamicType>
             </AppleProgressRing>
-            <DynamicType styleLevel="caption2" >Health</DynamicType>
+            <DynamicType styleLevel="small" color="muted">Health</DynamicType>
           </div>
         </div>
       </AppleCard>
@@ -67,13 +67,13 @@ export function PetDetailPage({ petId, onBack, onEdit, onDelete }: PetDetailPage
           { label: 'Member Since', value: formatDate(pet.createdAt) },
         ].map(info => (
           <AppleCard key={info.label} padding="md" hoverable>
-            <DynamicType styleLevel="caption1" >{info.label}</DynamicType>
-            <DynamicType styleLevel="subhead" weight={600} className="mt-1">{info.value}</DynamicType>
+            <DynamicType styleLevel="caption" color="secondary">{info.label}</DynamicType>
+            <DynamicType styleLevel="bodyBold" weight={600} className="mt-1">{info.value}</DynamicType>
           </AppleCard>
         ))}
       </div>
 
-      <DynamicType styleLevel="title3" weight={600} className="mb-3">Health Overview</DynamicType>
+      <DynamicType styleLevel="section" weight={600} className="mb-3">Health Overview</DynamicType>
       <AppleTable columns={[{ key: 'label', label: 'Record', render: (r: any) => <span className="font-medium">{r.label}</span> }, { key: 'value', label: 'Details' }]} data={healthData} keyExtractor={r => r.label} />
     </div>
   )

@@ -8,7 +8,7 @@ interface AppleCardProps extends HTMLAttributes<HTMLDivElement> {
   as?: 'div' | 'section' | 'article'
 }
 
-const paddingStyles = { sm: 'p-3', md: 'p-5', lg: 'p-6' }
+const paddingStyles = { sm: 'p-4', md: 'p-5', lg: 'p-6' }
 
 export function AppleCard({
   children, padding = 'md', hoverable = false, as: Tag = 'div', className, ...props
@@ -16,8 +16,8 @@ export function AppleCard({
   return (
     <Tag
       className={cn(
-        'apple-card', paddingStyles[padding],
-        hoverable && 'cursor-pointer hover:shadow-apple-lg hover:-translate-y-0.5',
+        'mm-card', paddingStyles[padding],
+        hoverable && 'cursor-pointer hover:-translate-y-0.5',
         'transition-all duration-300', className,
       )}
       {...props}

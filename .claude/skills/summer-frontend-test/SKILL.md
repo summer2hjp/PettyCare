@@ -1,5 +1,5 @@
 ---
-name: frontend-test-spec
+name: summer-frontend-test
 description: Test Level 分级标准（TL1-TL4）用于前端自动化测试，包含用例格式、断言模板和 PettyCare 项目实践参考
 metadata:
   type: reference

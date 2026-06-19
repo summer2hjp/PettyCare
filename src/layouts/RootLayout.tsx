@@ -27,7 +27,7 @@ export function RootLayout({
   const [searchValue, setSearchValue] = useState('')
 
   return (
-    <div className="h-dvh flex overflow-hidden bg-[var(--apple-secondarySystemBackground)]">
+    <div className="h-dvh flex overflow-hidden bg-[var(--mm-background)]">
       <AppleSidebar
         activeItem={activeItem}
         navItems={navItems}
@@ -45,7 +45,7 @@ export function RootLayout({
           onSignOut={signOut}
         />
 
-        <main className={cn('flex-1 overflow-y-auto p-5 bg-[var(--apple-secondarySystemBackground)]', className)}>
+        <main className={cn('flex-1 overflow-y-auto p-6 bg-[var(--mm-background)]', className)}>
           {children}
         </main>
       </div>

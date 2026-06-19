@@ -37,14 +37,14 @@ export function PetListPage({ onSelect, onAdd }: PetListPageProps) {
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-xs">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-apple-tertiaryLabel" />
+          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--mm-tertiaryLabel)]" />
           <input type="text" placeholder="Search pets..." value={search} onChange={e => setSearch(e.target.value)}
-            className="w-full h-[34px] pl-9 pr-3 rounded-apple-lg bg-[var(--apple-fill)] text-apple-subhead text-apple-label text-left placeholder:text-apple-placeholderText border-0 focus:outline-none focus:bg-[var(--apple-secondarySystemBackground)] transition-colors duration-200" />
+            className="w-full h-[34px] pl-9 pr-3 rounded-mm-md bg-[var(--mm-fill)] text-mm-caption text-[var(--mm-label)] text-left placeholder:text-[var(--mm-tertiaryLabel)] border-0 focus:outline-none focus:bg-[var(--mm-secondaryBackground)] transition-colors duration-200" />
         </div>
         <div className="flex gap-1">
           {['all', 'dog', 'cat', 'hamster'].map(s => (
             <button key={s} onClick={() => setFilterSpecies(s)}
-              className={cn('px-3 py-1.5 rounded-apple-lg text-apple-caption-1 font-medium transition-colors duration-200', filterSpecies === s ? 'bg-apple-blue text-white' : 'text-apple-secondaryLabel hover:bg-[var(--apple-fill)]')}>
+              className={cn('px-3 py-1.5 rounded-mm-md text-mm-small font-medium transition-colors duration-200', filterSpecies === s ? 'bg-[var(--mm-link)] text-white' : 'text-[var(--mm-secondaryLabel)] hover:bg-[var(--mm-fill)]')}>
               {s === 'all' ? 'All' : s.charAt(0).toUpperCase() + s.slice(1) + 's'}
             </button>
           ))}
@@ -64,9 +64,9 @@ export function PetListPage({ onSelect, onAdd }: PetListPageProps) {
                 className="mb-3"
                 src={pet.avatarUrl ? `/picture/${pet.avatarUrl}` : `/picture/${pet.name.toLowerCase()}-1.jpeg`}
               />
-              <DynamicType styleLevel="headline" weight={600}>{pet.name}</DynamicType>
-              <DynamicType styleLevel="caption1"  className="mt-0.5">{speciesEmoji[pet.species] ?? '🐾'} {pet.breed}</DynamicType>
-              <DynamicType styleLevel="caption2"  className="mt-2"><span className="text-lg">{pet.gender === 'male' ? '♂' : '♀'}</span> · {calculateAge(pet.birthDate)} · {pet.weight}{pet.weightUnit}</DynamicType>
+              <DynamicType styleLevel="bodyBold" weight={600}>{pet.name}</DynamicType>
+              <DynamicType styleLevel="caption"  className="mt-0.5">{speciesEmoji[pet.species] ?? '🐾'} {pet.breed}</DynamicType>
+              <DynamicType styleLevel="small" color="muted" className="mt-2"><span className="text-lg">{pet.gender === 'male' ? '♂' : '♀'}</span> · {calculateAge(pet.birthDate)} · {pet.weight}{pet.weightUnit}</DynamicType>
             </AppleCard>
           ))}
         </div>

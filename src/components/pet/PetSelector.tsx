@@ -27,20 +27,20 @@ export function PetSelector({ selectedPetId, onChange, className }: PetSelectorP
   return (
     <div ref={ref} className={cn('relative', className)}>
       <button onClick={() => setOpen(!open)}
-        className={cn('flex items-center gap-1.5 h-8 px-3 rounded-[8px] bg-transparent hover:text-apple-blue transition-colors duration-200')}>
+        className={cn('flex items-center gap-1.5 h-8 px-3 rounded-mm-md bg-[var(--mm-fill)] hover:bg-[var(--mm-secondaryBackground)] transition-colors duration-200')}>
         <span className="text-base">{current.species === 'dog' ? '🐕' : current.species === 'cat' ? '🐈' : current.species === 'hamster' ? '🐹' : '🐾'}</span>
-        <span className="text-apple-footnote text-apple-label font-medium">{current.name}</span>
-        <ChevronDown size={14} className={cn('text-apple-secondaryLabel transition-transform duration-200', open && 'rotate-180')} />
+        <span className="text-mm-caption text-[var(--mm-label)] font-medium">{current.name}</span>
+        <ChevronDown size={14} className={cn('text-[var(--mm-secondaryLabel)] transition-transform duration-200', open && 'rotate-180')} />
       </button>
 
       {open && (
-        <div className={cn('absolute right-0 top-full mt-1.5 min-w-[140px] py-1 z-50 glass-heavy rounded-apple-xl shadow-apple-lg border border-[var(--apple-separator)] animate-scale-in origin-top-right')}>
+        <div className={cn('absolute right-0 top-full mt-1.5 min-w-[140px] py-1 z-50 bg-[var(--mm-card)] rounded-mm-lg shadow-mm-card border border-[var(--mm-separator)] animate-scale-in origin-top-right')}>
           {pets.map(p => (
             <button key={p.id} onClick={() => { onChange(p.id); setOpen(false) }}
-              className={cn('w-full flex items-center gap-2 px-3 py-1.5 text-apple-caption-1 transition-colors duration-100', p.id === selectedPetId ? 'text-apple-label font-semibold' : 'text-apple-label hover:text-apple-blue')}>
+              className={cn('w-full flex items-center gap-2 px-3 py-1.5 text-mm-caption transition-colors duration-100', p.id === selectedPetId ? 'text-[var(--mm-label)] font-semibold' : 'text-[var(--mm-label)] hover:text-[var(--mm-link)]')}>
               <span>{p.species === 'dog' ? '🐕' : p.species === 'cat' ? '🐈' : p.species === 'hamster' ? '🐹' : '🐾'}</span>
               <span>{p.name}</span>
-              {p.id === selectedPetId && <div className="ml-auto w-1 h-1 rounded-full bg-apple-blue" />}
+              {p.id === selectedPetId && <div className="ml-auto w-1 h-1 rounded-full bg-[var(--mm-link)]" />}
             </button>
           ))}
         </div>

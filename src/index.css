@@ -3,57 +3,62 @@
 @tailwind utilities;
 
 /* =========================================
-   Apple Design Tokens — CSS Custom Properties
+   MiniMax Design Tokens — CSS Custom Properties
    ========================================= */
 
 :root {
   color-scheme: light;
 
-  --apple-red: #FF3B30;
-  --apple-orange: #FF9500;
-  --apple-yellow: #FFCC00;
-  --apple-green: #34C759;
-  --apple-mint: #00C7BE;
-  --apple-teal: #30B0C7;
-  --apple-cyan: #32ADE6;
-  --apple-blue: #007AFF;
-  --apple-indigo: #5856D6;
-  --apple-purple: #AF52DE;
-  --apple-pink: #FF2D55;
-  --apple-brown: #A2845E;
+  /* ── Brand Colors ── */
+  --mm-brand-blue: #1456f0;
+  --mm-brand-sky: #3daeff;
+  --mm-brand-pink: #ea5ec1;
+  --mm-brand-deep: #17437d;
 
-  /* ── Semantic tokens — warm pet-care palette ── */
-  --apple-label: #2C2C2C;
-  --apple-secondaryLabel: #8B7E74CC;
-  --apple-tertiaryLabel: #8B7E744D;
-  --apple-quaternaryLabel: #8B7E742E;
-  --apple-placeholderText: #8B7E744D;
-  --apple-separator: #D6CEC44D;
-  --apple-opaqueSeparator: #D6CEC4;
-  --apple-link: #007AFF;
-  --apple-systemBackground: #F8F4EF;
-  --apple-secondarySystemBackground: #F0EBE3;
-  --apple-tertiarySystemBackground: #F5F0E9;
-  --apple-systemGroupedBackground: #EBE5DC;
-  --apple-secondarySystemGroupedBackground: #F0F0F0;
-  --apple-tertiarySystemGroupedBackground: #E8E1D6;
-  --apple-fill: #B8A89833;
-  --apple-secondaryFill: #B8A89828;
-  --apple-tertiaryFill: #B8A8981E;
-  --apple-quaternaryFill: #B8A89814;
+  /* ── Blue Scale ── */
+  --mm-primary-200: #bfdbfe;
+  --mm-primary-light: #60a5fa;
+  --mm-primary-500: #3b82f6;
+  --mm-primary-600: #2563eb;
+  --mm-primary-700: #1d4ed8;
 
-  /* ── Shadow tokens ── */
-  --apple-shadow-sm: 0 1px 2px rgba(0,0,0,0.04), 0 1px 4px rgba(0,0,0,0.04);
-  --apple-shadow-md: 0 2px 8px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
-  --apple-shadow-lg: 0 4px 16px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
-  --apple-shadow-xl: 0 8px 32px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.04);
+  /* ── Text Colors ── */
+  --mm-label: #222222;
+  --mm-secondaryLabel: #45515e;
+  --mm-tertiaryLabel: #8e8e93;
+  --mm-mutedLabel: #8e8e93;
+  --mm-placeholderText: #8e8e93;
+  --mm-link: #3b82f6;
+
+  /* ── Surface Colors ── */
+  --mm-background: #ffffff;
+  --mm-secondaryBackground: #f0f0f0;
+  --mm-card: #ffffff;
+  --mm-cardHover: #fafafa;
+  --mm-fill: rgba(0, 0, 0, 0.05);
+  --mm-secondaryFill: rgba(0, 0, 0, 0.03);
+
+  /* ── Border Colors ── */
+  --mm-separator: #e5e7eb;
+  --mm-opaqueSeparator: #e5e7eb;
+
+  /* ── Shadow Values ── */
+  --mm-shadow-subtle: rgba(0, 0, 0, 0.08) 0px 4px 6px;
+  --mm-shadow-ambient: rgba(0, 0, 0, 0.08) 0px 0px 22.576px;
+  --mm-shadow-brand: rgba(44, 30, 116, 0.16) 0px 0px 15px;
+  --mm-shadow-card: rgba(36, 36, 36, 0.08) 0px 12px 16px -4px;
 
   /* ── Health status colors (fixed, no theme change) ── */
-  --apple-health-excellent: #34C759;
-  --apple-health-good: #7DCF5C;
-  --apple-health-fair: #FFCC00;
-  --apple-health-poor: #FF9500;
-  --apple-health-critical: #FF3B30;
+  --mm-health-excellent: #34C759;
+  --mm-health-good: #7DCF5C;
+  --mm-health-fair: #FFCC00;
+  --mm-health-poor: #FF9500;
+  --mm-health-critical: #FF3B30;
+
+  /* ── Semantic Backgrounds ── */
+  --mm-success-bg: #e8ffea;
+  --mm-error-bg: #fee2e2;
+  --mm-warning-bg: #fef3c7;
 }
 
 /* =========================================
@@ -62,31 +67,26 @@
 
 .dark {
   color-scheme: dark;
-  --apple-label: #FFFFFF;
-  --apple-secondaryLabel: #EBEBF5B8;
-  --apple-tertiaryLabel: #EBEBF560;
-  --apple-quaternaryLabel: #EBEBF540;
-  --apple-separator: #38383A;
-  --apple-opaqueSeparator: #38383A;
-  --apple-systemBackground: #000000;
-  --apple-secondarySystemBackground: #1C1C1E;
-  --apple-tertiarySystemBackground: #2C2C2E;
-  --apple-systemGroupedBackground: #000000;
-  --apple-secondarySystemGroupedBackground: #2C2C2E;
-  --apple-tertiarySystemGroupedBackground: #3A3A3C;
-  --apple-fill: #78788059;
-  --apple-secondaryFill: #78788045;
-  --apple-tertiaryFill: #7676803A;
-  --apple-quaternaryFill: #7474802E;
-  --apple-shadow-sm: 0 1px 2px rgba(0,0,0,0.24), 0 1px 4px rgba(0,0,0,0.16);
-  --apple-shadow-md: 0 2px 8px rgba(0,0,0,0.32), 0 1px 2px rgba(0,0,0,0.24);
-  --apple-shadow-lg: 0 4px 16px rgba(0,0,0,0.40), 0 2px 4px rgba(0,0,0,0.24);
-  --apple-shadow-xl: 0 8px 32px rgba(0,0,0,0.48), 0 2px 8px rgba(0,0,0,0.24);
+  --mm-label: #ffffff;
+  --mm-secondaryLabel: #a1a1aa;
+  --mm-tertiaryLabel: #71717a;
+  --mm-mutedLabel: #52525b;
+  --mm-background: #000000;
+  --mm-secondaryBackground: #1c1c1e;
+  --mm-card: #1c1c1e;
+  --mm-cardHover: #2c2c2e;
+  --mm-fill: rgba(255, 255, 255, 0.06);
+  --mm-secondaryFill: rgba(255, 255, 255, 0.03);
+  --mm-separator: #38383a;
+  --mm-opaqueSeparator: #38383a;
+  --mm-link: #60a5fa;
+  --mm-success-bg: rgba(52, 199, 89, 0.15);
+  --mm-error-bg: rgba(255, 59, 48, 0.15);
+  --mm-warning-bg: rgba(255, 204, 0, 0.15);
 }
 
 /* =========================================
    Theme Transition
-   Smoothly interpolate theme changes
    ========================================= */
 
 html.theme-transitioning,
@@ -108,12 +108,11 @@ html.theme-transitioning *::after {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
-    font-family: -apple-system, 'SF Pro Text', 'SF Pro Display',
-      'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    font-family: 'DM Sans', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
   }
 
   body {
-    @apply bg-apple-systemBackground text-apple-body text-apple-label
+    @apply bg-[var(--mm-background)] text-mm-body text-[var(--mm-label)]
            min-h-screen min-h-dvh overflow-x-hidden;
   }
 
@@ -129,7 +128,7 @@ html.theme-transitioning *::after {
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background: var(--apple-separator);
+    background: var(--mm-separator);
     border-radius: 2px;
   }
 }
@@ -139,52 +138,41 @@ html.theme-transitioning *::after {
    ========================================= */
 
 @layer components {
-  .glass {
-    background-color: rgba(235, 235, 235, 0.72);
-    backdrop-filter: blur(40px) saturate(1.2);
-    -webkit-backdrop-filter: blur(40px) saturate(1.2);
+  /* MiniMax Card */
+  .mm-card {
+    @apply bg-[var(--mm-card)] rounded-mm-xl
+           transition-all duration-300;
+    box-shadow: var(--mm-shadow-subtle);
+    color: var(--mm-label);
   }
-  .dark .glass {
-    background-color: rgba(0, 0, 0, 0.72);
-  }
-
-  .glass-light {
-    background-color: rgba(235, 235, 235, 0.48);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-  }
-  .dark .glass-light {
-    background-color: rgba(0, 0, 0, 0.48);
+  .mm-card:hover {
+    box-shadow: var(--mm-shadow-card);
+    background: var(--mm-cardHover);
   }
 
-  .glass-heavy {
-    background-color: rgba(240, 240, 240, 0.85);
-    backdrop-filter: blur(60px) saturate(1.4);
-    -webkit-backdrop-filter: blur(60px) saturate(1.4);
-  }
-  .dark .glass-heavy {
-    background-color: rgba(0, 0, 0, 0.85);
+  /* MiniMax Card with brand glow */
+  .mm-card-brand {
+    @apply bg-[var(--mm-card)] rounded-mm-2xl;
+    box-shadow: var(--mm-shadow-brand);
+    color: var(--mm-label);
   }
 
-  .apple-card {
-    @apply bg-[var(--apple-secondarySystemGroupedBackground)]
-           rounded-apple-xl shadow-apple-md
-           transition-shadow duration-300;
-    color: var(--apple-label);
-  }
-  .dark .apple-card {
-    @apply shadow-dark-apple-md;
+  /* MiniMax Card list (inset group replacement) */
+  .mm-inset-group {
+    @apply bg-[var(--mm-card)] rounded-mm-lg overflow-hidden
+           divide-y divide-[var(--mm-separator)];
+    box-shadow: var(--mm-shadow-subtle);
+    color: var(--mm-label);
   }
 
-  .apple-inset-group {
-    @apply bg-[var(--apple-secondarySystemGroupedBackground)]
-           rounded-apple-xl overflow-hidden
-           divide-y divide-[var(--apple-separator)];
-    color: var(--apple-label);
+  /* MiniMax Pill Button Base */
+  .mm-pill {
+    @apply rounded-mm-pill;
   }
 
+  /* Skeleton Loading */
   .skeleton {
-    @apply bg-[var(--apple-separator)] rounded-apple animate-skeleton;
+    @apply bg-[var(--mm-separator)] rounded-mm-md animate-skeleton;
     background-image: linear-gradient(
       90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%
     );
@@ -194,6 +182,19 @@ html.theme-transitioning *::after {
     background-image: linear-gradient(
       90deg, transparent 0%, rgba(255,255,255,0.05) 50%, transparent 100%
     );
+  }
+
+  /* Light background panels (glass replacement) */
+  .glass {
+    background-color: var(--mm-fill);
+    border: 1px solid var(--mm-separator);
+  }
+  .glass-light {
+    background-color: var(--mm-secondaryFill);
+  }
+  .glass-heavy {
+    background-color: var(--mm-card);
+    box-shadow: var(--mm-shadow-subtle);
   }
 }
 
@@ -215,14 +216,14 @@ html.theme-transitioning *::after {
 
 @media (prefers-contrast: more) {
   :root {
-    --apple-label: #000000;
-    --apple-secondaryLabel: #3C3C43CC;
-    --apple-separator: #3C3C43CC;
+    --mm-label: #000000;
+    --mm-secondaryLabel: #3C3C43CC;
+    --mm-separator: #3C3C43CC;
   }
   .dark {
-    --apple-label: #FFFFFF;
-    --apple-secondaryLabel: #EBEBF5CC;
-    --apple-separator: #545458;
+    --mm-label: #FFFFFF;
+    --mm-secondaryLabel: #EBEBF5CC;
+    --mm-separator: #545458;
   }
 }
 
@@ -240,7 +241,7 @@ html.theme-transitioning *::after {
 }
 
 @layer utilities {
-  .transition-apple {
+  .transition-mm {
     transition-timing-function: cubic-bezier(0.4, 0.0, 0.2, 1);
     transition-duration: 350ms;
   }

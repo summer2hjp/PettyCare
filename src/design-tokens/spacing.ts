@@ -1,8 +1,8 @@
 /**
- * 8pt Grid Spacing System
+ * MiniMax Design System — Spacing Tokens
  *
- * Apple HIG recommends an 8px base grid.
- * All margins, padding, and gaps align to this system.
+ * 8px base grid. All margins, padding, and gaps align to this system.
+ * Border radius scale: 8px (small) → 24px (extra large) → 9999px (pill).
  */
 
 export const spacing = {
@@ -21,9 +21,9 @@ export const spacing = {
 
 export const radii = {
   sm: 8,
-  md: 10,
-  lg: 12,
-  xl: 16,
-  xxl: 20,
-  full: 9999,
+  md: 13,
+  lg: 16,
+  xl: 20,
+  xxl: 24,
+  pill: 9999,
 } as const

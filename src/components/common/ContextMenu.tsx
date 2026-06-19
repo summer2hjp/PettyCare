@@ -28,11 +28,11 @@ export function ContextMenu({ items, children, className }: ContextMenuProps) {
       {children}
       {open && (
         <div ref={menuRef} style={{ left: pos.x, top: pos.y }}
-          className={cn('fixed z-50 min-w-[180px] py-1 glass-heavy rounded-apple-xl shadow-apple-lg border border-[var(--apple-separator)] animate-scale-in origin-top-left')}>
+          className={cn('fixed z-50 min-w-[180px] py-1 bg-[var(--mm-card)] rounded-mm-lg shadow-mm-card border border-[var(--mm-separator)] animate-scale-in origin-top-left')}>
           {items.map(item => (
             <button key={item.id} disabled={item.disabled}
               onClick={() => { item.onClick(); setOpen(false) }}
-              className={cn('w-full flex items-center gap-3 px-4 py-2 text-apple-subhead text-apple-label hover:bg-[var(--apple-fill)] dark:hover:bg-transparent transition-colors duration-100', item.danger && 'text-apple-red', item.disabled && 'opacity-40 cursor-not-allowed')}>
+              className={cn('w-full flex items-center gap-3 px-4 py-2 text-mm-caption text-[var(--mm-label)] hover:bg-[var(--mm-fill)] transition-colors duration-100', item.danger && 'text-[#FF3B30]', item.disabled && 'opacity-40 cursor-not-allowed')}>
               {item.icon && <span className="w-4 h-4 flex items-center">{item.icon}</span>}
               {item.label}
             </button>

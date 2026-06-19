@@ -1,10 +1,11 @@
 /**
- * Apple-style Shadow Layers
+ * MiniMax Design System — Shadow / Elevation Tokens
  *
- * iOS uses layered shadow depths to communicate elevation.
+ * MiniMax uses distinctive purple-tinted shadows for featured elements
+ * and neutral low-opacity shadows for standard cards.
  */
 
-export interface AppleShadow {
+export interface MMShadow {
   offsetY: number
   blur: number
   spread: number
@@ -12,9 +13,9 @@ export interface AppleShadow {
 }
 
 export const shadowLayers = {
-  sm: { offsetY: 1, blur: 2, spread: 0, color: 'rgba(0,0,0,0.04)' },
-  md: { offsetY: 2, blur: 8, spread: 0, color: 'rgba(0,0,0,0.06)' },
-  lg: { offsetY: 4, blur: 16, spread: 0, color: 'rgba(0,0,0,0.08)' },
-  xl: { offsetY: 8, blur: 32, spread: 0, color: 'rgba(0,0,0,0.10)' },
-  '2xl': { offsetY: 16, blur: 48, spread: 0, color: 'rgba(0,0,0,0.12)' },
-} as const satisfies Record<string, AppleShadow>
+  subtle: { offsetY: 4, blur: 6, spread: 0, color: 'rgba(0,0,0,0.08)' },
+  ambient: { offsetY: 0, blur: 22.576, spread: 0, color: 'rgba(0,0,0,0.08)' },
+  brand: { offsetY: 0, blur: 15, spread: 0, color: 'rgba(44,30,116,0.16)' },
+  brandOffset: { offsetY: 2, blur: 17.5, spread: 6.5, color: 'rgba(44,30,116,0.11)' },
+  card: { offsetY: 12, blur: 16, spread: -4, color: 'rgba(36,36,36,0.08)' },
+} as const satisfies Record<string, MMShadow>

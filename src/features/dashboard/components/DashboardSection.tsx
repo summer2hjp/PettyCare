@@ -46,9 +46,9 @@ export function DashboardSection({
       {/* Header */}
       <div className="flex items-center justify-between mb-3 px-1">
         <div className="flex items-baseline gap-2">
-          <DynamicType styleLevel="title3" weight={600}>{title}</DynamicType>
+          <DynamicType styleLevel="section" weight={600}>{title}</DynamicType>
           {subtitle && (
-            <DynamicType styleLevel="caption1" className="text-apple-secondaryLabel">
+            <DynamicType styleLevel="caption" className="text-[var(--mm-secondaryLabel)]">
               {subtitle}
             </DynamicType>
           )}
@@ -56,7 +56,7 @@ export function DashboardSection({
         {action && (
           <button
             onClick={action.onClick}
-            className="flex items-center gap-0.5 text-apple-blue text-apple-footnote hover:opacity-80 transition-opacity"
+            className="flex items-center gap-0.5 text-[var(--mm-link)] text-mm-caption hover:opacity-80 transition-opacity"
           >
             {action.label}
             <ChevronRight size={14} />
@@ -67,14 +67,14 @@ export function DashboardSection({
       {/* Content */}
       {error ? (
         <GlassPanel intensity={glassIntensity} className="flex items-center gap-3 p-5">
-          <AlertCircle size={20} className="text-apple-red shrink-0" />
+          <AlertCircle size={20} className="text-[#FF3B30] shrink-0" />
           <div className="flex-1 min-w-0">
-            <DynamicType styleLevel="footnote" weight={600}>Data load failed</DynamicType>
-            <DynamicType styleLevel="caption2" className="text-apple-secondaryLabel">{error}</DynamicType>
+            <DynamicType styleLevel="button" weight={600}>Data load failed</DynamicType>
+            <DynamicType styleLevel="small" className="text-[var(--mm-secondaryLabel)]">{error}</DynamicType>
           </div>
           {onRetry && (
             <button onClick={onRetry} className="p-1.5 rounded-full hover:bg-white/20 transition-colors">
-              <RefreshCw size={16} className="text-apple-blue" />
+              <RefreshCw size={16} className="text-[var(--mm-link)]" />
             </button>
           )}
         </GlassPanel>
@@ -86,7 +86,7 @@ export function DashboardSection({
         </div>
       ) : empty ? (
         <GlassPanel intensity={glassIntensity} className="p-5">
-          <DynamicType styleLevel="caption1" className="text-apple-secondaryLabel text-center py-4">
+          <DynamicType styleLevel="caption" className="text-[var(--mm-secondaryLabel)] text-center py-4">
             {emptyMessage ?? 'No data available'}
           </DynamicType>
         </GlassPanel>

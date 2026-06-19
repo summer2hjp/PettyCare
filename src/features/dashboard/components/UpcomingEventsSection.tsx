@@ -10,16 +10,16 @@ interface UpcomingEventsSectionProps {
 }
 
 const urgencyConfig: Record<string, { label: string; color: string }> = {
-  tomorrow: { label: 'Tomorrow', color: 'bg-apple-blue text-white' },
-  'within-3-days': { label: 'In 3 days', color: 'bg-apple-orange text-white' },
-  'next-week': { label: 'Next week', color: 'bg-apple-green text-white' },
-  later: { label: 'Later', color: 'bg-apple-separator text-apple-secondaryLabel' },
+  tomorrow: { label: 'Tomorrow', color: 'bg-[var(--mm-link)] text-white' },
+  'within-3-days': { label: 'In 3 days', color: 'bg-[#FF9500] text-white' },
+  'next-week': { label: 'Next week', color: 'bg-[#34C759] text-white' },
+  later: { label: 'Later', color: 'bg-[var(--mm-separator)] text-[var(--mm-secondaryLabel)]' },
 }
 
 const typeIcon: Record<string, React.ReactNode> = {
-  vaccination: <Syringe size={14} className="text-apple-blue" />,
-  appointment: <Stethoscope size={14} className="text-apple-purple" />,
-  visit: <Calendar size={14} className="text-apple-teal" />,
+  vaccination: <Syringe size={14} className="text-[var(--mm-link)]" />,
+  appointment: <Stethoscope size={14} className="text-[#AF52DE]" />,
+  visit: <Calendar size={14} className="text-[#30B0C7]" />,
 }
 
 export function UpcomingEventsSection({ events }: UpcomingEventsSectionProps) {
@@ -36,12 +36,12 @@ export function UpcomingEventsSection({ events }: UpcomingEventsSectionProps) {
             </span>
             <div className="flex items-center gap-1.5 mb-1">
               {typeIcon[event.type] ?? null}
-              <DynamicType styleLevel="footnote" weight={600}>{event.title}</DynamicType>
+              <DynamicType styleLevel="button" weight={600}>{event.title}</DynamicType>
             </div>
-            <DynamicType styleLevel="caption2" className="block text-apple-secondaryLabel">
+            <DynamicType styleLevel="small" className="block text-[var(--mm-secondaryLabel)]">
               {event.date}{event.time ? ` · ${event.time}` : ''}
             </DynamicType>
-            <DynamicType styleLevel="caption2" className="text-apple-secondaryLabel">{event.petName}</DynamicType>
+            <DynamicType styleLevel="small" className="text-[var(--mm-secondaryLabel)]">{event.petName}</DynamicType>
           </AppleCard>
         )
       })}

@@ -7,26 +7,24 @@ import { DynamicType } from '@/components/ui/DynamicType'
 import { EmptyState } from '@/components/common/EmptyState'
 import { formatDate } from '@/utils/date'
 import { cn } from '@/utils/cn'
-import { Plus, Syringe, Stethoscope, Pill, ChevronRight, ChevronDown } from 'lucide-react'
+import { Plus, Syringe, Stethoscope, Pill, ChevronDown } from 'lucide-react'
 import type { Vaccination, VetVisit, Medication } from '@/types/health'
 import { supabase } from '@/lib/supabase'
 
-
 function VaccinationRow({ v }: { v: Vaccination }) {
-  const statusColor = v.status === 'completed' ? 'bg-apple-green' : v.status === 'overdue' ? 'bg-apple-red' : 'bg-apple-orange'
+  const statusColor = v.status === 'completed' ? 'bg-[#34C759]' : v.status === 'overdue' ? 'bg-[#FF3B30]' : 'bg-[#FF9500]'
   const statusLabel = v.status === 'completed' ? 'Completed' : v.status === 'overdue' ? 'Overdue' : 'Upcoming'
   return (
     <div className="group flex items-center justify-between px-4 py-2 transition-colors">
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-apple-blue/10 flex items-center justify-center shrink-0"><Syringe size={16} className="text-apple-blue" /></div>
+        <div className="w-8 h-8 rounded-full bg-[var(--mm-link)]/10 flex items-center justify-center shrink-0"><Syringe size={16} className="text-[var(--mm-link)]" /></div>
         <div>
-          <DynamicType styleLevel="footnote" weight={600} className="group-hover:text-apple-blue">{v.name}</DynamicType>
-          <DynamicType styleLevel="caption2"  className="group-hover:text-apple-blue">Due: {formatDate(v.scheduledDate)}</DynamicType>
+          <DynamicType styleLevel="button" weight={600} className="group-hover:text-[var(--mm-link)]">{v.name}</DynamicType>
+          <DynamicType styleLevel="small" color="muted" className="group-hover:text-[var(--mm-link)]">Due: {formatDate(v.scheduledDate)}</DynamicType>
         </div>
       </div>
       <div className="flex items-center gap-3">
-        <span className={cn('inline-flex items-center px-2 py-0.5 rounded-apple-full text-[10px] font-semibold text-white', statusColor)}>{statusLabel}</span>
-        <ChevronRight size={16} className="text-apple-tertiaryLabel" />
+        <span className={cn('inline-flex items-center px-2 py-0.5 rounded-mm-pill text-[10px] font-semibold text-white', statusColor)}>{statusLabel}</span>
       </div>
     </div>
   )
@@ -36,14 +34,14 @@ function VisitCard({ v }: { v: VetVisit }) {
   return (
     <div className="group px-4 py-2 transition-colors">
       <div className="flex items-start gap-4">
-        <div className="w-8 h-8 rounded-full bg-apple-green/10 flex items-center justify-center shrink-0"><Stethoscope size={16} className="text-apple-green" /></div>
+        <div className="w-8 h-8 rounded-full bg-[#34C759]/10 flex items-center justify-center shrink-0"><Stethoscope size={16} className="text-[#34C759]" /></div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between">
-            <DynamicType styleLevel="footnote" weight={600} className="group-hover:text-apple-blue">{v.reason}</DynamicType>
-            <DynamicType styleLevel="caption2"  className="group-hover:text-apple-blue">{formatDate(v.date)}</DynamicType>
+            <DynamicType styleLevel="button" weight={600} className="group-hover:text-[var(--mm-link)]">{v.reason}</DynamicType>
+            <DynamicType styleLevel="small" color="muted" className="group-hover:text-[var(--mm-link)]">{formatDate(v.date)}</DynamicType>
           </div>
-          <DynamicType styleLevel="caption2"  className="group-hover:text-apple-blue">{v.vetName}{v.diagnosis ? ` · ${v.diagnosis}` : ''}</DynamicType>
-          {v.cost && <DynamicType styleLevel="caption2"  className="group-hover:text-apple-blue">${v.cost}</DynamicType>}
+          <DynamicType styleLevel="small" color="secondary" className="group-hover:text-[var(--mm-link)]">{v.vetName}{v.diagnosis ? ` · ${v.diagnosis}` : ''}</DynamicType>
+          {v.cost && <DynamicType styleLevel="small" color="muted" className="group-hover:text-[var(--mm-link)]">${v.cost}</DynamicType>}
         </div>
       </div>
     </div>
@@ -54,15 +52,15 @@ function MedicationRow({ m }: { m: Medication }) {
   return (
     <div className="group flex items-center justify-between px-4 py-2 transition-colors">
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-full bg-apple-orange/10 flex items-center justify-center shrink-0"><Pill size={16} className="text-apple-orange" /></div>
+        <div className="w-8 h-8 rounded-full bg-[#FF9500]/10 flex items-center justify-center shrink-0"><Pill size={16} className="text-[#FF9500]" /></div>
         <div>
-          <DynamicType styleLevel="footnote" weight={600} className="group-hover:text-apple-blue">{m.name}</DynamicType>
-          <DynamicType styleLevel="caption2"  className="group-hover:text-apple-blue">{m.dosage} · {m.frequency}</DynamicType>
+          <DynamicType styleLevel="button" weight={600} className="group-hover:text-[var(--mm-link)]">{m.name}</DynamicType>
+          <DynamicType styleLevel="small" color="muted" className="group-hover:text-[var(--mm-link)]">{m.dosage} · {m.frequency}</DynamicType>
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <span className={cn('w-2 h-2 rounded-full', m.isActive ? 'bg-apple-green' : 'bg-[var(--apple-separator)]')} />
-        <DynamicType styleLevel="caption1"  className="group-hover:text-apple-blue">{m.isActive ? 'Active' : 'Inactive'}</DynamicType>
+        <span className={cn('w-2 h-2 rounded-full', m.isActive ? 'bg-[#34C759]' : 'bg-[var(--mm-separator)]')} />
+        <DynamicType styleLevel="caption" color="secondary" className="group-hover:text-[var(--mm-link)]">{m.isActive ? 'Active' : 'Inactive'}</DynamicType>
       </div>
     </div>
   )
@@ -115,17 +113,17 @@ export function HealthPage() {
 
         <div ref={tabRef} className="relative">
           <button onClick={() => setTabOpen(!tabOpen)}
-            className={cn('flex items-center gap-1.5 h-8 px-3 rounded-[8px] bg-transparent hover:text-apple-blue transition-colors duration-200')}>
-            <span className="text-apple-footnote text-apple-label font-medium">{currentTab?.label ?? tab}</span>
-            <ChevronDown size={14} className={cn('text-apple-secondaryLabel transition-transform duration-200', tabOpen && 'rotate-180')} />
+            className={cn('flex items-center gap-1.5 h-8 px-3 rounded-mm-md bg-[var(--mm-fill)] hover:bg-[var(--mm-secondaryBackground)] transition-colors duration-200')}>
+            <span className="text-mm-caption text-[var(--mm-label)] font-medium">{currentTab?.label ?? tab}</span>
+            <ChevronDown size={14} className={cn('text-[var(--mm-secondaryLabel)] transition-transform duration-200', tabOpen && 'rotate-180')} />
           </button>
         {tabOpen && (
-          <div className={cn('absolute left-0 top-full mt-1.5 min-w-[200px] py-1 z-50 glass-heavy rounded-apple-xl shadow-apple-lg border border-[var(--apple-separator)] animate-scale-in origin-top-left')}>
+          <div className={cn('absolute left-0 top-full mt-1.5 min-w-[200px] py-1 z-50 bg-[var(--mm-card)] rounded-mm-lg shadow-mm-card border border-[var(--mm-separator)] animate-scale-in origin-top-left')}>
             {tabOptions.map(o => (
               <button key={o.value} onClick={() => { setTab(o.value); setTabOpen(false) }}
-                className={cn('w-full flex items-center gap-2 px-3 py-1.5 text-apple-caption-1 transition-colors duration-100', o.value === tab ? 'text-apple-label font-semibold' : 'text-apple-label hover:text-apple-blue')}>
+                className={cn('w-full flex items-center gap-2 px-3 py-1.5 text-mm-caption transition-colors duration-100', o.value === tab ? 'text-[var(--mm-label)] font-semibold' : 'text-[var(--mm-label)] hover:text-[var(--mm-link)]')}>
                 <span className="whitespace-nowrap">{o.label}</span>
-                {o.value === tab && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-apple-blue" />}
+                {o.value === tab && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[var(--mm-link)]" />}
               </button>
             ))}
           </div>
@@ -141,7 +139,7 @@ export function HealthPage() {
           {vaccinations.length === 0 ? (
             <AppleCard padding="lg"><EmptyState title="No vaccinations" description="Add your pet's first vaccination record" /></AppleCard>
           ) : (
-            <AppleCard padding="sm" className="!p-0 divide-y divide-[var(--apple-separator)]">
+            <AppleCard padding="sm" className="!p-0 divide-y divide-[var(--mm-separator)]">
               {vaccinations.map(v => <VaccinationRow key={v.id} v={v} />)}
             </AppleCard>
           )}
@@ -156,7 +154,7 @@ export function HealthPage() {
           {visits.length === 0 ? (
             <AppleCard padding="lg"><EmptyState title="No visits recorded" description="Add your first vet visit" /></AppleCard>
           ) : (
-            <AppleCard padding="sm" className="!p-0 divide-y divide-[var(--apple-separator)]">
+            <AppleCard padding="sm" className="!p-0 divide-y divide-[var(--mm-separator)]">
               {visits.map(v => <VisitCard key={v.id} v={v} />)}
             </AppleCard>
           )}
@@ -171,7 +169,7 @@ export function HealthPage() {
           {meds.length === 0 ? (
             <AppleCard padding="lg"><EmptyState title="No medications" description="Add your pet's first medication" /></AppleCard>
           ) : (
-            <AppleCard padding="sm" className="!p-0 divide-y divide-[var(--apple-separator)]">
+            <AppleCard padding="sm" className="!p-0 divide-y divide-[var(--mm-separator)]">
               {meds.map(m => <MedicationRow key={m.id} m={m} />)}
             </AppleCard>
           )}

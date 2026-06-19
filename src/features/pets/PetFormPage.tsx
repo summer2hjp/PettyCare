@@ -44,7 +44,6 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
     if (!file) return
     const url = URL.createObjectURL(file)
     setPreviewUrl(url)
-    // Store the filename as avatar reference (MVP: file must be manually placed in public/picture/)
     set('avatarUrl', file.name)
   }
 
@@ -79,7 +78,6 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
     <div className="max-w-2xl mx-auto flex items-center min-h-[calc(100vh-120px)]">
       <div className="w-full">
       <AppleCard padding="md" className="space-y-3">
-        {/* Header actions */}
         <div className="grid grid-cols-2 gap-3 mb-2">
           <AppleButton variant="secondary" size="sm" onClick={onBack} className="justify-self-start">Cancel</AppleButton>
           <div className="flex justify-end">
@@ -88,9 +86,8 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
             </AppleButton>
           </div>
         </div>
-        {/* Avatar upload */}
         <div className="flex items-center gap-4 py-2">
-          <div className="w-20 h-20 rounded-2xl bg-[var(--apple-fill)] flex items-center justify-center overflow-hidden shrink-0 border border-[var(--apple-separator)]">
+          <div className="w-20 h-20 rounded-mm-xl bg-[var(--mm-fill)] flex items-center justify-center overflow-hidden shrink-0 border border-[var(--mm-separator)]">
             {previewUrl ? (
               <img src={previewUrl} alt="Pet preview" className="w-full h-full object-cover" />
             ) : (
@@ -98,8 +95,8 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <DynamicType styleLevel="body" weight={600}>Pet Photo</DynamicType>
-            <DynamicType styleLevel="caption1" className="text-apple-secondaryLabel mt-0.5">Upload a photo of your pet</DynamicType>
+            <DynamicType styleLevel="bodyBold" weight={600}>Pet Photo</DynamicType>
+            <DynamicType styleLevel="caption" color="secondary" className="mt-0.5">Upload a photo of your pet</DynamicType>
             <div className="mt-2">
               <AppleButton variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
                 {previewUrl ? 'Change Photo' : 'Upload Photo'}
@@ -109,8 +106,8 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
           <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
         </div>
         {saveError && (
-          <div className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-2.5 mb-3">
-            <p className="text-[13px] text-apple-red font-semibold">{saveError}</p>
+          <div className="rounded-mm-md bg-red-500/10 border border-red-500/20 px-4 py-2.5 mb-3">
+            <p className="text-mm-small text-[#FF3B30] font-semibold">{saveError}</p>
           </div>
         )}
         <div className="grid grid-cols-2 gap-3">
@@ -161,8 +158,8 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
 function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
   return (
     <div>
-      <DynamicType styleLevel="footnote"  weight={600} className="mb-1.5">
-        {label} {error && <span className="text-apple-red ml-1">{error}</span>}
+      <DynamicType styleLevel="button" weight={600} className="mb-1.5">
+        {label} {error && <span className="text-[#FF3B30] ml-1">{error}</span>}
       </DynamicType>
       {children}
     </div>
@@ -184,17 +181,17 @@ function FormSelect({ value, onChange, options, placeholder }: { value: string; 
   return (
     <div ref={ref} className="relative">
       <button type="button" onClick={() => setOpen(!open)}
-        className={cn('w-full h-[36px] px-[10px] rounded-apple-lg text-apple-footnote text-left bg-[var(--apple-fill)] border-0 flex items-center justify-between gap-1 cursor-pointer')}>
-        <span className={cn(current ? 'text-apple-label' : 'text-apple-placeholderText')}>{current?.label ?? placeholder}</span>
-        <ChevronDown size={14} className={cn('text-apple-secondaryLabel shrink-0 transition-transform duration-200', open && 'rotate-180')} />
+        className={cn('w-full h-[36px] px-[10px] rounded-mm-md text-mm-caption text-left bg-[var(--mm-fill)] border-0 flex items-center justify-between gap-1 cursor-pointer')}>
+        <span className={cn(current ? 'text-[var(--mm-label)]' : 'text-[var(--mm-tertiaryLabel)]')}>{current?.label ?? placeholder}</span>
+        <ChevronDown size={14} className={cn('text-[var(--mm-secondaryLabel)] shrink-0 transition-transform duration-200', open && 'rotate-180')} />
       </button>
       {open && (
-        <div className={cn('absolute left-0 top-full mt-1 w-full py-1 z-50 rounded-apple-xl shadow-apple-lg border border-[var(--apple-separator)] bg-[var(--apple-secondarySystemGroupedBackground)] animate-scale-in')}>
+        <div className={cn('absolute left-0 top-full mt-1 w-full py-1 z-50 rounded-mm-lg shadow-mm-card border border-[var(--mm-separator)] bg-[var(--mm-card)] animate-scale-in')}>
           {options.map(o => (
             <button key={o.value} type="button" onClick={() => { onChange(o.value); setOpen(false) }}
-              className={cn('w-full flex items-center px-3 py-2 text-apple-footnote text-left transition-colors duration-100', o.value === value ? 'text-apple-label font-semibold' : 'text-apple-label hover:text-apple-blue')}>
+              className={cn('w-full flex items-center px-3 py-2 text-mm-caption text-left transition-colors duration-100', o.value === value ? 'text-[var(--mm-label)] font-semibold' : 'text-[var(--mm-label)] hover:text-[var(--mm-link)]')}>
               {o.label}
-              {o.value === value && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-apple-blue" />}
+              {o.value === value && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[var(--mm-link)]" />}
             </button>
           ))}
         </div>
@@ -204,5 +201,5 @@ function FormSelect({ value, onChange, options, placeholder }: { value: string; 
 }
 
 function fieldInput(error?: string) {
-  return cn('w-full h-[36px] px-[12px] rounded-apple-lg text-apple-footnote text-apple-label text-left bg-[var(--apple-fill)] placeholder:text-apple-placeholderText border-0 focus:outline-none focus:bg-[var(--apple-secondarySystemBackground)] transition-colors duration-200', error && 'ring-2 ring-apple-red')
+  return cn('w-full h-[36px] px-[12px] rounded-mm-md text-mm-caption text-[var(--mm-label)] text-left bg-[var(--mm-fill)] placeholder:text-[var(--mm-tertiaryLabel)] border-0 focus:outline-none focus:bg-[var(--mm-secondaryBackground)] transition-colors duration-200', error && 'ring-2 ring-[#FF3B30]')
 }

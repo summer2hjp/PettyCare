@@ -14,7 +14,7 @@ export function GlassPanel({ children, intensity = 'medium', className, as: Tag 
       intensity === 'light' && 'glass-light',
       intensity === 'medium' && 'glass',
       intensity === 'heavy' && 'glass-heavy',
-      'rounded-apple-xl', className,
+      'rounded-mm-lg', className,
     )}>
       {children}
     </Tag>

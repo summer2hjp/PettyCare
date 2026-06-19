@@ -81,12 +81,12 @@ export function PetHeroCard({ pet, health, activity, loading }: PetHeroCardProps
               {pet.name}
             </DynamicType>
             <div className="flex items-center gap-2 mt-1">
-              <DynamicType styleLevel="footnote" className="text-white/80">
+              <DynamicType styleLevel="button" className="text-white/80">
                 {speciesEmoji[pet.species] ?? ''} {pet.species} · {pet.breed}
               </DynamicType>
             </div>
             <div className="flex items-center gap-3 mt-1">
-              <DynamicType styleLevel="caption2" className="text-white/60">
+              <DynamicType styleLevel="small" className="text-white/60">
                 {getAge(pet.birthDate)} · {pet.weight}{pet.weightUnit}
               </DynamicType>
             </div>
@@ -97,8 +97,8 @@ export function PetHeroCard({ pet, health, activity, loading }: PetHeroCardProps
       {/* Health Score Card */}
       <GlassPanel intensity="light" className="p-5 flex flex-col items-center justify-center" as="div">
         <div className="flex items-center gap-2 mb-3">
-          <Heart size={16} className="text-apple-red" />
-          <DynamicType styleLevel="footnote" weight={600}>健康评分</DynamicType>
+          <Heart size={16} className="text-[#FF3B30]" />
+          <DynamicType styleLevel="button" weight={600}>健康评分</DynamicType>
         </div>
         <div className="relative w-[64px] h-[64px] mb-2">
           <svg width="64" height="64" viewBox="0 0 64 64" className="transform -rotate-90">
@@ -120,7 +120,7 @@ export function PetHeroCard({ pet, health, activity, loading }: PetHeroCardProps
             </DynamicType>
           </div>
         </div>
-        <DynamicType styleLevel="footnote" weight={600} className={healthScoreColor}>
+        <DynamicType styleLevel="button" weight={600} className={healthScoreColor}>
           {health?.status ?? 'No Data'}
         </DynamicType>
         {health && (
@@ -135,33 +135,33 @@ export function PetHeroCard({ pet, health, activity, loading }: PetHeroCardProps
       <GlassPanel intensity="light" className="p-5" as="div">
         <div className="flex items-center gap-2 mb-3">
           <Footprints size={16} />
-          <DynamicType styleLevel="footnote" weight={600}>今日活动</DynamicType>
+          <DynamicType styleLevel="button" weight={600}>今日活动</DynamicType>
         </div>
         {activity ? (
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <DynamicType styleLevel="caption2" className="text-white/60">步数</DynamicType>
+              <DynamicType styleLevel="small" className="text-white/60">步数</DynamicType>
               <DynamicType styleLevel="body" weight={600}>
                 {activity.steps.toLocaleString()}
               </DynamicType>
             </div>
             <div className="flex items-center justify-between">
-              <DynamicType styleLevel="caption2" className="text-white/60">距离</DynamicType>
+              <DynamicType styleLevel="small" className="text-white/60">距离</DynamicType>
               <DynamicType styleLevel="body" weight={600}>
                 {activity.distance}km
               </DynamicType>
             </div>
             <div className="flex items-center justify-between">
-              <DynamicType styleLevel="caption2" className="text-white/60">消耗</DynamicType>
+              <DynamicType styleLevel="small" className="text-white/60">消耗</DynamicType>
               <DynamicType styleLevel="body" weight={600}>
                 {activity.calories}cal
               </DynamicType>
             </div>
             {activity.weeklyAvg > 0 && (
               <div className="flex items-center justify-between pt-1 border-t border-white/10">
-                <DynamicType styleLevel="caption2" className="text-white/60">周均</DynamicType>
+                <DynamicType styleLevel="small" className="text-white/60">周均</DynamicType>
                 <div className="flex items-center gap-1">
-                  <DynamicType styleLevel="footnote" weight={600}>
+                  <DynamicType styleLevel="button" weight={600}>
                     {activity.weeklyAvg.toLocaleString()}
                   </DynamicType>
                   {activity.trendDirection === 'up' ? (
@@ -169,7 +169,7 @@ export function PetHeroCard({ pet, health, activity, loading }: PetHeroCardProps
                   ) : (
                     <TrendingDown size={14} className="text-red-400" />
                   )}
-                  <DynamicType styleLevel="caption2" className={cn(
+                  <DynamicType styleLevel="small" className={cn(
                     activity.trendDirection === 'up' ? 'text-green-400' : 'text-red-400'
                   )}>
                     {activity.trendPercent}%
@@ -180,7 +180,7 @@ export function PetHeroCard({ pet, health, activity, loading }: PetHeroCardProps
           </div>
         ) : (
           <div className="flex items-center justify-center h-[100px]">
-            <DynamicType styleLevel="caption1" className="text-white/40">
+            <DynamicType styleLevel="caption" className="text-white/40">
               暂无活动数据
             </DynamicType>
           </div>

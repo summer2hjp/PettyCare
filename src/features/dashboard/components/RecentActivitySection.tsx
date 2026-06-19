@@ -10,11 +10,11 @@ interface RecentActivitySectionProps {
 }
 
 const typeStyle: Record<string, { icon: React.ReactNode; bg: string }> = {
-  vaccination: { icon: <Syringe size={14} />, bg: 'bg-blue-100 dark:bg-blue-900/30 text-apple-blue' },
-  feeding: { icon: <Utensils size={14} />, bg: 'bg-amber-100 dark:bg-amber-900/30 text-apple-orange' },
-  activity: { icon: <Footprints size={14} />, bg: 'bg-green-100 dark:bg-green-900/30 text-apple-green' },
-  appointment: { icon: <Calendar size={14} />, bg: 'bg-purple-100 dark:bg-purple-900/30 text-apple-purple' },
-  visit: { icon: <Stethoscope size={14} />, bg: 'bg-rose-100 dark:bg-rose-900/30 text-apple-red' },
+  vaccination: { icon: <Syringe size={14} />, bg: 'bg-blue-100 dark:bg-blue-900/30 text-[var(--mm-link)]' },
+  feeding: { icon: <Utensils size={14} />, bg: 'bg-amber-100 dark:bg-amber-900/30 text-[#FF9500]' },
+  activity: { icon: <Footprints size={14} />, bg: 'bg-green-100 dark:bg-green-900/30 text-[#34C759]' },
+  appointment: { icon: <Calendar size={14} />, bg: 'bg-purple-100 dark:bg-purple-900/30 text-[#AF52DE]' },
+  visit: { icon: <Stethoscope size={14} />, bg: 'bg-rose-100 dark:bg-rose-900/30 text-[#FF3B30]' },
 }
 
 export function RecentActivitySection({ entries }: RecentActivitySectionProps) {
@@ -31,9 +31,9 @@ export function RecentActivitySection({ entries }: RecentActivitySectionProps) {
                 {style.icon}
               </div>
               <div className="min-w-0">
-                <DynamicType styleLevel="footnote" weight={600}>{entry.description}</DynamicType>
-                <DynamicType styleLevel="caption2" className="block text-apple-secondaryLabel">{entry.detail}</DynamicType>
-                <DynamicType styleLevel="caption2" className="block text-apple-tertiaryLabel">{entry.relativeTime}</DynamicType>
+                <DynamicType styleLevel="button" weight={600}>{entry.description}</DynamicType>
+                <DynamicType styleLevel="small" className="block text-[var(--mm-secondaryLabel)]">{entry.detail}</DynamicType>
+                <DynamicType styleLevel="small" className="block text-[var(--mm-tertiaryLabel)]">{entry.relativeTime}</DynamicType>
               </div>
             </div>
           </AppleCard>

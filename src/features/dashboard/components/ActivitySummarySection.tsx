@@ -10,10 +10,10 @@ interface ActivitySummarySectionProps {
 }
 
 const statConfig = [
-  { key: 'steps', icon: Footprints, color: 'bg-apple-blue/10 text-apple-blue', suffix: '', decimals: 0 },
-  { key: 'distance', icon: TrendingUp, color: 'bg-apple-green/10 text-apple-green', suffix: 'km', decimals: 1 },
-  { key: 'duration', icon: Timer, color: 'bg-apple-orange/10 text-apple-orange', suffix: 'min', decimals: 0 },
-  { key: 'calories', icon: Flame, color: 'bg-apple-red/10 text-apple-red', suffix: 'cal', decimals: 0 },
+  { key: 'steps', icon: Footprints, color: 'bg-[var(--mm-link)]/10 text-[var(--mm-link)]', suffix: '', decimals: 0 },
+  { key: 'distance', icon: TrendingUp, color: 'bg-[#34C759]/10 text-[#34C759]', suffix: 'km', decimals: 1 },
+  { key: 'duration', icon: Timer, color: 'bg-[#FF9500]/10 text-[#FF9500]', suffix: 'min', decimals: 0 },
+  { key: 'calories', icon: Flame, color: 'bg-[#FF3B30]/10 text-[#FF3B30]', suffix: 'cal', decimals: 0 },
 ] as const
 
 export function ActivitySummarySection({ data }: ActivitySummarySectionProps) {
@@ -35,10 +35,10 @@ export function ActivitySummarySection({ data }: ActivitySummarySectionProps) {
               <Icon size={16} />
             </div>
             <div className="min-w-0">
-              <DynamicType styleLevel="caption2" className="text-apple-secondaryLabel capitalize">{key}</DynamicType>
+              <DynamicType styleLevel="small" className="text-[var(--mm-secondaryLabel)] capitalize">{key}</DynamicType>
               <div className="flex items-baseline gap-1">
-                <DynamicType styleLevel="title3" weight={700}>{values[key]}</DynamicType>
-                <DynamicType styleLevel="caption2" className="text-apple-secondaryLabel">{suffix}</DynamicType>
+                <DynamicType styleLevel="section" weight={700}>{values[key]}</DynamicType>
+                <DynamicType styleLevel="small" className="text-[var(--mm-secondaryLabel)]">{suffix}</DynamicType>
               </div>
             </div>
           </div>
@@ -47,12 +47,12 @@ export function ActivitySummarySection({ data }: ActivitySummarySectionProps) {
       {/* Trend card */}
       <AppleCard padding="md" hoverable className="snap-start shrink-0 min-w-[130px] flex items-center gap-2">
         {data.trendDirection === 'up'
-          ? <TrendingUp size={20} className="text-apple-green" />
-          : <TrendingDown size={20} className="text-apple-red" />
+          ? <TrendingUp size={20} className="text-[#34C759]" />
+          : <TrendingDown size={20} className="text-[#FF3B30]" />
         }
         <div>
-          <DynamicType styleLevel="caption2" className="text-apple-secondaryLabel">Weekly trend</DynamicType>
-          <DynamicType styleLevel="title3" weight={700}>
+          <DynamicType styleLevel="small" className="text-[var(--mm-secondaryLabel)]">Weekly trend</DynamicType>
+          <DynamicType styleLevel="section" weight={700}>
             {data.trendDirection === 'up' ? '+' : '-'}{data.trendPercent}%
           </DynamicType>
         </div>

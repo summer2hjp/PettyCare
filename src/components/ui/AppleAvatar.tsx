@@ -5,7 +5,7 @@ interface AppleAvatarProps {
   src?: string; name?: string; size?: 'sm' | 'md' | 'lg' | 'xl'; className?: string
 }
 
-const sizeMap = { sm: 'w-8 h-8 text-apple-footnote', md: 'w-10 h-10 text-apple-callout', lg: 'w-14 h-14 text-apple-body', xl: 'w-20 h-20 text-apple-title-3' }
+const sizeMap = { sm: 'w-8 h-8 text-mm-small', md: 'w-10 h-10 text-mm-caption', lg: 'w-14 h-14 text-mm-body', xl: 'w-20 h-20 text-mm-card-title' }
 
 function getInitials(name?: string): string {
   if (!name) return ''
@@ -18,7 +18,7 @@ export function AppleAvatar({ src, name, size = 'md', className }: AppleAvatarPr
   const showFallback = !src || imgError
 
   return (
-    <div className={cn(sizeMap[size], 'rounded-full flex items-center justify-center bg-[var(--apple-fill)] text-apple-secondaryLabel font-semibold ring-1 ring-[var(--apple-separator)] overflow-hidden shrink-0 select-none', className)}>
+    <div className={cn(sizeMap[size], 'rounded-full flex items-center justify-center bg-[var(--mm-fill)] text-[var(--mm-secondaryLabel)] font-semibold ring-1 ring-[var(--mm-separator)] overflow-hidden shrink-0 select-none', className)}>
       {showFallback ? (initials || '🐾') : (
         <img src={src} alt={name ?? ''} className="w-full h-full object-cover" onError={() => setImgError(true)} />
       )}

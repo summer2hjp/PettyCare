@@ -61,7 +61,7 @@ export function GrowthTimelineSection({
     <div className="mb-6">
       <div className="flex items-center justify-between mb-3 px-1">
         <div className="flex items-center gap-2">
-          <DynamicType styleLevel="title3" weight={600}>📈 成长轨迹</DynamicType>
+          <DynamicType styleLevel="section" weight={600}>📈 成长轨迹</DynamicType>
           {onUpload && !selecting && (
             <button
               onClick={onUpload}
@@ -74,13 +74,13 @@ export function GrowthTimelineSection({
         </div>
         <div className="flex items-center gap-2">
           {onBatchDelete && moments.length > 0 && !selecting && (
-            <button onClick={() => setSelecting(true)} className="text-apple-blue text-apple-footnote hover:opacity-80 transition-opacity">
+            <button onClick={() => setSelecting(true)} className="text-[var(--mm-link)] text-mm-caption hover:opacity-80 transition-opacity">
               选择
             </button>
           )}
           {selecting && (
             <button onClick={() => { setSelecting(false); setSelectedIds(new Set()) }}
-              className="flex items-center gap-1 text-apple-red text-apple-footnote hover:opacity-80 transition-opacity">
+              className="flex items-center gap-1 text-[#FF3B30] text-mm-caption hover:opacity-80 transition-opacity">
               <XIcon size={14} /> 取消
             </button>
           )}
@@ -90,17 +90,17 @@ export function GrowthTimelineSection({
       {error ? (
         <div className="rounded-xl glass-light p-5 flex items-center gap-3">
           <div className="flex-1 min-w-0">
-            <DynamicType styleLevel="footnote" weight={600} className="text-apple-red">
+            <DynamicType styleLevel="button" weight={600} className="text-[#FF3B30]">
               Failed to load
             </DynamicType>
-            <DynamicType styleLevel="caption2" className="text-apple-secondaryLabel">
+            <DynamicType styleLevel="small" className="text-[var(--mm-secondaryLabel)]">
               {error}
             </DynamicType>
           </div>
           {onRetry && (
             <button
               onClick={onRetry}
-              className="px-3 py-1.5 rounded-lg glass-light text-apple-blue text-apple-footnote hover:opacity-80 transition-opacity"
+              className="px-3 py-1.5 rounded-lg glass-light text-[var(--mm-link)] text-mm-caption hover:opacity-80 transition-opacity"
             >
               Retry
             </button>
@@ -110,8 +110,8 @@ export function GrowthTimelineSection({
         <GlassMomentSkeleton count={3} aspectRatio="portrait" />
       ) : sorted.length === 0 ? (
         <div className="rounded-xl glass-light p-6 flex flex-col items-center gap-2">
-          <Clock size={24} className="text-apple-tertiaryLabel" />
-          <DynamicType styleLevel="caption1" className="text-apple-secondaryLabel text-center">
+          <Clock size={24} className="text-[var(--mm-tertiaryLabel)]" />
+          <DynamicType styleLevel="caption" className="text-[var(--mm-secondaryLabel)] text-center">
             还没有成长记录，每月拍一张对比照吧 📸
           </DynamicType>
         </div>
@@ -130,7 +130,7 @@ export function GrowthTimelineSection({
             return (
               <div key={moment.id} className="flex items-center gap-2 snap-start shrink-0">
                 {index > 0 && (
-                  <ChevronRight size={20} className="text-apple-tertiaryLabel shrink-0" />
+                  <ChevronRight size={20} className="text-[var(--mm-tertiaryLabel)] shrink-0" />
                 )}
                 <div className="relative shrink-0 w-[140px]">
                   {selecting && (
@@ -139,7 +139,7 @@ export function GrowthTimelineSection({
                       className={cn(
                         'absolute top-1.5 left-1.5 z-10 w-6 h-6 rounded-full flex items-center justify-center transition-all duration-200',
                         selectedIds.has(moment.id)
-                          ? 'bg-apple-blue text-white scale-110'
+                          ? 'bg-[var(--mm-link)] text-white scale-110'
                           : 'bg-white/60 text-transparent hover:bg-white/80'
                       )}
                     >
@@ -169,7 +169,7 @@ export function GrowthTimelineSection({
                         />
                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
                           <DynamicType
-                            styleLevel="caption2"
+                            styleLevel="small"
                             weight={600}
                             className="text-white truncate"
                             style={{ textShadow: '0 1px 2px rgba(0,0,0,0.3)' }}
@@ -177,7 +177,7 @@ export function GrowthTimelineSection({
                             {label}
                           </DynamicType>
                           {moment.caption && (
-                            <DynamicType styleLevel="caption2" className="text-white/80 truncate">
+                            <DynamicType styleLevel="small" className="text-white/80 truncate">
                               {moment.caption}
                             </DynamicType>
                           )}
@@ -197,7 +197,7 @@ export function GrowthTimelineSection({
         <div className="mt-3 flex justify-center">
           <button
             onClick={handleBatchDelete}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl glass-heavy text-red-400 text-apple-footnote font-semibold hover:bg-white/10 transition-all"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl glass-heavy text-red-400 text-mm-caption font-semibold hover:bg-white/10 transition-all"
           >
             <Trash2 size={16} />
             删除选中 ({selectedIds.size})

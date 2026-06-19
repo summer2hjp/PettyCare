@@ -8,7 +8,7 @@ interface ToastData { id: string; message: string; variant?: ToastVariant; durat
 interface ToastContainerProps { toasts: ToastData[]; onDismiss: (id: string) => void; className?: string }
 
 const iconMap = { success: CheckCircle, error: AlertCircle, info: Info, warning: AlertTriangle }
-const variantBorder = { success: 'border-l-apple-green', error: 'border-l-apple-red', info: 'border-l-apple-blue', warning: 'border-l-apple-orange' }
+const variantBorder = { success: 'border-l-[#34C759]', error: 'border-l-[#FF3B30]', info: 'border-l-[var(--mm-link)]', warning: 'border-l-[#FF9500]' }
 
 export function ToastItem({ toast, onDismiss }: { toast: ToastData; onDismiss: (id: string) => void }) {
   const [visible, setVisible] = useState(false)
@@ -21,10 +21,10 @@ export function ToastItem({ toast, onDismiss }: { toast: ToastData; onDismiss: (
   }, [toast.id, toast.duration, onDismiss])
 
   return (
-    <div className={cn('flex items-start gap-3 px-4 py-3 rounded-apple-xl shadow-apple-lg glass-heavy border-l-4', variantBorder[toast.variant ?? 'info'], 'transition-all duration-300', visible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4')}>
-      <Icon size={18} className="shrink-0 mt-0.5 text-apple-label" />
-      <p className="flex-1 text-apple-subhead text-apple-label">{toast.message}</p>
-      <button onClick={() => { onDismiss(toast.id) }} className="text-apple-tertiaryLabel hover:text-apple-label shrink-0"><X size={16} /></button>
+    <div className={cn('flex items-start gap-3 px-4 py-3 rounded-mm-lg shadow-mm-card bg-[var(--mm-card)] border border-[var(--mm-separator)] border-l-4', variantBorder[toast.variant ?? 'info'], 'transition-all duration-300', visible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4')}>
+      <Icon size={18} className="shrink-0 mt-0.5 text-[var(--mm-label)]" />
+      <p className="flex-1 text-mm-caption text-[var(--mm-label)]">{toast.message}</p>
+      <button onClick={() => { onDismiss(toast.id) }} className="text-[var(--mm-tertiaryLabel)] hover:text-[var(--mm-label)] shrink-0"><X size={16} /></button>
     </div>
   )
 }

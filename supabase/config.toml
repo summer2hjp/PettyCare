@@ -1,9 +1,5 @@
 # For detailed configuration reference documentation, visit:
 # https://supabase.com/docs/guides/local-development/cli/config
-# A string used to distinguish different Supabase projects on the same host. Defaults to the
-# working directory name when running `supabase init`.
-[project]
-name = "pettycare"
 
 [api]
 enabled = true
@@ -222,7 +218,7 @@ enable_signup = true
 double_confirm_changes = true
 # If enabled, users need to confirm their email address before signing in.
 enable_confirmations = false
-enable_autoconfirm = true
+# enable_autoconfirm = true
 # If enabled, users will need to reauthenticate or have logged in recently to change their password.
 secure_password_change = false
 # Controls the minimum amount of time that must pass before sending another signup confirmation or password reset email.
@@ -385,7 +381,7 @@ deno_version = 2
 # secret_key = "env(SECRET_VALUE)"
 
 [analytics]
-enabled = true
+enabled = false
 port = 54327
 # Configure one of the supported backends: `postgres`, `bigquery`.
 backend = "postgres"
