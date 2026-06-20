@@ -4,7 +4,8 @@ import { AppleButton } from '@/components/ui/AppleButton'
 import { AppleCard } from '@/components/ui/AppleCard'
 import { DynamicType } from '@/components/ui/DynamicType'
 import { cn } from '@/utils/cn'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, Loader2, AlertCircle, RefreshCw } from 'lucide-react'
+import { uploadImage, UploadError } from '@/lib/upload'
 import type { Pet, PetFormData, PetSpecies, PetGender } from '@/types/pet'
 
 interface PetFormPageProps { pet?: Pet; onBack?: () => void; onSaved?: () => void }
@@ -25,8 +26,18 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
   const [errors, setErrors] = useState<Partial<Record<keyof PetFormData, string>>>({})
   const [saving, setSaving] = useState(false)
   const [saveError, setSaveError] = useState<string | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(pet?.avatarUrl ? `/picture/${pet.avatarUrl}` : null)
+  const [previewUrl, setPreviewUrl] = useState<string | null>(pet?.avatarUrl ?? null)
+  const [uploadState, setUploadState] = useState<'idle' | 'uploading' | 'error'>('idle')
+  const [uploadError, setUploadError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const blobUrlRef = useRef<string | null>(null)
+  const generatedPetId = useRef<string | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') onBack?.() }
@@ -39,12 +50,42 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
     if (errors[key]) setErrors(prev => ({ ...prev, [key]: undefined }))
   }
 
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
-    const url = URL.createObjectURL(file)
-    setPreviewUrl(url)
-    set('avatarUrl', file.name)
+
+    if (blobUrlRef.current) URL.revokeObjectURL(blobUrlRef.current)
+    const blobUrl = URL.createObjectURL(file)
+    blobUrlRef.current = blobUrl
+    setPreviewUrl(blobUrl)
+    setUploadState('uploading')
+    setUploadError(null)
+
+    try {
+      if (!isEdit && !generatedPetId.current) {
+        generatedPetId.current = crypto.randomUUID()
+      }
+      const petId = (isEdit && pet ? pet.id : generatedPetId.current)!
+
+      const url = await uploadImage(file, 'avatars', `${petId}/avatar`)
+      setPreviewUrl(url)
+      set('avatarUrl', url)
+      setUploadState('idle')
+    } catch (err) {
+      setUploadState('error')
+      setUploadError(
+        err instanceof UploadError
+          ? err.message
+          : 'Upload failed. Please try again.',
+      )
+    }
+  }
+
+  const retryUpload = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+      fileInputRef.current.click()
+    }
   }
 
   const validate = () => {
@@ -63,7 +104,7 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
     setSaveError(null)
     try {
       if (isEdit && pet) await updatePet(pet.id, form)
-      else await addPet(form)
+      else await addPet(form, generatedPetId.current ?? undefined)
       onSaved?.()
     } catch (err) {
       console.error('Save pet error:', err)
@@ -87,8 +128,12 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
           </div>
         </div>
         <div className="flex items-center gap-4 py-2">
-          <div className="w-20 h-20 rounded-mm-xl bg-[var(--mm-fill)] flex items-center justify-center overflow-hidden shrink-0 border border-[var(--mm-separator)]">
-            {previewUrl ? (
+          <div className="w-20 h-20 rounded-mm-xl bg-[var(--mm-fill)] flex items-center justify-center overflow-hidden shrink-0 border border-[var(--mm-separator)] relative">
+            {uploadState === 'uploading' ? (
+              <div className="flex items-center justify-center w-full h-full bg-[var(--mm-fill)]">
+                <Loader2 size={24} className="text-[var(--mm-link)] animate-spin" />
+              </div>
+            ) : previewUrl ? (
               <img src={previewUrl} alt="Pet preview" className="w-full h-full object-cover" />
             ) : (
               <span className="text-3xl">🐾</span>
@@ -97,13 +142,24 @@ export function PetFormPage({ pet, onBack, onSaved }: PetFormPageProps) {
           <div className="flex-1 min-w-0">
             <DynamicType styleLevel="bodyBold" weight={600}>Pet Photo</DynamicType>
             <DynamicType styleLevel="caption" color="secondary" className="mt-0.5">Upload a photo of your pet</DynamicType>
-            <div className="mt-2">
-              <AppleButton variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()}>
-                {previewUrl ? 'Change Photo' : 'Upload Photo'}
+            <div className="mt-2 flex items-center gap-2">
+              <AppleButton variant="secondary" size="sm" onClick={() => fileInputRef.current?.click()} disabled={uploadState === 'uploading'}>
+                {uploadState === 'uploading' ? 'Uploading...' : previewUrl ? 'Change Photo' : 'Upload Photo'}
               </AppleButton>
+              {uploadState === 'error' && (
+                <button onClick={retryUpload} className="flex items-center gap-1 text-mm-small text-[#FF3B30] hover:opacity-80 transition-opacity">
+                  <RefreshCw size={12} /> Retry
+                </button>
+              )}
             </div>
+            {uploadState === 'error' && uploadError && (
+              <div className="mt-1.5 flex items-center gap-1 text-mm-small text-[#FF3B30]">
+                <AlertCircle size={12} />
+                <span>{uploadError}</span>
+              </div>
+            )}
           </div>
-          <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleFileSelect} />
+          <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleFileSelect} />
         </div>
         {saveError && (
           <div className="rounded-mm-md bg-red-500/10 border border-red-500/20 px-4 py-2.5 mb-3">

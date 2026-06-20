@@ -8,7 +8,7 @@ interface PetContextType {
   loading: boolean
   error: string | null
   getPet: (id: string) => Pet | undefined
-  addPet: (data: PetFormData) => Promise<void>
+  addPet: (data: PetFormData, id?: string) => Promise<void>
   updatePet: (id: string, data: Partial<PetFormData>) => Promise<void>
   deletePet: (id: string) => Promise<void>
 }
@@ -33,7 +33,7 @@ export function PetProvider({ children }: { children: ReactNode }) {
 
   const getPet = useCallback((id: string) => pets.find(p => p.id === id), [pets])
 
-  const addPet = useCallback(async (data: PetFormData) => {
+  const addPet = useCallback(async (data: PetFormData, id?: string) => {
     const { data: members } = await supabase
       .from('household_members')
       .select('household_id')
@@ -41,9 +41,15 @@ export function PetProvider({ children }: { children: ReactNode }) {
       .single()
     if (!members) throw new Error('No household found')
 
+    const insertData: Record<string, unknown> = {
+      ...toSnakeCase(data),
+      household_id: members.household_id,
+    }
+    if (id) insertData.id = id
+
     const { data: newPet, error: err } = await supabase
       .from('pets')
-      .insert({ ...toSnakeCase(data), household_id: members.household_id })
+      .insert(insertData)
       .select()
       .single()
     if (err) throw err

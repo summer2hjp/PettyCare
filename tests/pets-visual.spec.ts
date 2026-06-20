@@ -16,7 +16,7 @@ async function sleep(ms: number) { return new Promise(r => setTimeout(r, ms)) }
 
 async function run() {
   const browser = await puppeteer.launch({
-    executablePath: '/usr/bin/google-chrome',
+    executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox'],
   })
@@ -293,7 +293,23 @@ async function run() {
   assert(healthTableContent.hasWeightTrend, 'Health table has "Weight Trend" row', 'TL2')
   assert(healthTableContent.hasActivityLevel, 'Health table has "Activity Level" row', 'TL2')
 
-  // ─── Test 12: Click "Back" → returns to Pet List ───
+  // ─── Test 12: Moments section ───
+  console.log('\n📋 [TL2] Moments Section')
+  const momentsSection = await page.evaluate(() => {
+    const body = document.body.innerText
+    const buttons = Array.from(document.querySelectorAll('button'))
+    const addMomentBtn = buttons.find(b =>
+      b.textContent?.trim() === 'Add a moment photo'
+    )
+    return {
+      hasMomentsHeading: body.includes('Moments'),
+      hasAddMomentPlaceholder: !!addMomentBtn,
+    }
+  })
+  assert(momentsSection.hasMomentsHeading, 'Pet detail page shows "Moments" section heading', 'TL2')
+  assert(momentsSection.hasAddMomentPlaceholder, 'Moments section shows "Add a moment photo" button', 'TL2')
+
+  // ─── Test 13: Click "Back" → returns to Pet List ───
   console.log('\n📋 [TL2] Navigation: Back to Pet List')
   await page.evaluate(() => {
     const buttons = Array.from(document.querySelectorAll('button'))
@@ -356,7 +372,26 @@ async function run() {
   assert(formContent.selectDropdowns >= 3, `Form has at least 3 select dropdowns (Species, Gender, Unit) - found ${formContent.selectDropdowns}`, 'TL2')
   assert(formContent.formLabels >= 8, `Form shows at least 8 field labels (found ${formContent.formLabels}/10)`, 'TL2')
 
-  // ─── Test 14: Form validation ───
+  // ─── Test 14: Photo upload UI ───
+  console.log('\n📋 [TL2] Photo Upload UI')
+  const photoUploadUI = await page.evaluate(() => {
+    const body = document.body.innerText
+    const buttons = Array.from(document.querySelectorAll('button'))
+    const uploadBtn = buttons.find(b =>
+      b.textContent?.trim() === 'Upload Photo' &&
+      !b.closest('nav')
+    )
+    return {
+      hasPetPhoto: body.includes('Pet Photo'),
+      hasUploadPhotoBtn: !!uploadBtn,
+      hasPreviewPlaceholder: body.includes('🐾'),
+    }
+  })
+  assert(photoUploadUI.hasPetPhoto, 'Form shows "Pet Photo" section label', 'TL2')
+  assert(photoUploadUI.hasUploadPhotoBtn, 'Form shows "Upload Photo" button', 'TL2')
+  assert(photoUploadUI.hasPreviewPlaceholder, 'Form shows paw emoji as photo placeholder', 'TL2')
+
+  // ─── Test 15: Form validation ───
   console.log('\n📋 [TL2] Form Validation')
   // The "Add Pet" form starts with empty fields. Click Save without filling.
   const savedClicked = await clickButtonByText('Save')
