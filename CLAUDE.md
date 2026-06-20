@@ -170,6 +170,20 @@ Root `tsconfig.json` uses **project references** pointing to `tsconfig.app.json`
 - **`web`** service: serves the production build via Nginx on port 8080 (Dockerfile at `docker/web/Dockerfile`)
 - **`tunnel`** service: Cloudflare Tunnel for public access (env file at `docker/cloudflared/.env`)
 
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues, with external PRs as an additional triage surface. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+All five canonical labels use their default names (needs-triage, needs-info, ready-for-agent, ready-for-human, wontfix). See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context layout (CONTEXT.md + docs/adr/ at repo root). See `docs/agents/domain.md`.
+
 ### Additional Documentation
 
 - `docs/frontend-experience.md` — architecture decisions, design system rationale, common pitfalls (custom spacing cascade, dark mode border flicker, `peer-checked` limitations), and performance patterns
