@@ -1,6 +1,7 @@
 import { Search, Bell, Sun, Moon, X, LogOut } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import { useState, useRef, useEffect } from 'react'
+import { Dock } from '@/components/ui/Dock'
 
 interface AppleToolbarProps {
   title?: string
@@ -126,79 +127,113 @@ export function AppleToolbar({
         )}
 
         <div className="flex items-center gap-1 ml-auto">
-          <button
-            onClick={() => setSearchOpen(true)}
-            className={cn(
-              'w-9 h-9 flex items-center justify-center',
-              'rounded-mm-md transition-colors duration-200',
-              'hover:bg-[var(--mm-fill)]',
-            )}
-          >
-            <Search size={20} className="text-[var(--mm-label)]" />
-          </button>
+          {isDark ? (
+            <Dock
+              items={[
+                { id: 'search', icon: <Search size={20} />, label: 'Search', onClick: () => setSearchOpen(true) },
+                { id: 'notifications', icon: <Bell size={20} />, label: 'Notifications' },
+                { id: 'theme', icon: <Sun size={18} />, label: 'Light Mode', onClick: onThemeToggle },
+                { id: 'user', icon: <span>👤</span>, label: userEmail ?? 'Account', onClick: () => setUserMenuOpen(!userMenuOpen) },
+              ]}
+              panelHeight={56}
+              baseItemSize={40}
+              magnification={60}
+            />
+          ) : (
+            <>
+              <button
+                onClick={() => setSearchOpen(true)}
+                className={cn(
+                  'w-9 h-9 flex items-center justify-center',
+                  'rounded-mm-md transition-colors duration-200',
+                  'hover:bg-[var(--mm-fill)]',
+                )}
+              >
+                <Search size={20} className="text-[var(--mm-label)]" />
+              </button>
 
-          <button
-            className={cn(
-              'relative w-9 h-9 flex items-center justify-center',
-              'rounded-mm-md transition-colors duration-200',
-              'hover:bg-[var(--mm-fill)]',
-            )}
-          >
-            <Bell size={20} className="text-[var(--mm-label)]" />
-            {notificationCount > 0 && (
-              <span className={cn(
-                'absolute -top-0.5 -right-0.5',
-                'min-w-[18px] h-[18px] px-1',
-                'flex items-center justify-center',
-                'bg-[#FF3B30] rounded-mm-pill',
-                'text-[11px] font-semibold text-white',
-                'shadow-mm-subtle',
-              )}>
-                {notificationCount > 99 ? '99+' : notificationCount}
-              </span>
-            )}
-          </button>
+              <button
+                className={cn(
+                  'relative w-9 h-9 flex items-center justify-center',
+                  'rounded-mm-md transition-colors duration-200',
+                  'hover:bg-[var(--mm-fill)]',
+                )}
+              >
+                <Bell size={20} className="text-[var(--mm-label)]" />
+                {notificationCount > 0 && (
+                  <span className={cn(
+                    'absolute -top-0.5 -right-0.5',
+                    'min-w-[18px] h-[18px] px-1',
+                    'flex items-center justify-center',
+                    'bg-[#FF3B30] rounded-mm-pill',
+                    'text-[11px] font-semibold text-white',
+                    'shadow-mm-subtle',
+                  )}>
+                    {notificationCount > 99 ? '99+' : notificationCount}
+                  </span>
+                )}
+              </button>
 
-          <button
-            onClick={onThemeToggle}
-            className={cn(
-              'w-9 h-9 flex items-center justify-center',
-              'rounded-mm-md transition-colors duration-200',
-              'hover:bg-[var(--mm-fill)]',
-            )}
-          >
-            {isDark ? <Sun size={18} className="text-[var(--mm-label)]" /> : <Moon size={18} className="text-[var(--mm-label)]" />}
-          </button>
+              <button
+                onClick={onThemeToggle}
+                className={cn(
+                  'w-9 h-9 flex items-center justify-center',
+                  'rounded-mm-md transition-colors duration-200',
+                  'hover:bg-[var(--mm-fill)]',
+                )}
+              >
+                {isDark ? <Sun size={18} className="text-[var(--mm-label)]" /> : <Moon size={18} className="text-[var(--mm-label)]" />}
+              </button>
 
-          <div className="relative shrink-0" ref={userMenuRef}>
-            <button
-              onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className="w-8 h-8 flex items-center justify-center rounded-full transition-colors"
-            >
-              {userAvatar ? (
-                <img src={userAvatar} alt="" className="w-full h-full rounded-full object-cover" />
-              ) : (
-                <span className="text-lg">👤</span>
-              )}
-            </button>
+              <div className="relative shrink-0" ref={userMenuRef}>
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="w-8 h-8 flex items-center justify-center rounded-full transition-colors"
+                >
+                  {userAvatar ? (
+                    <img src={userAvatar} alt="" className="w-full h-full rounded-full object-cover" />
+                  ) : (
+                    <span className="text-lg">👤</span>
+                  )}
+                </button>
 
-            {userMenuOpen && (
-              <div className="absolute right-0 top-10 w-56 rounded-mm-lg bg-[var(--mm-card)] shadow-mm-card border border-[var(--mm-separator)] py-1.5 z-50">
-                {userEmail && (
-                  <div className="px-4 py-2 border-b border-[var(--mm-separator)]">
-                    <p className="text-sm text-[var(--mm-label)] font-medium truncate">{userEmail}</p>
+                {userMenuOpen && (
+                  <div className="absolute right-0 top-10 w-56 rounded-mm-lg bg-[var(--mm-card)] shadow-mm-card border border-[var(--mm-separator)] py-1.5 z-50">
+                    {userEmail && (
+                      <div className="px-4 py-2 border-b border-[var(--mm-separator)]">
+                        <p className="text-sm text-[var(--mm-label)] font-medium truncate">{userEmail}</p>
+                      </div>
+                    )}
+                    <button
+                      onClick={() => { setUserMenuOpen(false); onSignOut?.() }}
+                      className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--mm-label)] hover:bg-[var(--mm-fill)] transition-colors"
+                    >
+                      <LogOut size={15} />
+                      Sign Out
+                    </button>
                   </div>
                 )}
-                <button
-                  onClick={() => { setUserMenuOpen(false); onSignOut?.() }}
-                  className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--mm-label)] hover:bg-[var(--mm-fill)] transition-colors"
-                >
-                  <LogOut size={15} />
-                  Sign Out
-                </button>
               </div>
-            )}
-          </div>
+            </>
+          )}
+
+          {/* User menu (shared between light and dark — rendered outside the Dock for both) */}
+          {isDark && userMenuOpen && (
+            <div className="absolute right-0 top-14 w-56 rounded-mm-lg bg-[var(--mm-card)] shadow-mm-card border border-[var(--mm-separator)] py-1.5 z-50">
+              {userEmail && (
+                <div className="px-4 py-2 border-b border-[var(--mm-separator)]">
+                  <p className="text-sm text-[var(--mm-label)] font-medium truncate">{userEmail}</p>
+                </div>
+              )}
+              <button
+                onClick={() => { setUserMenuOpen(false); onSignOut?.() }}
+                className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--mm-label)] hover:bg-[var(--mm-fill)] transition-colors"
+              >
+                <LogOut size={15} />
+                Sign Out
+              </button>
+            </div>
+          )}
         </div>
       </header>
 

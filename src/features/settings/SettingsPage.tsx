@@ -5,6 +5,7 @@ import { AppleCard } from '@/components/ui/AppleCard'
 import { AppleSwitch } from '@/components/ui/AppleSwitch'
 import { AppleAvatar } from '@/components/ui/AppleAvatar'
 import { DynamicType } from '@/components/ui/DynamicType'
+import { ShinyText } from '@/components/ui/ShinyText'
 import { cn } from '@/utils/cn'
 import { useTheme } from '@/hooks/useTheme'
 import { Sun, Moon, Bell, Shield, Palette, ChevronRight, Info, LogOut, Users, UserPlus } from 'lucide-react'
@@ -59,7 +60,7 @@ export function SettingsPage() {
         </div>
       </AppleCard>
 
-      <DynamicType styleLevel="body" color="secondary" weight={600} className="mb-2.5 px-1">Appearance</DynamicType>
+      <ShinyText text="Appearance" as="div" className="text-mm-body text-[var(--mm-secondaryLabel)] font-semibold mb-2.5 px-1" />
       <AppleCard padding="sm" className="!p-0 divide-y divide-[var(--mm-separator)] mb-4">
         <SettingRow icon={theme === 'dark' ? <Moon size={16} /> : <Sun size={16} />} label="Dark Mode" description={theme === 'dark' ? 'Dark theme active' : 'Switch to dark theme'} right={<AppleSwitch checked={theme === 'dark'} onChange={toggleTheme} />} />
         <SettingRow icon={<Palette size={16} />} label="Accent Color" description="Blue (default)" />
@@ -81,20 +82,20 @@ export function SettingsPage() {
         />
       </AppleCard>
 
-      <DynamicType styleLevel="body" color="secondary" weight={600} className="mb-2.5 px-1">Notifications</DynamicType>
+      <ShinyText text="Notifications" as="div" className="text-mm-body text-[var(--mm-secondaryLabel)] font-semibold mb-2.5 px-1" />
       <AppleCard padding="sm" className="!p-0 divide-y divide-[var(--mm-separator)] mb-4">
         <SettingRow icon={<Bell size={16} />} label="Push Notifications" right={<AppleSwitch checked={pushEnabled} onChange={() => setPushEnabled(!pushEnabled)} />} />
         <SettingRow icon={<Bell size={16} />} label="Email Reminders" right={<AppleSwitch checked={emailEnabled} onChange={() => setEmailEnabled(!emailEnabled)} />} />
         <SettingRow icon={<Bell size={16} />} label="Medication Reminders" right={<AppleSwitch checked={reminderEnabled} onChange={() => setReminderEnabled(!reminderEnabled)} />} />
       </AppleCard>
 
-      <DynamicType styleLevel="body" color="secondary" weight={600} className="mb-2.5 px-1">Privacy</DynamicType>
+      <ShinyText text="Privacy" as="div" className="text-mm-body text-[var(--mm-secondaryLabel)] font-semibold mb-2.5 px-1" />
       <AppleCard padding="sm" className="!p-0 divide-y divide-[var(--mm-separator)] mb-4">
         <SettingRow icon={<Shield size={16} />} label="Data Sharing" description="Off" />
         <SettingRow icon={<Shield size={16} />} label="Export Data" />
       </AppleCard>
 
-      <DynamicType styleLevel="body" color="secondary" weight={600} className="mb-2.5 px-1">About</DynamicType>
+      <ShinyText text="About" as="div" className="text-mm-body text-[var(--mm-secondaryLabel)] font-semibold mb-2.5 px-1" />
       <AppleCard padding="sm" className="!p-0 divide-y divide-[var(--mm-separator)] mb-4">
         <SettingRow icon={<Info size={16} />} label="Version" right={<DynamicType styleLevel="caption" color="muted">0.1.0</DynamicType>} />
         <SettingRow icon={<Info size={16} />} label="PettyCare" right={<DynamicType styleLevel="caption" color="muted">🐾</DynamicType>} />

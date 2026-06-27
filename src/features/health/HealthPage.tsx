@@ -4,6 +4,8 @@ import { AppleCard } from '@/components/ui/AppleCard'
 import { AppleButton } from '@/components/ui/AppleButton'
 import { PetSelector } from '@/components/pet/PetSelector'
 import { DynamicType } from '@/components/ui/DynamicType'
+import { MagicRings } from '@/components/ui/MagicRings'
+import { useTheme } from '@/hooks/useTheme'
 import { EmptyState } from '@/components/common/EmptyState'
 import { formatDate } from '@/utils/date'
 import { cn } from '@/utils/cn'
@@ -68,6 +70,8 @@ function MedicationRow({ m }: { m: Medication }) {
 
 export function HealthPage() {
   const { pets } = usePets()
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const [selectedPetId, setSelectedPetId] = useState(pets[0]?.id ?? '')
   const [tab, setTab] = useState('vaccinations')
   const [tabOpen, setTabOpen] = useState(false)
@@ -136,13 +140,16 @@ export function HealthPage() {
           <div className="flex justify-end mb-3">
             <AppleButton variant="secondary" size="sm" icon={<Plus size={14} />} onClick={() => alert('Add record coming soon!')}>Add Record</AppleButton>
           </div>
-          {vaccinations.length === 0 ? (
-            <AppleCard padding="lg"><EmptyState title="No vaccinations" description="Add your pet's first vaccination record" /></AppleCard>
-          ) : (
-            <AppleCard padding="sm" className="!p-0 divide-y divide-[var(--mm-separator)]">
-              {vaccinations.map(v => <VaccinationRow key={v.id} v={v} />)}
-            </AppleCard>
-          )}
+          <div className="relative">
+            {isDark && <MagicRings ringCount={4} color="#3b82f6" colorTwo="#60a5fa" opacity={0.5} speed={0.7} className="rounded-mm-lg" />}
+            {vaccinations.length === 0 ? (
+              <AppleCard padding="lg"><EmptyState title="No vaccinations" description="Add your pet's first vaccination record" /></AppleCard>
+            ) : (
+              <AppleCard padding="sm" className="relative z-10 !p-0 divide-y divide-[var(--mm-separator)]">
+                {vaccinations.map(v => <VaccinationRow key={v.id} v={v} />)}
+              </AppleCard>
+            )}
+          </div>
         </div>
       )}
 
@@ -151,13 +158,16 @@ export function HealthPage() {
           <div className="flex justify-end mb-3">
             <AppleButton variant="secondary" size="sm" icon={<Plus size={14} />} onClick={() => alert('Add visit coming soon!')}>Add Visit</AppleButton>
           </div>
-          {visits.length === 0 ? (
-            <AppleCard padding="lg"><EmptyState title="No visits recorded" description="Add your first vet visit" /></AppleCard>
-          ) : (
-            <AppleCard padding="sm" className="!p-0 divide-y divide-[var(--mm-separator)]">
-              {visits.map(v => <VisitCard key={v.id} v={v} />)}
-            </AppleCard>
-          )}
+          <div className="relative">
+            {isDark && <MagicRings ringCount={4} color="#34C759" colorTwo="#7DCF5C" opacity={0.5} speed={0.7} className="rounded-mm-lg" />}
+            {visits.length === 0 ? (
+              <AppleCard padding="lg"><EmptyState title="No visits recorded" description="Add your first vet visit" /></AppleCard>
+            ) : (
+              <AppleCard padding="sm" className="relative z-10 !p-0 divide-y divide-[var(--mm-separator)]">
+                {visits.map(v => <VisitCard key={v.id} v={v} />)}
+              </AppleCard>
+            )}
+          </div>
         </div>
       )}
 
@@ -166,13 +176,16 @@ export function HealthPage() {
           <div className="flex justify-end mb-3">
             <AppleButton variant="secondary" size="sm" icon={<Plus size={14} />} onClick={() => alert('Add medication coming soon!')}>Add Medication</AppleButton>
           </div>
-          {meds.length === 0 ? (
-            <AppleCard padding="lg"><EmptyState title="No medications" description="Add your pet's first medication" /></AppleCard>
-          ) : (
-            <AppleCard padding="sm" className="!p-0 divide-y divide-[var(--mm-separator)]">
-              {meds.map(m => <MedicationRow key={m.id} m={m} />)}
-            </AppleCard>
-          )}
+          <div className="relative">
+            {isDark && <MagicRings ringCount={4} color="#FF9500" colorTwo="#FFCC00" opacity={0.5} speed={0.7} className="rounded-mm-lg" />}
+            {meds.length === 0 ? (
+              <AppleCard padding="lg"><EmptyState title="No medications" description="Add your pet's first medication" /></AppleCard>
+            ) : (
+              <AppleCard padding="sm" className="relative z-10 !p-0 divide-y divide-[var(--mm-separator)]">
+                {meds.map(m => <MedicationRow key={m.id} m={m} />)}
+              </AppleCard>
+            )}
+          </div>
         </div>
       )}
     </div>
