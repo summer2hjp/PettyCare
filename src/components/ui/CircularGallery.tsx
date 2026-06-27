@@ -250,7 +250,7 @@ class Media {
   isAfter = false;
 
   constructor({
-    geometry, gl, image, index, length, renderer, scene, screen, text, viewport, bend, textColor, borderRadius = 0, font
+    geometry, gl, image, index, length, renderer, scene, screen, text, viewport, bend = 0, textColor, borderRadius = 0, font
   }: {
     geometry: Plane;
     gl: OGLRenderingContext;
@@ -464,7 +464,7 @@ class App {
     container: HTMLElement,
     {
       items,
-      bend,
+      bend = 0,
       textColor = '#ffffff',
       borderRadius = 0,
       font = 'bold 30px Figtree',
@@ -510,7 +510,7 @@ class App {
       widthSegments: 100
     });
   }
-  createMedias(items?: GalleryItem[], bend = 1, textColor?: string, borderRadius?: number, font?: string) {
+  createMedias(items?: GalleryItem[], bend = 0, textColor?: string, borderRadius?: number, font?: string) {
     const defaultItems: GalleryItem[] = [
       { image: 'https://picsum.photos/seed/1/800/600?grayscale', text: 'Bridge' },
       { image: 'https://picsum.photos/seed/2/800/600?grayscale', text: 'Desk Setup' },
@@ -539,7 +539,7 @@ class App {
         screen: this.screen,
         text: data.text,
         viewport: this.viewport,
-        bend,
+        bend:  bend ?? 0,
         textColor: textColor ?? '#ffffff',
         borderRadius: borderRadius ?? 0,
         font: font ?? 'bold 30px Figtree'
