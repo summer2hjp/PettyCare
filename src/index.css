@@ -133,6 +133,25 @@ html.theme-transitioning *::after {
   }
 }
 
+/* ── ShinyText Animation ── */
+@keyframes shine-move {
+  0% { background-position: var(--shine-bg-from, -120px); }
+  100% { background-position: var(--shine-bg-to, 120px); }
+}
+
+.shiny-text {
+  display: inline-block;
+  animation: shine-move var(--shine-speed, 2s) var(--shine-yoyo, normal) infinite;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 100%;
+}
+
+.shiny-text-pause:hover {
+  animation-play-state: paused;
+}
+
 /* =========================================
    Component Layer
    ========================================= */

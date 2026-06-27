@@ -1,6 +1,9 @@
 import { cn } from '@/utils/cn'
 import { DynamicType } from '@/components/ui/DynamicType'
+import { ShinyText } from '@/components/ui/ShinyText'
 import { GlassPanel } from '@/components/ui/GlassPanel'
+import { MagicRings } from '@/components/ui/MagicRings'
+import { useTheme } from '@/hooks/useTheme'
 import { Heart, UtensilsCrossed, Calendar, Lightbulb } from 'lucide-react'
 import type { DashboardHealthData, FeedingMeal, DashboardUpcomingEvent, DashboardInsight } from '@/features/dashboard/types/dashboard'
 
@@ -81,10 +84,12 @@ function StatCard({
 }
 
 export function DataCardRow({ health, feeding, events, insights, loading, className, onNavigate }: DataCardRowProps) {
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
   if (loading) {
     return (
       <div className={cn('mb-6', className)}>
-        <DynamicType styleLevel="section" weight={600} className="mb-3 px-1">Overview</DynamicType>
+        <ShinyText text="Overview" as="h2" className="text-mm-section font-semibold mb-3 px-1" />
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           <StatCardSkeleton />
           <StatCardSkeleton />
@@ -113,35 +118,47 @@ export function DataCardRow({ health, feeding, events, insights, loading, classN
 
   return (
     <div className={cn('mb-6', className)}>
-      <DynamicType styleLevel="section" weight={600} className="mb-3 px-1">Overview</DynamicType>
+      <ShinyText text="Overview" as="h2" className="text-mm-section font-semibold mb-3 px-1" />
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        <StatCard
-          icon={<Heart size={14} className="text-[#FF3B30]" />}
-          label="Health"
-          value={healthValue}
-          sublabel={healthSublabel}
-          onClick={onNavigate ? () => onNavigate('health') : undefined}
-        />
-        <StatCard
-          icon={<UtensilsCrossed size={14} />}
-          label="Feeding"
-          value={feedingValue}
-          sublabel={feedingSublabel}
-          onClick={onNavigate ? () => onNavigate('feeding') : undefined}
-        />
-        <StatCard
-          icon={<Calendar size={14} />}
-          label="Events"
-          value={eventsValue}
-          sublabel={eventsSublabel}
-          onClick={onNavigate ? () => onNavigate('appointments') : undefined}
-        />
-        <StatCard
-          icon={<Lightbulb size={14} />}
-          label="Insight"
-          value={insightValue}
-          sublabel={insightSublabel}
-        />
+        <div className="relative">
+          {isDark && <MagicRings ringCount={4} color="#fc42ff" colorTwo="#42fcff" opacity={0.6} speed={0.8} className="rounded-mm-lg" />}
+          <StatCard
+            icon={<Heart size={14} className="text-[#FF3B30]" />}
+            label="Health"
+            value={healthValue}
+            sublabel={healthSublabel}
+            onClick={onNavigate ? () => onNavigate('health') : undefined}
+          />
+        </div>
+        <div className="relative">
+          {isDark && <MagicRings ringCount={4} color="#3b82f6" colorTwo="#60a5fa" opacity={0.6} speed={0.8} className="rounded-mm-lg" />}
+          <StatCard
+            icon={<UtensilsCrossed size={14} />}
+            label="Feeding"
+            value={feedingValue}
+            sublabel={feedingSublabel}
+            onClick={onNavigate ? () => onNavigate('feeding') : undefined}
+          />
+        </div>
+        <div className="relative">
+          {isDark && <MagicRings ringCount={4} color="#34C759" colorTwo="#7DCF5C" opacity={0.6} speed={0.8} className="rounded-mm-lg" />}
+          <StatCard
+            icon={<Calendar size={14} />}
+            label="Events"
+            value={eventsValue}
+            sublabel={eventsSublabel}
+            onClick={onNavigate ? () => onNavigate('appointments') : undefined}
+          />
+        </div>
+        <div className="relative">
+          {isDark && <MagicRings ringCount={4} color="#FF9500" colorTwo="#FFCC00" opacity={0.6} speed={0.8} className="rounded-mm-lg" />}
+          <StatCard
+            icon={<Lightbulb size={14} />}
+            label="Insight"
+            value={insightValue}
+            sublabel={insightSublabel}
+          />
+        </div>
       </div>
     </div>
   )

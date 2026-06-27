@@ -7,6 +7,8 @@ import { EmptyState } from '@/components/common/EmptyState'
 import { LoadingState } from '@/components/common/LoadingState'
 import { ErrorState } from '@/components/common/ErrorState'
 import { DynamicType } from '@/components/ui/DynamicType'
+import { MagicRings } from '@/components/ui/MagicRings'
+import { useTheme } from '@/hooks/useTheme'
 import { calculateAge } from '@/utils/date'
 import { cn } from '@/utils/cn'
 import { Plus, Search } from 'lucide-react'
@@ -17,6 +19,8 @@ interface PetListPageProps { onSelect?: (id: string) => void; onAdd?: () => void
 
 export function PetListPage({ onSelect, onAdd }: PetListPageProps) {
   const { pets, loading, error } = usePets()
+  const { theme } = useTheme()
+  const isDark = theme === 'dark'
   const [search, setSearch] = useState('')
   const [filterSpecies, setFilterSpecies] = useState<string>('all')
 
@@ -57,17 +61,20 @@ export function PetListPage({ onSelect, onAdd }: PetListPageProps) {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {filtered.map(pet => (
-            <AppleCard key={pet.id} hoverable onClick={() => onSelect?.(pet.id)} className="flex flex-col items-center text-center py-6">
-              <AppleAvatar
-                name={pet.name}
-                size="xl"
-                className="mb-3"
-                src={pet.avatarUrl ? `/picture/${pet.avatarUrl}` : `/picture/${pet.name.toLowerCase()}-1.jpeg`}
-              />
-              <DynamicType styleLevel="bodyBold" weight={600}>{pet.name}</DynamicType>
-              <DynamicType styleLevel="caption"  className="mt-0.5">{speciesEmoji[pet.species] ?? '🐾'} {pet.breed}</DynamicType>
-              <DynamicType styleLevel="small" color="muted" className="mt-2"><span className="text-lg">{pet.gender === 'male' ? '♂' : '♀'}</span> · {calculateAge(pet.birthDate)} · {pet.weight}{pet.weightUnit}</DynamicType>
-            </AppleCard>
+            <div key={pet.id} className="relative">
+              {isDark && <MagicRings ringCount={4} opacity={0.5} speed={0.7} className="rounded-mm-xl" />}
+              <AppleCard hoverable onClick={() => onSelect?.(pet.id)} className="relative z-10 flex flex-col items-center text-center py-6">
+                <AppleAvatar
+                  name={pet.name}
+                  size="xl"
+                  className="mb-3"
+                  src={pet.avatarUrl ? `/picture/${pet.avatarUrl}` : `/picture/${pet.name.toLowerCase()}-1.jpeg`}
+                />
+                <DynamicType styleLevel="bodyBold" weight={600}>{pet.name}</DynamicType>
+                <DynamicType styleLevel="caption"  className="mt-0.5">{speciesEmoji[pet.species] ?? '🐾'} {pet.breed}</DynamicType>
+                <DynamicType styleLevel="small" color="muted" className="mt-2"><span className="text-lg">{pet.gender === 'male' ? '♂' : '♀'}</span> · {calculateAge(pet.birthDate)} · {pet.weight}{pet.weightUnit}</DynamicType>
+              </AppleCard>
+            </div>
           ))}
         </div>
       )}
