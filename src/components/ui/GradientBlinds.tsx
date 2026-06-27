@@ -36,7 +36,6 @@ interface GradientBlindsProps {
   spotlightOpacity?: number
   distortAmount?: number
   shineDirection?: 'left' | 'right'
-  mixBlendMode?: string
 }
 
 const GradientBlinds = ({
@@ -55,7 +54,6 @@ const GradientBlinds = ({
   spotlightOpacity = 1,
   distortAmount = 0,
   shineDirection = 'left',
-  mixBlendMode = 'lighten',
 }: GradientBlindsProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number>(0);
@@ -357,11 +355,6 @@ void main() {
     <div
       ref={containerRef}
       className={`gradient-blinds-container ${className ?? ''}`}
-      style={{
-        ...(mixBlendMode && {
-          mixBlendMode: mixBlendMode as React.CSSProperties['mixBlendMode'],
-        }),
-      }}
     />
   );
 };

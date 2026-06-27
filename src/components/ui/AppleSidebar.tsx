@@ -1,4 +1,3 @@
-import { type ReactNode } from 'react'
 import { type LucideIcon, LayoutDashboard, PawPrint, Heart, Activity, UtensilsCrossed, Calendar, Settings } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import { ShinyText } from '@/components/ui/ShinyText'
@@ -26,7 +25,6 @@ interface AppleSidebarProps {
   appName?: string
   onNavigate?: (itemId: string) => void
   className?: string
-  dockContent?: ReactNode
 }
 
 export function AppleSidebar({
@@ -35,7 +33,6 @@ export function AppleSidebar({
   appName = 'PettyCare',
   onNavigate,
   className,
-  dockContent,
 }: AppleSidebarProps) {
   return (
     <aside
@@ -88,12 +85,6 @@ export function AppleSidebar({
           )
         })}
       </nav>
-
-      {dockContent && (
-        <div className="mt-auto px-3 pt-2 pb-3 border-t border-[var(--mm-separator)] flex justify-center">
-          {dockContent}
-        </div>
-      )}
     </aside>
   )
 }
