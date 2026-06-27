@@ -1,7 +1,7 @@
 import { type ReactNode, useState } from 'react'
 import { AppleSidebar, type NavItem } from '@/components/ui/AppleSidebar'
 import { AppleToolbar } from '@/components/ui/AppleToolbar'
-import GradientBlinds from '@/components/ui/GradientBlinds'
+import SplashCursor from '@/components/ui/SplashCursor'
 import Ballpit from '@/components/ui/Ballpit'
 import { useTheme } from '@/hooks/useTheme'
 import { useAuth } from '@/store/auth-context'
@@ -33,14 +33,13 @@ export function RootLayout({
 
   return (
     <div className="h-dvh flex overflow-hidden relative bg-[var(--mm-background)]">
-      {/* Ballpit in light mode, GradientBlinds in dark mode */}
-      <div className="absolute inset-0 z-0 pointer-events-none">
-        {isDark ? (
-          <GradientBlinds className="w-full h-full" />
-        ) : (
+      {/* SplashCursor fluid overlay in dark mode, Ballpit in light mode */}
+      {isDark && <SplashCursor />}
+      {!isDark && (
+        <div className="absolute inset-0 z-0 pointer-events-none">
           <Ballpit className="w-full h-full" />
-        )}
-      </div>
+        </div>
+      )}
 
       <AppleSidebar
         activeItem={activeItem}
