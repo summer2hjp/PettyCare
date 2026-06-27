@@ -1,17 +1,16 @@
 // src/features/dashboard/DashboardPage.tsx
 
-import { useState, useRef, useCallback } from 'react'
+import { useState, useRef, useCallback, useMemo } from 'react'
+import { Plus } from 'lucide-react'
 import { usePets } from '@/store/pet-context'
 import { useDashboardData } from '@/features/dashboard/hooks/useDashboardData'
 import { usePetMoments } from '@/features/dashboard/hooks/usePetMoments'
-import { MomentSection } from '@/features/dashboard/components/MomentSection'
-import { GrowthTimelineSection } from '@/features/dashboard/components/GrowthTimelineSection'
+import CircularGallery from '@/components/ui/CircularGallery'
 import { DataCardRow } from '@/features/dashboard/components/DataCardRow'
 import { QuickActionsSection } from '@/features/dashboard/components/QuickActionsSection'
-import { PhotoPreview } from '@/features/dashboard/components/PhotoPreview'
 import { supabase } from '@/lib/supabase'
 import type { DashboardAction } from '@/features/dashboard/types/dashboard'
-import type { PetMoment, MomentType } from '@/types/moments'
+import type { MomentType } from '@/types/moments'
 
 interface DashboardPageProps {
   onNavigate: (page: string) => void
@@ -26,18 +25,23 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
   const interactionMoments = usePetMoments({ petId: null, type: 'interaction', limit: 8, pets })
   const growthMoments = usePetMoments({ petId: null, type: 'growth', limit: 10, pets })
 
-  // Photo preview state
-  const [previewMoments, setPreviewMoments] = useState<PetMoment[] | null>(null)
-  const [previewIndex, setPreviewIndex] = useState(0)
-
   // Upload state
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploadingType, setUploadingType] = useState<MomentType | null>(null)
 
-  const openPreview = (moments: PetMoment[], index: number) => {
-    setPreviewMoments(moments)
-    setPreviewIndex(index)
-  }
+  // Stable gallery items from moments
+  const dailyItems = useMemo(() =>
+    dailyMoments.moments.map(m => ({ image: m.imageUrl, text: m.caption ?? '' })),
+    [dailyMoments.moments]
+  )
+  const interactionItems = useMemo(() =>
+    interactionMoments.moments.map(m => ({ image: m.imageUrl, text: m.caption ?? '' })),
+    [interactionMoments.moments]
+  )
+  const growthItems = useMemo(() =>
+    growthMoments.moments.map(m => ({ image: m.imageUrl, text: m.caption ?? '' })),
+    [growthMoments.moments]
+  )
 
   const handleAction = (action: DashboardAction) => {
     onNavigate(action.navigateTo.page)
@@ -52,39 +56,6 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     setTimeout(() => fileInputRef.current?.click(), 0)
   }, [pets.length])
 
-  const handleDelete = useCallback(async (moment: PetMoment) => {
-    try {
-      const { error } = await supabase
-        .from('pet_moments')
-        .delete()
-        .eq('id', moment.id)
-      if (error) throw error
-      dailyMoments.refresh()
-      interactionMoments.refresh()
-      growthMoments.refresh()
-    } catch (err) {
-      console.error('Delete failed:', err)
-      alert('删除失败: ' + (err instanceof Error ? err.message : 'Unknown error'))
-    }
-  }, [dailyMoments, interactionMoments, growthMoments])
-
-  const handleBatchDelete = useCallback(async (toDelete: PetMoment[]) => {
-    try {
-      const ids = toDelete.map(m => m.id)
-      const { error } = await supabase
-        .from('pet_moments')
-        .delete()
-        .in('id', ids)
-      if (error) throw error
-      dailyMoments.refresh()
-      interactionMoments.refresh()
-      growthMoments.refresh()
-    } catch (err) {
-      console.error('Batch delete failed:', err)
-      alert('批量删除失败: ' + (err instanceof Error ? err.message : 'Unknown error'))
-    }
-  }, [dailyMoments, interactionMoments, growthMoments])
-
   const handleFileSelected = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file || !uploadingType || pets.length === 0) return
@@ -94,19 +65,16 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     const filePath = `moments/${fileName}`
 
     try {
-      // 1. Upload to Supabase Storage
       const { error: uploadError } = await supabase.storage
         .from('avatars')
         .upload(filePath, file)
 
       if (uploadError) throw uploadError
 
-      // 2. Get public URL
       const { data: { publicUrl } } = supabase.storage
         .from('avatars')
         .getPublicUrl(filePath)
 
-      // 3. Insert record into pet_moments
       const { error: insertError } = await supabase
         .from('pet_moments')
         .insert({
@@ -119,7 +87,6 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
 
       if (insertError) throw insertError
 
-      // 4. Refresh all moments
       dailyMoments.refresh()
       interactionMoments.refresh()
       growthMoments.refresh()
@@ -128,7 +95,6 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
       alert('上传失败: ' + (err instanceof Error ? err.message : 'Unknown error'))
     } finally {
       setUploadingType(null)
-      // Reset file input
       if (fileInputRef.current) fileInputRef.current.value = ''
     }
   }, [uploadingType, pets, dailyMoments, interactionMoments, growthMoments])
@@ -150,44 +116,88 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
       <QuickActionsSection actions={data.actions} onAction={handleAction} />
 
       {/* Daily Life Moments */}
-      <MomentSection
-        title="📸 宠物的日常"
-        subtitle={undefined}
-        moments={dailyMoments.moments}
-        momentType="daily"
-        loading={dailyMoments.loading}
-        error={dailyMoments.error}
-        emptyMessage="还没有日常记录，快去拍一张吧 📸"
-        onMomentClick={(index) => openPreview(dailyMoments.moments, index)}
-        onRetry={dailyMoments.refresh}
-        onUpload={handleUpload}
-        onBatchDelete={handleBatchDelete}
-      />
+      <section className="mb-6">
+        <div className="flex items-center justify-between mb-3 px-1">
+          <div className="flex items-center gap-2">
+            <span className="text-mm-section font-semibold text-[var(--mm-label)]">📸 宠物的日常</span>
+            {pets.length > 0 && (
+              <button
+                onClick={() => handleUpload('daily')}
+                className="w-6 h-6 rounded-full glass-light flex items-center justify-center hover:scale-110 transition-transform"
+                title="上传照片"
+              >
+                <Plus size={14} />
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="h-[320px] rounded-xl overflow-hidden">
+          <CircularGallery
+            items={dailyItems}
+            bend={2}
+            textColor="#ffffff"
+            borderRadius={0.05}
+            scrollSpeed={1.5}
+            scrollEase={0.05}
+          />
+        </div>
+      </section>
 
       {/* Interaction Moments */}
-      <MomentSection
-        title="💕 互动瞬间"
-        subtitle={undefined}
-        moments={interactionMoments.moments}
-        momentType="interaction"
-        loading={interactionMoments.loading}
-        error={interactionMoments.error}
-        emptyMessage="还没有互动记录，和宠物一起玩吧 🎾"
-        onMomentClick={(index) => openPreview(interactionMoments.moments, index)}
-        onRetry={interactionMoments.refresh}
-        onUpload={handleUpload}
-        onBatchDelete={handleBatchDelete}
-      />
+      <section className="mb-6">
+        <div className="flex items-center justify-between mb-3 px-1">
+          <div className="flex items-center gap-2">
+            <span className="text-mm-section font-semibold text-[var(--mm-label)]">💕 互动瞬间</span>
+            {pets.length > 0 && (
+              <button
+                onClick={() => handleUpload('interaction')}
+                className="w-6 h-6 rounded-full glass-light flex items-center justify-center hover:scale-110 transition-transform"
+                title="上传照片"
+              >
+                <Plus size={14} />
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="h-[320px] rounded-xl overflow-hidden">
+          <CircularGallery
+            items={interactionItems}
+            bend={-2}
+            textColor="#ffffff"
+            borderRadius={0.05}
+            scrollSpeed={1.5}
+            scrollEase={0.05}
+          />
+        </div>
+      </section>
 
       {/* Growth Timeline */}
-      <GrowthTimelineSection
-        moments={growthMoments.moments}
-        loading={growthMoments.loading}
-        error={growthMoments.error}
-        onMomentClick={(index) => openPreview(growthMoments.moments, index)}
-        onRetry={growthMoments.refresh}
-        onUpload={() => handleUpload('growth')}
-      />
+      <section className="mb-6">
+        <div className="flex items-center justify-between mb-3 px-1">
+          <div className="flex items-center gap-2">
+            <span className="text-mm-section font-semibold text-[var(--mm-label)]">📈 成长轨迹</span>
+            {pets.length > 0 && (
+              <button
+                onClick={() => handleUpload('growth')}
+                className="w-6 h-6 rounded-full glass-light flex items-center justify-center hover:scale-110 transition-transform"
+                title="上传照片"
+              >
+                <Plus size={14} />
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="h-[320px] rounded-xl overflow-hidden">
+          <CircularGallery
+            items={growthItems}
+            bend={3}
+            textColor="#ffffff"
+            borderRadius={0.05}
+            scrollSpeed={1.5}
+            scrollEase={0.05}
+          />
+        </div>
+      </section>
 
       {/* Data Card Row */}
       <DataCardRow
@@ -198,16 +208,6 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
         loading={overallLoading}
         onNavigate={onNavigate}
       />
-
-      {/* Photo Preview Modal */}
-      {previewMoments && (
-        <PhotoPreview
-          moments={previewMoments}
-          initialIndex={previewIndex}
-          onClose={() => setPreviewMoments(null)}
-          onDelete={handleDelete}
-        />
-      )}
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { type LucideIcon, LayoutDashboard, PawPrint, Heart, Activity, UtensilsCrossed, Calendar, Settings } from 'lucide-react'
 import { cn } from '@/utils/cn'
 import { ShinyText } from '@/components/ui/ShinyText'
+import ShapeBlur from '@/components/ui/ShapeBlur'
 
 export interface NavItem {
   id: string
@@ -51,7 +52,12 @@ export function AppleSidebar({
       >
         <div className="flex items-center gap-1.5">
           <span className="text-2xl">🐾</span>
-          <span className="text-mm-card-title font-display text-[var(--mm-label)] font-bold">{appName}</span>
+          <div className="relative">
+            <span className="text-mm-card-title font-display text-[var(--mm-label)] font-bold">{appName}</span>
+            <div className="absolute inset-0 pointer-events-none">
+              <ShapeBlur variation={0} shapeSize={1.2} circleSize={0.3} circleEdge={0.4} />
+            </div>
+          </div>
         </div>
       </a>
 
