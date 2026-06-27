@@ -677,12 +677,12 @@ export interface CircularGalleryProps {
 
 export default function CircularGallery({
   items,
-  bend = 3,
+  bend = 0,
   textColor = '#ffffff',
   borderRadius = 0.05,
   font = 'bold 30px Figtree',
   fontUrl,
-  scrollSpeed = 2,
+  scrollSpeed = 4,
   scrollEase = 0.05
 }: CircularGalleryProps) {
   const containerRef = useRef<HTMLDivElement>(null);
