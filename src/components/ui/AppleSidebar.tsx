@@ -1,5 +1,7 @@
+import { type ReactNode } from 'react'
 import { type LucideIcon, LayoutDashboard, PawPrint, Heart, Activity, UtensilsCrossed, Calendar, Settings } from 'lucide-react'
 import { cn } from '@/utils/cn'
+import { ShinyText } from '@/components/ui/ShinyText'
 
 export interface NavItem {
   id: string
@@ -24,6 +26,7 @@ interface AppleSidebarProps {
   appName?: string
   onNavigate?: (itemId: string) => void
   className?: string
+  dockContent?: ReactNode
 }
 
 export function AppleSidebar({
@@ -32,6 +35,7 @@ export function AppleSidebar({
   appName = 'PettyCare',
   onNavigate,
   className,
+  dockContent,
 }: AppleSidebarProps) {
   return (
     <aside
@@ -64,21 +68,32 @@ export function AppleSidebar({
               onClick={() => onNavigate?.(item.id)}
               className={cn(
                 'w-full flex items-center gap-3 px-3 py-2.5 rounded-mm-md',
-                'text-mm-body text-[var(--mm-label)] font-medium',
+                'text-mm-body font-medium',
                 'transition-all duration-200',
                 'hover:bg-[var(--mm-fill)]',
-                isActive && [
-                  'bg-[var(--mm-fill)] font-semibold',
-                  'border border-[var(--mm-separator)]',
-                ],
+                isActive && 'bg-[var(--mm-fill)] font-semibold',
               )}
             >
               <Icon size={20} strokeWidth={isActive ? 2.5 : 1.8} className={isActive ? 'text-[var(--mm-link)]' : 'text-[var(--mm-secondaryLabel)]'} />
-              <span>{item.label}</span>
+              <ShinyText
+                text={item.label}
+                disabled={!isActive}
+                speed={3}
+                color="#b5b5b5"
+                shineColor="#ffffff"
+                spread={120}
+                className="text-[var(--mm-label)]"
+              />
             </button>
           )
         })}
       </nav>
+
+      {dockContent && (
+        <div className="mt-auto px-3 pt-2 pb-3 border-t border-[var(--mm-separator)] flex justify-center">
+          {dockContent}
+        </div>
+      )}
     </aside>
   )
 }

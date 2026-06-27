@@ -23,6 +23,11 @@ npx tsx tests/activity-visual.spec.ts     # Activity module
 npx tsx tests/feeding-visual.spec.ts      # Feeding module
 npx tsx tests/appointments-visual.spec.ts # Appointments module
 npx tsx tests/settings-visual.spec.ts     # Settings module
+npx tsx tests/darkmode-visual.spec.ts     # ShapeGrid, Dock, ShinyText, MagicRings (Three.js)
+
+# Unit tests (vitest — no dev server needed)
+npm test                                   # Run all vitest tests
+npx vitest tests/upload.test.ts            # Run a single test file
 
 # Run all tests sequentially
 for f in tests/*.spec.ts; do echo "=== $f ==="; npx tsx "$f" | tail -5; done
@@ -137,6 +142,26 @@ The entire light mode has been refactored from Apple HIG to MiniMax design langu
 
 **State coverage pattern**: Each data-type component renders one of: `LoadingState` / `EmptyState` / `ErrorState` / data view. See `components/common/`.
 
+### Image Upload (`src/lib/upload.ts`)
+
+`uploadImage()` handles client-side resize (max 800px), type validation (JPEG/PNG/WebP), and size limits (5MB) before uploading to Supabase Storage. Uses `UploadError` class for typed error handling. See `tests/upload.test.ts` for unit tests.
+
+### Three.js Component
+
+`src/components/ui/MagicRings.tsx` — animated Three.js ring visualization used in the dark mode UI. Renders a Canvas via `@react-three/fiber`. The only Three.js component in the codebase.
+
+### Utility Scripts (`scripts/`)
+
+| Script | Purpose |
+|--------|---------|
+| `check-db.mjs` | Verify Supabase connection and tables |
+| `seed-moments.mjs` | Seed pet moments data |
+| `screenshot.mjs` | Take page screenshots via Puppeteer |
+
+### Server (`server/`)
+
+Standalone Node.js server (`server/index.js`) with its own `package.json` and `package-lock.json`. Not part of the main Vite app.
+
 ### Key Patterns
 
 - **`cn()` utility** (`src/utils/cn.ts`): wraps `clsx` + `tailwind-merge` for conflict-free conditional classes
@@ -163,6 +188,10 @@ The entire light mode has been refactored from Apple HIG to MiniMax design langu
 ### TypeScript Configuration
 
 Root `tsconfig.json` uses **project references** pointing to `tsconfig.app.json` (app code) and `tsconfig.node.json` (Vite config). Both have `"noEmit": true`. Always use `tsc -b` (build mode) to type-check all references — plain `tsc` on the root config checks nothing because `"files": []`.
+
+### Vitest
+
+Separate `vitest.config.ts` (not in tsconfig project references) with its own `@/` alias to `src/`. Tests live in `tests/*.test.ts` (unit) and `tests/*.spec.ts` (Puppeteer visual). Unit tests run in `node` environment — no DOM.
 
 ### Docker Deployment
 

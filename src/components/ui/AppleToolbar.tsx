@@ -1,7 +1,6 @@
 import { Search, Bell, Sun, Moon, X, LogOut } from 'lucide-react'
 import { cn } from '@/utils/cn'
-import { useState, useRef, useEffect } from 'react'
-import { Dock } from '@/components/ui/Dock'
+import { useRef, useEffect } from 'react'
 
 interface AppleToolbarProps {
   title?: string
@@ -14,6 +13,10 @@ interface AppleToolbarProps {
   onThemeToggle?: () => void
   onSignOut?: () => void
   className?: string
+  searchOpen?: boolean
+  onSearchOpenChange?: (open: boolean) => void
+  userMenuOpen?: boolean
+  onUserMenuOpenChange?: (open: boolean) => void
 }
 
 const searchLinks = [
@@ -70,9 +73,11 @@ export function AppleToolbar({
   onThemeToggle,
   onSignOut,
   className,
+  searchOpen = false,
+  onSearchOpenChange,
+  userMenuOpen = false,
+  onUserMenuOpenChange,
 }: AppleToolbarProps) {
-  const [searchOpen, setSearchOpen] = useState(false)
-  const [userMenuOpen, setUserMenuOpen] = useState(false)
   const inputRef = useRef<HTMLInputElement>(null)
   const panelRef = useRef<HTMLDivElement>(null)
   const userMenuRef = useRef<HTMLDivElement>(null)
@@ -90,26 +95,26 @@ export function AppleToolbar({
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (panelRef.current && !panelRef.current.contains(e.target as Node)) {
-        setSearchOpen(false)
+        onSearchOpenChange?.(false)
       }
     }
     if (searchOpen) {
       setTimeout(() => document.addEventListener('mousedown', handleClick), 0)
     }
     return () => document.removeEventListener('mousedown', handleClick)
-  }, [searchOpen])
+  }, [searchOpen, onSearchOpenChange])
 
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) {
-        setUserMenuOpen(false)
+        onUserMenuOpenChange?.(false)
       }
     }
     if (userMenuOpen) {
       document.addEventListener('mousedown', handleClick)
     }
     return () => document.removeEventListener('mousedown', handleClick)
-  }, [userMenuOpen])
+  }, [userMenuOpen, onUserMenuOpenChange])
 
   return (
     <>
@@ -127,113 +132,79 @@ export function AppleToolbar({
         )}
 
         <div className="flex items-center gap-1 ml-auto">
-          {isDark ? (
-            <Dock
-              items={[
-                { id: 'search', icon: <Search size={20} />, label: 'Search', onClick: () => setSearchOpen(true) },
-                { id: 'notifications', icon: <Bell size={20} />, label: 'Notifications' },
-                { id: 'theme', icon: <Sun size={18} />, label: 'Light Mode', onClick: onThemeToggle },
-                { id: 'user', icon: <span>👤</span>, label: userEmail ?? 'Account', onClick: () => setUserMenuOpen(!userMenuOpen) },
-              ]}
-              panelHeight={56}
-              baseItemSize={40}
-              magnification={60}
-            />
-          ) : (
-            <>
-              <button
-                onClick={() => setSearchOpen(true)}
-                className={cn(
-                  'w-9 h-9 flex items-center justify-center',
-                  'rounded-mm-md transition-colors duration-200',
-                  'hover:bg-[var(--mm-fill)]',
-                )}
-              >
-                <Search size={20} className="text-[var(--mm-label)]" />
-              </button>
+          <button
+            onClick={() => onSearchOpenChange?.(true)}
+            className={cn(
+              'w-9 h-9 flex items-center justify-center',
+              'rounded-mm-md transition-colors duration-200',
+              'hover:bg-[var(--mm-fill)]',
+            )}
+          >
+            <Search size={20} className="text-[var(--mm-label)]" />
+          </button>
 
-              <button
-                className={cn(
-                  'relative w-9 h-9 flex items-center justify-center',
-                  'rounded-mm-md transition-colors duration-200',
-                  'hover:bg-[var(--mm-fill)]',
-                )}
-              >
-                <Bell size={20} className="text-[var(--mm-label)]" />
-                {notificationCount > 0 && (
-                  <span className={cn(
-                    'absolute -top-0.5 -right-0.5',
-                    'min-w-[18px] h-[18px] px-1',
-                    'flex items-center justify-center',
-                    'bg-[#FF3B30] rounded-mm-pill',
-                    'text-[11px] font-semibold text-white',
-                    'shadow-mm-subtle',
-                  )}>
-                    {notificationCount > 99 ? '99+' : notificationCount}
-                  </span>
-                )}
-              </button>
+          <button
+            className={cn(
+              'relative w-9 h-9 flex items-center justify-center',
+              'rounded-mm-md transition-colors duration-200',
+              'hover:bg-[var(--mm-fill)]',
+            )}
+          >
+            <Bell size={20} className="text-[var(--mm-label)]" />
+            {notificationCount > 0 && (
+              <span className={cn(
+                'absolute -top-0.5 -right-0.5',
+                'min-w-[18px] h-[18px] px-1',
+                'flex items-center justify-center',
+                'bg-[#FF3B30] rounded-mm-pill',
+                'text-[11px] font-semibold text-white',
+                'shadow-mm-subtle',
+              )}>
+                {notificationCount > 99 ? '99+' : notificationCount}
+              </span>
+            )}
+          </button>
 
-              <button
-                onClick={onThemeToggle}
-                className={cn(
-                  'w-9 h-9 flex items-center justify-center',
-                  'rounded-mm-md transition-colors duration-200',
-                  'hover:bg-[var(--mm-fill)]',
-                )}
-              >
-                {isDark ? <Sun size={18} className="text-[var(--mm-label)]" /> : <Moon size={18} className="text-[var(--mm-label)]" />}
-              </button>
+          <button
+            onClick={onThemeToggle}
+            className={cn(
+              'w-9 h-9 flex items-center justify-center',
+              'rounded-mm-md transition-colors duration-200',
+              'hover:bg-[var(--mm-fill)]',
+            )}
+          >
+            {isDark ? <Sun size={18} className="text-[var(--mm-label)]" /> : <Moon size={18} className="text-[var(--mm-label)]" />}
+          </button>
 
-              <div className="relative shrink-0" ref={userMenuRef}>
-                <button
-                  onClick={() => setUserMenuOpen(!userMenuOpen)}
-                  className="w-8 h-8 flex items-center justify-center rounded-full transition-colors"
-                >
-                  {userAvatar ? (
-                    <img src={userAvatar} alt="" className="w-full h-full rounded-full object-cover" />
-                  ) : (
-                    <span className="text-lg">👤</span>
-                  )}
-                </button>
+          <div className="relative shrink-0" ref={userMenuRef}>
+            <button
+              onClick={() => onUserMenuOpenChange?.(!userMenuOpen)}
+              className="w-8 h-8 flex items-center justify-center rounded-full transition-colors"
+            >
+              {userAvatar ? (
+                <img src={userAvatar} alt="" className="w-full h-full rounded-full object-cover" />
+              ) : (
+                <span className="text-lg">👤</span>
+              )}
+            </button>
 
-                {userMenuOpen && (
-                  <div className="absolute right-0 top-10 w-56 rounded-mm-lg bg-[var(--mm-card)] shadow-mm-card border border-[var(--mm-separator)] py-1.5 z-50">
-                    {userEmail && (
-                      <div className="px-4 py-2 border-b border-[var(--mm-separator)]">
-                        <p className="text-sm text-[var(--mm-label)] font-medium truncate">{userEmail}</p>
-                      </div>
-                    )}
-                    <button
-                      onClick={() => { setUserMenuOpen(false); onSignOut?.() }}
-                      className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--mm-label)] hover:bg-[var(--mm-fill)] transition-colors"
-                    >
-                      <LogOut size={15} />
-                      Sign Out
-                    </button>
+            {userMenuOpen && (
+              <div className="absolute right-0 top-10 w-56 rounded-mm-lg bg-[var(--mm-card)] shadow-mm-card border border-[var(--mm-separator)] py-1.5 z-50">
+                {userEmail && (
+                  <div className="px-4 py-2 border-b border-[var(--mm-separator)]">
+                    <p className="text-sm text-[var(--mm-label)] font-medium truncate">{userEmail}</p>
                   </div>
                 )}
+                <button
+                  onClick={() => { onUserMenuOpenChange?.(false); onSignOut?.() }}
+                  className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--mm-label)] hover:bg-[var(--mm-fill)] transition-colors"
+                >
+                  <LogOut size={15} />
+                  Sign Out
+                </button>
               </div>
-            </>
-          )}
-
-          {/* User menu (shared between light and dark — rendered outside the Dock for both) */}
-          {isDark && userMenuOpen && (
-            <div className="absolute right-0 top-14 w-56 rounded-mm-lg bg-[var(--mm-card)] shadow-mm-card border border-[var(--mm-separator)] py-1.5 z-50">
-              {userEmail && (
-                <div className="px-4 py-2 border-b border-[var(--mm-separator)]">
-                  <p className="text-sm text-[var(--mm-label)] font-medium truncate">{userEmail}</p>
-                </div>
-              )}
-              <button
-                onClick={() => { setUserMenuOpen(false); onSignOut?.() }}
-                className="w-full flex items-center gap-2.5 px-4 py-2 text-sm text-[var(--mm-label)] hover:bg-[var(--mm-fill)] transition-colors"
-              >
-                <LogOut size={15} />
-                Sign Out
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </header>
 
@@ -254,7 +225,7 @@ export function AppleToolbar({
                   placeholder="Search pets, health records, reminders..."
                   value={searchValue}
                   onChange={e => onSearch?.(e.target.value)}
-                  onKeyDown={e => e.key === 'Escape' && setSearchOpen(false)}
+                  onKeyDown={e => e.key === 'Escape' && onSearchOpenChange?.(false)}
                   className={cn(
                     'flex-1 h-10 text-mm-body text-[var(--mm-label)] text-left',
                     'bg-transparent',
@@ -263,7 +234,7 @@ export function AppleToolbar({
                   )}
                 />
                 <button
-                  onClick={() => setSearchOpen(false)}
+                  onClick={() => onSearchOpenChange?.(false)}
                   className={cn(
                     'w-8 h-8 flex items-center justify-center',
                     'rounded-mm-md transition-colors duration-200',
@@ -278,14 +249,14 @@ export function AppleToolbar({
 
               <DynamicSearchLinks
                 query={searchValue}
-                onSelect={() => setSearchOpen(false)}
+                onSelect={() => onSearchOpenChange?.(false)}
               />
             </div>
           </div>
 
           <div
             className="flex-1 cursor-pointer"
-            onClick={() => setSearchOpen(false)}
+            onClick={() => onSearchOpenChange?.(false)}
           />
         </div>
       )}
