@@ -1,0 +1,59 @@
+.focus-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+
+.focus-word {
+  position: relative;
+  display: inline-block;
+}
+
+.focus-frame {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  border: 1.5px solid var(--border-color);
+  border-radius: 4px;
+  box-shadow:
+    0 0 6px var(--glow-color),
+    inset 0 0 6px var(--glow-color);
+}
+
+.corner {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-color: var(--border-color);
+  box-shadow: 0 0 4px var(--glow-color);
+}
+
+.corner.top-left {
+  top: -2px;
+  left: -2px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+
+.corner.top-right {
+  top: -2px;
+  right: -2px;
+  border-top: 2px solid;
+  border-right: 2px solid;
+}
+
+.corner.bottom-left {
+  bottom: -2px;
+  left: -2px;
+  border-bottom: 2px solid;
+  border-left: 2px solid;
+}
+
+.corner.bottom-right {
+  bottom: -2px;
+  right: -2px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
