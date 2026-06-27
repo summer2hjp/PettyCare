@@ -95,20 +95,18 @@ export function HealthPage() {
   const [visits, setVisits] = useState<VetVisit[]>([])
   const [meds, setMeds] = useState<Medication[]>([])
 
-  useEffect(() => {
-    supabase.from('vaccinations').select('*').eq('pet_id', selectedPetId)
-      .then(({ data }) => setVaccinations(data as Vaccination[] ?? []))
-  }, [selectedPetId])
+  const fetchData = async (table: string, setter: (data: any[]) => void, label: string) => {
+    try {
+      const { data } = await supabase.from(table).select('*').eq('pet_id', selectedPetId)
+      setter(data as any[] ?? [])
+    } catch (err) {
+      console.error(`Failed to fetch ${label}:`, err)
+    }
+  }
 
-  useEffect(() => {
-    supabase.from('vet_visits').select('*').eq('pet_id', selectedPetId)
-      .then(({ data }) => setVisits(data as VetVisit[] ?? []))
-  }, [selectedPetId])
-
-  useEffect(() => {
-    supabase.from('medications').select('*').eq('pet_id', selectedPetId)
-      .then(({ data }) => setMeds(data as Medication[] ?? []))
-  }, [selectedPetId])
+  useEffect(() => { fetchData('vaccinations', (d) => setVaccinations(d as Vaccination[]), 'vaccinations') }, [selectedPetId])
+  useEffect(() => { fetchData('vet_visits', (d) => setVisits(d as VetVisit[]), 'vet visits') }, [selectedPetId])
+  useEffect(() => { fetchData('medications', (d) => setMeds(d as Medication[]), 'medications') }, [selectedPetId])
 
   return (
     <div>

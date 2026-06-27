@@ -47,32 +47,28 @@ function ringFragmentShader(
   opacity: number,
   noiseAmount: number,
 ) {
+  // Precompute RGB components from hex in JS (GLSL ES has no string type)
+  const r1 = parseInt(color.slice(1, 3), 16) / 255
+  const g1 = parseInt(color.slice(3, 5), 16) / 255
+  const b1 = parseInt(color.slice(5, 7), 16) / 255
+  const r2 = parseInt(colorTwo.slice(1, 3), 16) / 255
+  const g2 = parseInt(colorTwo.slice(3, 5), 16) / 255
+  const b2 = parseInt(colorTwo.slice(5, 7), 16) / 255
+
   return `
     uniform float uTime;
     uniform vec2 uMouse;
     uniform float uHover;
     varying vec2 vUv;
 
-    vec3 hexToRgb(string hex) {
-      float r = float(0x${color.slice(1, 3)}) / 255.0;
-      float g = float(0x${color.slice(3, 5)}) / 255.0;
-      float b = float(0x${color.slice(5, 7)}) / 255.0;
-      return vec3(r, g, b);
-    }
-    vec3 hexToRgb2(string hex) {
-      float r = float(0x${colorTwo.slice(1, 3)}) / 255.0;
-      float g = float(0x${colorTwo.slice(3, 5)}) / 255.0;
-      float b = float(0x${colorTwo.slice(5, 7)}) / 255.0;
-      return vec3(r, g, b);
-    }
+    const vec3 c1 = vec3(${r1.toFixed(6)}, ${g1.toFixed(6)}, ${b1.toFixed(6)});
+    const vec3 c2 = vec3(${r2.toFixed(6)}, ${g2.toFixed(6)}, ${b2.toFixed(6)});
 
     float hash(vec2 p) {
       return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
     }
 
     void main() {
-      vec3 c1 = hexToRgb("");
-      vec3 c2 = hexToRgb2("");
       vec3 color = mix(c1, c2, sin(uTime * 0.5) * 0.5 + 0.5);
 
       float noise = hash(vUv + uTime * 0.1) * ${noiseAmount.toFixed(2)};

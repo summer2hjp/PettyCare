@@ -11,7 +11,6 @@ export interface ShapeGridProps {
   speed?: number
   borderColor?: string
   squareSize?: number
-  hoverFillColor?: string
   shape?: ShapeType
   hoverTrailAmount?: number
   className?: string
@@ -76,7 +75,6 @@ export function ShapeGrid({
   speed = 1,
   borderColor = '#999',
   squareSize = 40,
-  hoverFillColor = '#222',
   shape = 'square',
   hoverTrailAmount = 0,
   className,
@@ -137,7 +135,7 @@ export function ShapeGrid({
         drawShape(ctx, shape, x, y, squareSize, borderColor, isHovered ? 0.15 : trailAlpha)
       }
     }
-  }, [direction, speed, borderColor, squareSize, hoverFillColor, shape, hoverTrailAmount])
+  }, [direction, speed, borderColor, squareSize, shape, hoverTrailAmount])
 
   useEffect(() => {
     if (theme !== 'dark') return

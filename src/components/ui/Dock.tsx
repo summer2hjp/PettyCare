@@ -96,7 +96,6 @@ export function Dock({
               aria-label={item.ariaLabel ?? item.label}
               title={item.label}
               onClick={item.onClick}
-              onMouseEnter={() => {}}
               className={cn(
                 'flex items-center justify-center rounded-xl',
                 'transition-colors duration-150',
